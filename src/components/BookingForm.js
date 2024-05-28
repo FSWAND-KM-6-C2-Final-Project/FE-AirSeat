@@ -89,11 +89,11 @@ const BookingForm = ({ initialClass }) => {
         onSubmit={handleSubmit}
         className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg font-plus-jakarta-sans"
       >
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
           Isi Data Pemesan
         </h2>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-[#164765]">
             Nama Lengkap
           </label>
           <input
@@ -101,12 +101,12 @@ const BookingForm = ({ initialClass }) => {
             name="fullName"
             value={orderData.fullName}
             onChange={handleOrderChange}
-            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
             required
           />
         </div>
         <div className="mb-6 flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-[#164765]">
             Punya Nama Keluarga?
           </label>
           <Switch
@@ -118,7 +118,7 @@ const BookingForm = ({ initialClass }) => {
               })
             }
             className={`${
-              orderData.hasLastName ? "bg-blue-600" : "bg-gray-200"
+              orderData.hasLastName ? "bg-[#447C9D]" : "bg-gray-200"
             } relative inline-flex h-6 w-11 items-center rounded-full`}
           >
             <span
@@ -130,7 +130,7 @@ const BookingForm = ({ initialClass }) => {
         </div>
         {orderData.hasLastName && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-[#164765]">
               Nama Keluarga
             </label>
             <input
@@ -138,13 +138,13 @@ const BookingForm = ({ initialClass }) => {
               name="lastName"
               value={orderData.lastName}
               onChange={handleOrderChange}
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
               required
             />
           </div>
         )}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-[#164765]">
             Nomor Telepon
           </label>
           <input
@@ -152,12 +152,12 @@ const BookingForm = ({ initialClass }) => {
             name="phoneNumber"
             value={orderData.phoneNumber}
             onChange={handleOrderChange}
-            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
             required
           />
         </div>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-[#164765]">
             Email
           </label>
           <input
@@ -165,12 +165,12 @@ const BookingForm = ({ initialClass }) => {
             name="email"
             value={orderData.email}
             onChange={handleOrderChange}
-            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
             required
           />
         </div>
 
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
           Isi Data Penumpang
         </h2>
         {passengers.map((passenger, index) => (
@@ -178,18 +178,18 @@ const BookingForm = ({ initialClass }) => {
             key={index}
             className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50"
           >
-            <h3 className="text-xl font-semibold mb-4 border-b pb-2">
+            <h3 className="text-xl font-semibold mb-4 border-b pb-2 text-[#164765]">
               Data Diri Penumpang {index + 1} - Adult
             </h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Title
               </label>
               <select
                 name="title"
                 value={passenger.title}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
               >
                 <option>Mr.</option>
                 <option>Ms.</option>
@@ -197,7 +197,7 @@ const BookingForm = ({ initialClass }) => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Nama Lengkap
               </label>
               <input
@@ -205,12 +205,12 @@ const BookingForm = ({ initialClass }) => {
                 name="fullName"
                 value={passenger.fullName}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
             <div className="mb-4 flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Punya Nama Keluarga?
               </label>
               <Switch
@@ -222,7 +222,7 @@ const BookingForm = ({ initialClass }) => {
                   setPassengers(newPassengers);
                 }}
                 className={`${
-                  passenger.hasLastName ? "bg-blue-600" : "bg-gray-200"
+                  passenger.hasLastName ? "bg-[#447C9D]" : "bg-gray-200"
                 } relative inline-flex h-6 w-11 items-center rounded-full`}
               >
                 <span
@@ -234,7 +234,7 @@ const BookingForm = ({ initialClass }) => {
             </div>
             {passenger.hasLastName && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-[#164765]">
                   Nama Keluarga
                 </label>
                 <input
@@ -242,13 +242,13 @@ const BookingForm = ({ initialClass }) => {
                   name="lastName"
                   value={passenger.lastName}
                   onChange={(e) => handlePassengerChange(index, e)}
-                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                   required
                 />
               </div>
             )}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Tanggal Lahir
               </label>
               <input
@@ -256,12 +256,12 @@ const BookingForm = ({ initialClass }) => {
                 name="dob"
                 value={passenger.dob}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Kewarganegaraan
               </label>
               <input
@@ -269,12 +269,12 @@ const BookingForm = ({ initialClass }) => {
                 name="nationality"
                 value={passenger.nationality}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 KTP/Paspor
               </label>
               <input
@@ -282,12 +282,12 @@ const BookingForm = ({ initialClass }) => {
                 name="idNumber"
                 value={passenger.idNumber}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Negara Penerbit
               </label>
               <input
@@ -295,12 +295,12 @@ const BookingForm = ({ initialClass }) => {
                 name="issuingCountry"
                 value={passenger.issuingCountry}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-[#164765]">
                 Berlaku Sampai
               </label>
               <input
@@ -308,7 +308,7 @@ const BookingForm = ({ initialClass }) => {
                 name="expiryDate"
                 value={passenger.expiryDate}
                 onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
                 required
               />
             </div>
@@ -317,12 +317,12 @@ const BookingForm = ({ initialClass }) => {
         <button
           type="button"
           onClick={addPassenger}
-          className="mb-6 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+          className="mb-6 px-4 py-2 bg-[#164765] text-white rounded-md hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75"
         >
           Tambah Penumpang
         </button>
 
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
           Pilih Kursi
         </h2>
         <div className="overflow-x-auto">
@@ -332,7 +332,7 @@ const BookingForm = ({ initialClass }) => {
                 {["A", "B", "C", "", "D", "E", "F"].map((col, index) => (
                   <div
                     key={index}
-                    className="text-center font-semibold text-gray-700"
+                    className="text-center font-semibold text-[#164765]"
                   >
                     {col}
                   </div>
@@ -345,7 +345,7 @@ const BookingForm = ({ initialClass }) => {
                           return (
                             <div
                               key={index}
-                              className="flex items-center justify-center font-semibold text-gray-700"
+                              className="flex items-center justify-center font-semibold text-[#164765]"
                             >
                               {row + 1}
                             </div>
@@ -366,7 +366,7 @@ const BookingForm = ({ initialClass }) => {
                           <button
                             key={col}
                             type="button"
-                            className={`p-2 ${bgColor} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75 hover:bg-opacity-75`}
+                            className={`p-2 ${bgColor} rounded-md focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 hover:bg-opacity-75`}
                             onClick={() => handleSeatSelection(row, col)}
                             disabled={isDisabled}
                           >
@@ -385,7 +385,7 @@ const BookingForm = ({ initialClass }) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="mt-6 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 w-full"
+            className="mt-6 px-4 py-2 bg-[#164765] text-white rounded-md hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 w-full"
           >
             Simpan
           </button>
