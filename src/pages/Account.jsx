@@ -1,7 +1,7 @@
 import Account from "../components/Account";
 import Navbar from "../components/Navbar";
 
-const EditProfile = () => {
+const AccountPage = () => {
   return (
     <>
       <Navbar />
@@ -10,4 +10,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default AccountPage;

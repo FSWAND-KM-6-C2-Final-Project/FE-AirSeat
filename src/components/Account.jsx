@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft, FiEdit3, FiSettings, FiLogOut } from "react-icons/fi";
 
-const EditPage = () => {
+const Account = () => {
   const [activeSection, setActiveSection] = useState("profile");
 
   const [name, setName] = useState("");
@@ -196,4 +196,4 @@ const EditPage = () => {
   );
 };
 
-export default EditPage;
+export default Account;
