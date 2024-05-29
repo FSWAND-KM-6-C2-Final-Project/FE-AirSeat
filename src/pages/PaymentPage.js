@@ -1,12 +1,12 @@
 import React from "react";
 import PaymentOptions from "../components/PaymentOptions";
-import Navbar from "../components/Navbar";
 import StepsSection from "../components/StepsSection";
+import NavbarBook from "../components/NavbarBook";
 
 const PaymentPage = () => {
   return (
     <div>
-      <Navbar />
+      <NavbarBook />
       <StepsSection />
       <PaymentOptions />
     </div>

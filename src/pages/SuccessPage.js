@@ -1,12 +1,12 @@
 import React from "react";
 import PaymentSuccess from "../components/PaymentSuccess";
-import Navbar from "../components/Navbar";
 import StepsSection from "../components/StepsSection";
+import NavbarBook from "../components/NavbarBook";
 
 const SuccessPage = () => {
   return (
     <div>
-      <Navbar />
+      <NavbarBook />
       <StepsSection />
       <PaymentSuccess />
     </div>
