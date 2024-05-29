@@ -7,7 +7,14 @@ module.exports = {
   ],
   darkMode: false,
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customBlue1: "#164765",
+        customBlue2: "#447C9D",
+        customBlue3: "#9CBEC8",
+        customBlue4: "#DEF2FD",
+      },
+    },
   },
   variants: {
     extend: {},

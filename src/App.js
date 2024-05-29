@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import BookingPage from "./pages/BookingPage";
 import PaymentPage from "./pages/PaymentPage";
 import SuccessPage from "./pages/SuccessPage";
+import Notification from "./pages/Notification";
+import AccountPage from "./pages/Account";
 import "./index.css";
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-success" element={<SuccessPage />} />
+          <Route path="/profile" element={<AccountPage />} />
+          <Route path="/notification" element={<Notification />} />
         </Routes>
       </div>
     </Router>
