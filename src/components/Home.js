@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { FiSearch } from "react-icons/fi";
+import bangkokImage from "../images/bangkok.svg";
 
 const Home = () => {
+  const [selectedButton, setSelectedButton] = useState("All");
   const [showReturnDate, setShowReturnDate] = useState(false);
   const [showPassengerModal, setShowPassengerModal] = useState(false);
   const [showClassModal, setShowClassModal] = useState(false);
@@ -15,6 +18,9 @@ const Home = () => {
     children: 0,
     infants: 0,
   });
+  const handleClick = (button) => {
+    setSelectedButton(button);
+  };
   const [tempPassengers, setTempPassengers] = useState({
     adults: 0,
     children: 0,
@@ -90,8 +96,8 @@ const Home = () => {
   );
 
   return (
-    <main className="flex justify-center mt-10">
-      <div className="bg-white rounded-lg shadow p-6 w-full max-w-7xl">
+    <main className="flex flex-col items-center mt-20">
+      <div className="bg-white rounded-lg shadow p-6 w-full max-w-7xl mb-10">
         <h2 className="text-xl font-bold mb-4">
           Choose a special flight schedule at{" "}
           <span className="text-purple-600">AirSeat!</span>
@@ -176,13 +182,13 @@ const Home = () => {
             />
           </div>
         </div>
-        <button className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white rounded py-3">
+        <button className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3">
           Search Flights
         </button>
       </div>
 
       {showPassengerModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg relative">
             <button
               onClick={() => setShowPassengerModal(false)}
@@ -231,7 +237,7 @@ const Home = () => {
             </div>
             <button
               onClick={handleSavePassengers}
-              className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white rounded py-2"
+              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-2"
             >
               Save
             </button>
@@ -240,7 +246,7 @@ const Home = () => {
       )}
 
       {showClassModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg relative">
             <button
               onClick={() => setShowClassModal(false)}
@@ -254,7 +260,7 @@ const Home = () => {
                 <div
                   key={cls}
                   className={`flex justify-between items-center p-2 border rounded cursor-pointer hover:bg-gray-200 ${
-                    tempSeatClass === cls ? "bg-purple-600 text-white" : ""
+                    tempSeatClass === cls ? "bg-customBlue2 text-white" : ""
                   }`}
                   onClick={() => setTempSeatClass(cls)}
                 >
@@ -279,7 +285,7 @@ const Home = () => {
             </div>
             <button
               onClick={handleSaveClass}
-              className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white rounded py-2"
+              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-2"
             >
               Save
             </button>
@@ -288,7 +294,7 @@ const Home = () => {
       )}
 
       {showFromCityModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg relative">
             <button
               onClick={() => setShowFromCityModal(false)}
@@ -320,7 +326,7 @@ const Home = () => {
       )}
 
       {showToCityModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg relative">
             <button
               onClick={() => setShowToCityModal(false)}
@@ -350,6 +356,112 @@ const Home = () => {
           </div>
         </div>
       )}
+
+      <div className="mt-10 w-full max-w-7xl px-4">
+        <h2 className="text-2xl font-bold mb-6">Favorite Destinations</h2>
+        <div className="flex gap-2 mb-4">
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "All"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("All")}
+          >
+            <FiSearch className="mr-3" />
+            All
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "Asia"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("Asia")}
+          >
+            <FiSearch className="mr-3" />
+            Asia
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "North America"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("North America")}
+          >
+            <FiSearch className="mr-3" />
+            North America
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "South America"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("South America")}
+          >
+            <FiSearch className="mr-3" />
+            South America
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "Australia"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("Australia")}
+          >
+            <FiSearch className="mr-3" />
+            Australia
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "Europe"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("Europe")}
+          >
+            <FiSearch className="mr-3" />
+            Europe
+          </button>
+          <button
+            className={`px-4 py-2 flex items-center rounded ${
+              selectedButton === "Africa"
+                ? "bg-customBlue1 text-white"
+                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+            }`}
+            onClick={() => handleClick("Africa")}
+          >
+            <FiSearch className="mr-3" />
+            Africa
+          </button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {[...Array(10)].map((_, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow p-4 grid-item relative"
+            >
+              <img
+                src={bangkokImage}
+                alt="Bangkok"
+                className="rounded-t-lg w-full"
+              />
+              <span className="bg-customBlue2 text-white px-2 py-1 rounded absolute top-0 right-0 mt-2 mr-2">
+                Limited!
+              </span>
+              <div className="mt-2 text-sm">
+                <h3 className="mt-2 text-lg font-bold">Jakarta -> Bangkok</h3>
+                <p>AirAsia</p>
+                <p>20 - 30 March 2023</p>
+                <p className="text-red-600 font-bold">Start from IDR 950.000</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <style>
         {`
@@ -396,16 +508,9 @@ const Home = () => {
               background-color: #e2e8f0;
           }
 
-          .hover\\:bg-purple-700:hover {
-              background-color: #4c51bf;
-          }
-
-          .bg-purple-600 {
-              background-color: #6b46c1;
-          }
-
-          .bg-purple-700 {
-              background-color: #4c51bf;
+          .grid-item:hover {
+            transform: scale(1.05);
+            transition: transform 0.35s ease-in-out, box-shadow 0.35s ease-in-out; /* Tambahkan efek transisi untuk perubahan zoom */
           }
         `}
       </style>
