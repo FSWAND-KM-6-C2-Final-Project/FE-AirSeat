@@ -20,7 +20,7 @@ const FlightDetails = () => {
           }
         `}
       </style>
-      <div className="md:w-1/3 min-h-screen p-6 bg-white rounded-lg shadow-lg my-6 border border-gray-200 flight-details">
+      <div className="md:w-1/3 max-h-screen p-6 bg-white rounded-lg shadow-lg my-6 border border-gray-200 flight-details">
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b-2 border-gray-300 pb-3">
           Detail Penerbangan
         </h2>
