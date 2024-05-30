@@ -8,6 +8,7 @@ import Notification from "./pages/Notification";
 import AccountPage from "./pages/Account";
 import SearchPage from "./pages/SearchPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
+import OrderHistoryEmptyPage from "./pages/OrderHistoryEmptyPage";
 import "./index.css";
 
 function App() {
@@ -23,6 +24,10 @@ function App() {
           <Route path="/notification" element={<Notification />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/order-history" element={<OrderHistoryPage />} />
+          <Route
+            path="/order-history-empty"
+            element={<OrderHistoryEmptyPage />}
+          />
         </Routes>
       </div>
     </Router>
