@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import { format, addDays } from 'date-fns';
+import { format, addDays } from "date-fns";
 
 const FlightSelection = () => {
   const [selectedDay, setSelectedDay] = useState(null);
@@ -16,8 +16,8 @@ const FlightSelection = () => {
       for (let i = 0; i < 7; i++) {
         const nextDate = addDays(today, i);
         dateArray.push({
-          day: format(nextDate, 'eeee'),
-          date: format(nextDate, 'dd/MM/yyyy')
+          day: format(nextDate, "eeee"),
+          date: format(nextDate, "dd/MM/yyyy"),
         });
       }
       return dateArray;

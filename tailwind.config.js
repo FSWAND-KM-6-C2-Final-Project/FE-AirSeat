@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  purge: [
+  content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./public/index.html",
     "./node_modules/flowbite/**/*.js",
   ],
-  darkMode: false,
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -13,6 +13,8 @@ module.exports = {
         customBlue2: "#447C9D",
         customBlue3: "#9CBEC8",
         customBlue4: "#DEF2FD",
+        customGreen1: "#73CA5C",
+        customPurple1: "#A06ECE",
       },
     },
   },

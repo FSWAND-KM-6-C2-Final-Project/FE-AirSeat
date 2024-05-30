@@ -7,6 +7,7 @@ import SuccessPage from "./pages/SuccessPage";
 import Notification from "./pages/Notification";
 import AccountPage from "./pages/Account";
 import SearchPage from "./pages/SearchPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 import "./index.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/profile" element={<AccountPage />} />
           <Route path="/notification" element={<Notification />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/order-history" element={<OrderHistoryPage />} />
         </Routes>
       </div>
     </Router>
