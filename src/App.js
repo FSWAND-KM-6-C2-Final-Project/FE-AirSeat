@@ -6,6 +6,7 @@ import PaymentPage from "./pages/PaymentPage";
 import SuccessPage from "./pages/SuccessPage";
 import Notification from "./pages/Notification";
 import AccountPage from "./pages/Account";
+import SearchPage from "./pages/SearchPage";
 import "./index.css";
 
 function App() {
@@ -13,12 +14,13 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/homepage" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-success" element={<SuccessPage />} />
           <Route path="/profile" element={<AccountPage />} />
           <Route path="/notification" element={<Notification />} />
+          <Route path="/search" element={<SearchPage />} />
         </Routes>
       </div>
     </Router>

@@ -30,16 +30,24 @@ npm start
 
 ## Features
 
+- **Homepage**: Allows users to check the flight schedule and view favorite destinations.
 - **Booking Form**: Allows users to fill in their booking details.
+- **Flight Results**: Displays available flights based on the user's search criteria.
 - **Flight Details**: Displays detailed information about the flight.
 - **Payment Options**: Lets users choose from different payment methods.
 - **Payment Success**: Displays the success status after payment is completed.
+- **Profile**: Users can update their profile data.
+- **Notification**: Users receive notifications about discounts and any changes in flight schedules.
 
 
 ## Navigation
 The application uses React Router for navigation. Below are the routes defined:
 
+- **/**: Displays the homepage with a form to check flight schedules and favorite destinations.
+- **/search**: Displays the homepage with a form to check flight schedules and favorite destinations.
 - **/booking**: Displays the booking form and flight details.
 - **/payment**: Displays the payment options.
 - **/payment-success**: Displays the payment success message.
+- **/profile**: Displays the profile page where users can edit their profile data.
+- **/notification**: Displays notifications about discounts and any changes in flight schedules.
 

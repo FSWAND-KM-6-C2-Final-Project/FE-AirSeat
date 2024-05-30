@@ -47,7 +47,7 @@ const Account = () => {
             className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-9/12 ml-2 md:ml-28 lg:ml-36 xl:ml-48 mt-8 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
-            Beranda
+            Back to Homepage
           </Link>
         </div>
       </div>
@@ -59,14 +59,14 @@ const Account = () => {
             className="flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300"
           >
             <FiEdit3 className="text-customBlue1" size={24} />
-            <span>Ubah Profil</span>
+            <span>Edit Profile</span>
           </button>
           <button
             onClick={handleSettingsClick}
             className="flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300"
           >
             <FiSettings className="text-customBlue1" size={24} />
-            <span>Pengaturan Akun</span>
+            <span>Accouunt Settings</span>
           </button>
           <button
             onClick={handleLogout}
@@ -91,7 +91,7 @@ const Account = () => {
                   htmlFor="name"
                   className="block font-bold text-customBlue1 ml-5"
                 >
-                  Nama Lengkap
+                  Full Name
                 </label>
                 <input
                   type="text"
@@ -142,7 +142,7 @@ const Account = () => {
                 type="submit"
                 className="bg-customBlue2 text-white px-10 py-3 rounded-xl self-center hover:bg-customBlue1"
               >
-                Simpan
+                Save
               </button>
             </form>
           </div>
@@ -185,7 +185,7 @@ const Account = () => {
                 onClick={handleEditProfile}
                 className="bg-customBlue2 text-white px-10 py-3 rounded-xl self-center hover:bg-customBlue1"
               >
-                Edit Profil
+                Edit Profile
               </button>
             </div>
           </div>

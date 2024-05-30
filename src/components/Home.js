@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import bangkokImage from "../images/bangkok.svg";
 
@@ -95,12 +96,14 @@ const Home = () => {
     city.toLowerCase().includes(toCitySearch.toLowerCase())
   );
 
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <main className="flex flex-col items-center mt-20">
-      <div className="bg-white rounded-lg shadow p-6 w-full max-w-7xl mb-10">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-7xl mb-10">
         <h2 className="text-xl font-bold mb-4">
           Choose a special flight schedule at{" "}
-          <span className="text-purple-600">AirSeat!</span>
+          <span className="text-customBlue2">AirSeat!</span>
         </h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -128,7 +131,8 @@ const Home = () => {
               <label className="block text-gray-700">Date</label>
               <input
                 type="date"
-                defaultValue="2023-03-01"
+                defaultValue={today}
+                min={today}
                 className="w-1/2 border border-gray-300 rounded py-2 px-4"
               />
             </div>
@@ -174,7 +178,7 @@ const Home = () => {
               type="text"
               value={seatClass}
               onClick={() => {
-                setTempSeatClass(""); // Ensure no class is selected by default
+                setTempSeatClass("");
                 setShowClassModal(true);
               }}
               readOnly
@@ -182,7 +186,13 @@ const Home = () => {
             />
           </div>
         </div>
-        <button className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3">
+
+        <button
+          onClick={() => {
+            window.location.href = "/search";
+          }}
+          className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
+        >
           Search Flights
         </button>
       </div>
@@ -259,21 +269,21 @@ const Home = () => {
               {Object.keys(seatClassPrices).map((cls) => (
                 <div
                   key={cls}
-                  className={`flex justify-between items-center p-2 border rounded cursor-pointer hover:bg-gray-200 ${
+                  className={`flex justify-between items-center p-2 border rounded cursor-pointer hover:bg-customBlue2 ${
                     tempSeatClass === cls ? "bg-customBlue2 text-white" : ""
                   }`}
                   onClick={() => setTempSeatClass(cls)}
                 >
                   <div>
                     <h4
-                      className={`text-gray-700 ${
+                      className={`text-black ${
                         tempSeatClass === cls ? "text-white" : ""
                       }`}
                     >
                       {cls}
                     </h4>
                     <p
-                      className={`text-sm text-gray-500 ${
+                      className={`text-sm text-customBlue2 ${
                         tempSeatClass === cls ? "text-white" : ""
                       }`}
                     >
@@ -314,7 +324,7 @@ const Home = () => {
               {filteredFromCities.map((city) => (
                 <div
                   key={city}
-                  className="p-2 border rounded cursor-pointer hover:bg-gray-200"
+                  className="p-2 border rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectFromCity(city)}
                 >
                   {city}
@@ -346,7 +356,7 @@ const Home = () => {
               {filteredToCities.map((city) => (
                 <div
                   key={city}
-                  className="p-2 border rounded cursor-pointer hover:bg-gray-200"
+                  className="p-2 border rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectToCity(city)}
                 >
                   {city}
@@ -442,7 +452,7 @@ const Home = () => {
           {[...Array(10)].map((_, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow p-4 grid-item relative"
+              className="bg-white rounded-lg shadow-md p-4 grid-item relative mb-10"
             >
               <img
                 src={bangkokImage}
@@ -465,54 +475,110 @@ const Home = () => {
 
       <style>
         {`
-          .toggle-checkbox:checked + .toggle-label {
-              background-color: #4c51bf;
-          }
+    .toggle-checkbox:checked + .toggle-label {
+        background-color: #4c51bf;
+    }
 
-          .toggle-checkbox:checked + .toggle-label::after {
-              transform: translateX(100%);
-          }
+    .toggle-checkbox:checked + .toggle-label::after {
+        transform: translateX(100%);
+    }
 
-          .toggle-checkbox {
-              display: none;
-          }
+    .toggle-checkbox {
+        display: none;
+    }
 
-          .toggle-label {
-              display: block;
-              width: 40px;
-              height: 20px;
-              background-color: #e2e8f0;
-              border-radius: 9999px;
-              cursor: pointer;
-              position: relative;
-              transition: background-color 0.2s;
-          }
+    .toggle-label {
+        display: block;
+        width: 40px;
+        height: 20px;
+        background-color: #e2e8f0;
+        border-radius: 9999px;
+        cursor: pointer;
+        position: relative;
+        transition: background-color 0.2s;
+    }
 
-          .toggle-label::after {
-              content: '';
-              position: absolute;
-              top: 2px;
-              left: 2px;
-              width: 16px;
-              height: 16px;
-              background-color: white;
-              border-radius: 9999px;
-              transition: transform 0.2s;
-          }
+    .toggle-label::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background-color: white;
+        border-radius: 9999px;
+        transition: transform 0.2s;
+    }
 
-          .cursor-not-allowed {
-              cursor: not-allowed;
-          }
+    .cursor-not-allowed {
+        cursor: not-allowed;
+    }
 
-          .hover\\:bg-gray-200:hover {
-              background-color: #e2e8f0;
-          }
+    .hover\\:bg-gray-200:hover {
+        background-color: #e2e8f0;
+    }
 
-          .grid-item:hover {
-            transform: scale(1.05);
-            transition: transform 0.35s ease-in-out, box-shadow 0.35s ease-in-out; /* Tambahkan efek transisi untuk perubahan zoom */
-          }
-        `}
+    .grid-item:hover {
+      transform: scale(1.05);
+      transition: transform 0.35s ease-in-out, box-shadow 0.35s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-cols-5 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flex.gap-2.mb-4 {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .flex.gap-2.mb-4 > button {
+        flex: 1 1 calc(50% - 0.5rem);
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      .grid-cols-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      .grid-cols-5 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+
+      .flex.gap-2.mb-4 {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .flex.gap-2.mb-4 > button {
+        flex: 1 1 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  `}
       </style>
     </main>
   );

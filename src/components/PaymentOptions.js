@@ -8,11 +8,6 @@ const PaymentOptions = () => {
     <div>
       <style>
         {`
-          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap');
-
-          .payment-container, .payment-container h2, .payment-container button, .payment-container input {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-          }
         `}
       </style>
       <div className="payment-container flex flex-col md:flex-row p-8 space-y-8 md:space-y-0 md:space-x-8">

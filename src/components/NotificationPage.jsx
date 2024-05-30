@@ -17,7 +17,7 @@ const NotificationPage = () => {
             className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-8/12 md:ml-48 mt-4 ml-6 md:mt-8 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
-            Beranda
+            Back to Homepage
           </Link>
           <button
             className="flex items-center outline outline-customBlue2 px-4 py-1 rounded-full ml-6 mt-10"
