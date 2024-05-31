@@ -31,10 +31,10 @@ const FlightSelection = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Pilih Penerbangan</h2>
-      <div className="flex items-center justify-between mb-4">
-        <div className="bg-customBlue2 text-white p-3 rounded-lg md:px-56 md:py-2">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+      <h2 className="text-lg sm:text-xl font-bold mb-4">Pilih Penerbangan</h2>
+      <div className="flex flex-col md:flex-row items-center justify-between mb-4 space-y-2 md:space-y-0">
+        <div className="bg-customBlue2 text-white p-3 rounded-lg w-full md:w-auto md:px-56 md:py-2">
           <div className="flex items-center space-x-2 text-sm">
             <FiArrowLeft className="cursor-pointer" />
             <span>JKT &rarr; MLB - 2 Penumpang - Economy</span>
@@ -49,7 +49,7 @@ const FlightSelection = () => {
           Change Search
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-2 mb-4 text-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 mb-4 text-center">
         {dates.map((date, index) => (
           <div
             key={index}
