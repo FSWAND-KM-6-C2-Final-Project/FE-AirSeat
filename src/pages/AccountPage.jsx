@@ -1,5 +1,5 @@
 import Account from "../components/Account";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAccount";
 
 const AccountPage = () => {
   return (

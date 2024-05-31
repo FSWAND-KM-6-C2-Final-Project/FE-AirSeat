@@ -4,8 +4,8 @@ import HomePage from "./pages/HomePage";
 import BookingPage from "./pages/BookingPage";
 import PaymentPage from "./pages/PaymentPage";
 import SuccessPage from "./pages/SuccessPage";
-import Notification from "./pages/Notification";
-import AccountPage from "./pages/Account";
+import NotificationPage from "./pages/NotificationPage";
+import AccountPage from "./pages/AccountPage";
 import SearchPage from "./pages/SearchPage";
 import "./index.css";
 
@@ -19,7 +19,7 @@ function App() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-success" element={<SuccessPage />} />
           <Route path="/profile" element={<AccountPage />} />
-          <Route path="/notification" element={<Notification />} />
+          <Route path="/notification" element={<NotificationPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>
       </div>
