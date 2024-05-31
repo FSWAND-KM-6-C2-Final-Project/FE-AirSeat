@@ -463,7 +463,9 @@ const Home = () => {
                 Limited!
               </span>
               <div className="mt-2 text-sm">
-                <h3 className="mt-2 text-lg font-bold">Jakarta -> Bangkok</h3>
+                <h3 className="mt-2 text-lg font-bold">
+                  Jakarta &rarr; Bangkok
+                </h3>
                 <p>AirAsia</p>
                 <p>20 - 30 March 2023</p>
                 <p className="text-red-600 font-bold">Start from IDR 950.000</p>
