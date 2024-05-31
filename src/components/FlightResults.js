@@ -7,8 +7,8 @@ const FlightCard = ({ time, duration, arrival, price, isHighlighted, onClick, is
       className={`flex flex-col border rounded-lg mb-4 ${isExpanded ? 'border-customBlue2 bg-white' : 'border-customBlue2 bg-white'} w-full`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between p-4">
+        <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="flex items-center space-x-2">
             <img src="path/to/airline-logo.png" alt="Airline Logo" className="w-6 h-6" />
             <span className="text-sm font-semibold">Jet Air - Economy</span>
@@ -104,11 +104,11 @@ const FlightList = () => {
 
   return (
     <div className="flex flex-col items-center bg-white p-4">
-      <div className="flex w-full max-w-screen-lg justify-center space-x-4">
-        <div className="w-1/4">
+      <div className="flex flex-col md:flex-row w-full max-w-screen-lg justify-center space-y-4 md:space-x-4 md:space-y-0">
+        <div className="w-full md:w-1/4">
           <Filter />
         </div>
-        <div className="w-3/4">
+        <div className="w-full md:w-3/4">
           {flights.map((flight, index) => (
             <FlightCard
               key={index}
