@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import bangkokImage from "../images/bangkok.svg";
 
