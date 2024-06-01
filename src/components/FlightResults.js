@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
-import { FaSuitcase, FaRegClock, FaHeart, FaDollarSign } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaSuitcase, FaRegClock, FaHeart, FaDollarSign } from "react-icons/fa";
 
-const FlightCard = ({ time, duration, arrival, price, isHighlighted, onClick, isExpanded }) => {
+const FlightCard = ({
+  time,
+  duration,
+  arrival,
+  price,
+  isHighlighted,
+  onClick,
+  isExpanded,
+}) => {
   return (
     <div
-      className={`flex flex-col border rounded-lg mb-4 ${isExpanded ? 'border-customBlue2 bg-white' : 'border-customBlue2 bg-white'} w-full`}
+      className={`flex flex-col border rounded-lg mb-4 ${
+        isExpanded
+          ? "border-customBlue2 bg-white"
+          : "border-customBlue2 bg-white"
+      } w-full`}
       onClick={onClick}
     >
       <div className="flex flex-col sm:flex-row items-center justify-between p-4">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           <div className="flex items-center space-x-2">
-            <img src="path/to/airline-logo.png" alt="Airline Logo" className="w-6 h-6" />
+            <img
+              src="path/to/airline-logo.png"
+              alt="Airline Logo"
+              className="w-6 h-6"
+            />
             <span className="text-sm font-semibold">Jet Air - Economy</span>
           </div>
           <div className="flex flex-col items-center">
@@ -30,7 +46,17 @@ const FlightCard = ({ time, duration, arrival, price, isHighlighted, onClick, is
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <span className={`text-lg font-bold ${isHighlighted ? (isExpanded ? 'text-red-500' : 'text-gray-900') : 'text-gray-900'}`}>{price}</span>
+          <span
+            className={`text-lg font-bold ${
+              isHighlighted
+                ? isExpanded
+                  ? "text-red-500"
+                  : "text-gray-900"
+                : "text-gray-900"
+            }`}
+          >
+            {price}
+          </span>
           <button
             className="bg-customBlue2 hover:bg-customBlue1 text-white px-4 py-2 rounded-lg"
             onClick={(e) => {
@@ -45,11 +71,31 @@ const FlightCard = ({ time, duration, arrival, price, isHighlighted, onClick, is
       {isExpanded && (
         <div className="p-4 border-t">
           <h4 className="font-semibold">Detail Penerbangan</h4>
-          <p>07:00<br />3 Maret 2023<br />Soekarno Hatta - Terminal 1A Domestik</p>
-          <p>Jet Air - Economy<br />JT - 203</p>
+          <p>
+            07:00
+            <br />3 Maret 2023
+            <br />
+            Soekarno Hatta - Terminal 1A Domestik
+          </p>
+          <p>
+            Jet Air - Economy
+            <br />
+            JT - 203
+          </p>
           <h4 className="font-semibold">Informasi:</h4>
-          <p>Baggage 20 kg<br />Cabin baggage 7 kg<br />In Flight Entertainment</p>
-          <p>11:00<br />3 Maret 2023<br />Melbourne International Airport</p>
+          <p>
+            Baggage 20 kg
+            <br />
+            Cabin baggage 7 kg
+            <br />
+            In Flight Entertainment
+          </p>
+          <p>
+            11:00
+            <br />3 Maret 2023
+            <br />
+            Melbourne International Airport
+          </p>
         </div>
       )}
     </div>
@@ -88,14 +134,38 @@ const Filter = () => {
   );
 };
 
-const FlightList = () => {
+const FlightResults = () => {
   const [expandedCardIndex, setExpandedCardIndex] = useState(null);
 
   const flights = [
-    { time: '07:00', duration: '4h 0m', arrival: '11:00', price: 'IDR 4.950.000', isHighlighted: true },
-    { time: '08:00', duration: '4h 0m', arrival: '12:00', price: 'IDR 5.950.000', isHighlighted: false },
-    { time: '13:15', duration: '4h 0m', arrival: '17:15', price: 'IDR 7.225.000', isHighlighted: false },
-    { time: '20:15', duration: '3h 15m', arrival: '23:30', price: 'IDR 8.010.000', isHighlighted: false },
+    {
+      time: "07:00",
+      duration: "4h 0m",
+      arrival: "11:00",
+      price: "IDR 4.950.000",
+      isHighlighted: true,
+    },
+    {
+      time: "08:00",
+      duration: "4h 0m",
+      arrival: "12:00",
+      price: "IDR 5.950.000",
+      isHighlighted: false,
+    },
+    {
+      time: "13:15",
+      duration: "4h 0m",
+      arrival: "17:15",
+      price: "IDR 7.225.000",
+      isHighlighted: false,
+    },
+    {
+      time: "20:15",
+      duration: "3h 15m",
+      arrival: "23:30",
+      price: "IDR 8.010.000",
+      isHighlighted: false,
+    },
   ];
 
   const handleCardClick = (index) => {
@@ -123,4 +193,4 @@ const FlightList = () => {
   );
 };
 
-export default FlightList;
+export default FlightResults;

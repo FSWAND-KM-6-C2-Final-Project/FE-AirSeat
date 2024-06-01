@@ -44,6 +44,9 @@ npm start
 The application uses React Router for navigation. Below are the routes defined:
 
 - **/**: Displays the homepage with a form to check flight schedules and favorite destinations.
+- **/sign-in**:
+- **/sign-up**:
+- **/reset-password**:
 - **/search**: Displays the homepage with a form to check flight schedules and favorite destinations.
 - **/booking**: Displays the booking form and flight details.
 - **/payment**: Displays the payment options.
