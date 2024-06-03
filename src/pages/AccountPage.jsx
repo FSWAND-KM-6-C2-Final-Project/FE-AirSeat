@@ -1,10 +1,10 @@
 import Account from "../components/Account";
-import Navbar from "../components/NavbarAccount";
+import NavbarAccount from "../components/NavbarAccount";
 
 const AccountPage = () => {
   return (
     <>
-      <Navbar />
+      <NavbarAccount />
       <Account />
     </>
   );
