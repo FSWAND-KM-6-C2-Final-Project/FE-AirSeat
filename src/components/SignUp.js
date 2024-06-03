@@ -92,13 +92,12 @@ const SignUp = () => {
           </form>
           <p className="mt-4 text-center">
             Already have an account?{" "}
-            <a
-              href=""
-              className="text-customBlue2 hover:text-customBlue1 ml-2 font-bold"
+            <span
+              className="text-customBlue2 hover:text-customBlue1 ml-2 font-bold cursor-pointer"
               onClick={handleSignIn}
             >
               Sign In
-            </a>
+            </span>
           </p>
         </div>
       </div>
