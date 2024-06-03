@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 
 const SignIn = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -49,6 +50,11 @@ const SignIn = () => {
     navigate("/sign-up");
   };
 
+  const handleGoogleSignIn = () => {
+    // Add your Google sign-in logic here
+    console.log("Google sign-in clicked");
+  };
+
   return (
     <div className="min-h-screen flex">
       <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center">
@@ -64,7 +70,7 @@ const SignIn = () => {
       </div>
       <div className="flex-1 flex flex-col justify-center items-center">
         <div className="w-full max-w-md px-8">
-          <h2 className="text-2xl font-bold mb-4">Sign In</h2>
+          <h2 className="text-2xl font-bold mb-8">Sign In</h2>
           <form onSubmit={handleSignIn}>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold">
@@ -114,6 +120,18 @@ const SignIn = () => {
               Sign In
             </button>
           </form>
+          <div className="flex items-center my-4">
+            <hr className="flex-grow border-t border-gray-300" />
+            <span className="mx-4 text-gray-500">or</span>
+            <hr className="flex-grow border-t border-gray-300" />
+          </div>
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md flex items-center justify-center hover:bg-gray-100"
+          >
+            <FcGoogle size={24} className="mr-2" />
+            Continue with Google
+          </button>
           <p className="mt-4 text-center">
             Don't have an account?{" "}
             <span
