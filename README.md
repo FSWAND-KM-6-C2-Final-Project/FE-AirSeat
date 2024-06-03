@@ -31,6 +31,10 @@ npm start
 ## Features
 
 - **Homepage**: Allows users to check the flight schedule and view favorite destinations.
+- **Sign In**: Users can log in to their accounts.
+- **Sign Up**: New users can create an account.
+- **Send OTP**:
+- **Reset Password**: Users can reset their password if they forget it.
 - **Booking Form**: Allows users to fill in their booking details.
 - **Flight Results**: Displays available flights based on the user's search criteria.
 - **Flight Details**: Displays detailed information about the flight.
@@ -44,6 +48,10 @@ npm start
 The application uses React Router for navigation. Below are the routes defined:
 
 - **/**: Displays the homepage with a form to check flight schedules and favorite destinations.
+- **/sign-in**: Displays the sign-in page where users can log in.
+- **/sign-up**: Displays the sign-up page where new users can create an account.
+- **/otp**:
+- **/reset-password**: Displays the reset password page where users can reset their password.
 - **/search**: Displays the homepage with a form to check flight schedules and favorite destinations.
 - **/booking**: Displays the booking form and flight details.
 - **/payment**: Displays the payment options.

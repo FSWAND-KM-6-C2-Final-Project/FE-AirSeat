@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiBell, FiList } from "react-icons/fi";
 
-const Navbar = () => {
+const NavbarAccount = () => {
   const [activePage, setActivePage] = useState("");
 
   useEffect(() => {
@@ -65,4 +65,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarAccount;

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import bangkokImage from "../images/bangkok.svg";
 
@@ -80,11 +79,11 @@ const Home = () => {
     const { adults, children, infants } = passengers;
     let display = [];
     if (adults > 0)
-      display.push(`${adults} ${adults === 1 ? "Adult" : "Adults"}`);
+      display.push(`${adults} ${adults === 1 ? "Adult" : "Adult"}`);
     if (children > 0)
       display.push(`${children} ${children === 1 ? "Child" : "Children"}`);
     if (infants > 0)
-      display.push(`${infants} ${infants === 1 ? "Infant" : "Infants"}`);
+      display.push(`${infants} ${infants === 1 ? "Infant" : "Infant"}`);
     return display.length > 0 ? display.join(", ") : "Passengers";
   };
 
@@ -99,7 +98,21 @@ const Home = () => {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <main className="flex flex-col items-center mt-20">
+    <main className="flex flex-col items-center mt-14">
+      <div className="relative w-full max-w-7xl">
+        <div className="absolute inset-0 bg-purple-100 opacity-50 rounded-lg"></div>
+        <div className="relative flex justify-between items-center p-6 bg-customYellow rounded-lg min-h-[200px]">
+          <div className="flex flex-col items-start">
+            <span className="text-2xl font-bold text-black mb-2">
+              Diskon Hari ini
+            </span>
+            <span className="text-4xl font-extrabold text-customBlue2">
+              85%!
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-7xl mb-10">
         <h2 className="text-xl font-bold mb-4">
           Choose a special flight schedule at{" "}
@@ -305,23 +318,22 @@ const Home = () => {
 
       {showFromCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg relative min-w-[600px] max-w-lg max-h-[90%]">
             <button
               onClick={() => setShowFromCityModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
             >
               &times;
             </button>
-            <h3 className="text-lg font-bold mb-4">Select City</h3>
             <input
               type="text"
               value={fromCitySearch}
               onChange={(e) => setFromCitySearch(e.target.value)}
-              placeholder="Search city"
+              placeholder="Search for a country or city"
               className="w-full border border-gray-300 rounded py-2 px-4 mb-4"
             />
-            <div className="space-y-4">
-              {filteredFromCities.map((city) => (
+            <div className="space-y-4 max-h-60 overflow-y-auto">
+              {filteredToCities.map((city) => (
                 <div
                   key={city}
                   className="p-2 border rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
@@ -337,22 +349,21 @@ const Home = () => {
 
       {showToCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg relative  min-w-[600px] max-w-lg max-h-[90%]">
             <button
               onClick={() => setShowToCityModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
             >
               &times;
             </button>
-            <h3 className="text-lg font-bold mb-4">Select City</h3>
             <input
               type="text"
               value={toCitySearch}
               onChange={(e) => setToCitySearch(e.target.value)}
-              placeholder="Search city"
+              placeholder="Search for a country or city"
               className="w-full border border-gray-300 rounded py-2 px-4 mb-4"
             />
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-60 overflow-y-auto">
               {filteredToCities.map((city) => (
                 <div
                   key={city}
@@ -464,7 +475,7 @@ const Home = () => {
               </span>
               <div className="mt-2 text-sm">
                 <h3 className="mt-2 text-lg font-bold">
-                  Jakarta -&gt; Bangkok
+                  Jakarta &rarr; Bangkok
                 </h3>
                 <p>AirAsia</p>
                 <p>20 - 30 March 2023</p>
