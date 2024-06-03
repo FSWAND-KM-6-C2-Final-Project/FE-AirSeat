@@ -4,6 +4,8 @@ import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const SignIn = () => {
+  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -11,9 +13,32 @@ const SignIn = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSignIn = (event) => {
+  const handleSignIn = async (event) => {
     event.preventDefault();
-    navigate("/");
+
+    const response = await fetch(
+      "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: emailOrPhone,
+          password: password,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    if (response.ok) {
+      // Navigate to home page or dashboard
+      navigate("/");
+    } else {
+      // Handle error
+      console.error(data);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   const handleForgotPassword = () => {
@@ -47,6 +72,8 @@ const SignIn = () => {
               </label>
               <input
                 type="email"
+                value={emailOrPhone}
+                onChange={(e) => setEmailOrPhone(e.target.value)}
                 placeholder="Email/Phone"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
@@ -56,6 +83,8 @@ const SignIn = () => {
               <div className="relative">
                 <input
                   type={passwordVisible ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
                 />
