@@ -1,6 +1,6 @@
 import React from "react";
 
-const Navbar = () => {
+const NavbarOTP = () => {
   return (
     <div className="bg-gray-100">
       <header className="bg-white shadow-md p-3">
@@ -14,4 +14,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarOTP;
