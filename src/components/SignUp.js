@@ -18,40 +18,7 @@ const SignUp = () => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            full_name: fullName,
-            email: email,
-            phone_number: phoneNumber,
-            password: password,
-            confirm_password: confirmPassword,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
-
-      alert("Registration successful! Please log in.");
-      navigate("/otp");
-    } catch (error) {
-      alert(error.message);
-    }
+    navigate("/sign-in");
   };
 
   const handleSignIn = () => {

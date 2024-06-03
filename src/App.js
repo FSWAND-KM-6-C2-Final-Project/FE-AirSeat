@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
+import OTPPage from "./pages/OTPPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import BookingPage from "./pages/BookingPage";
 import PaymentPage from "./pages/PaymentPage";
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/otp" element={<OTPPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/booking" element={<BookingPage />} />
