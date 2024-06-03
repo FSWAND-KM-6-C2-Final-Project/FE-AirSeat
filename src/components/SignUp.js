@@ -13,7 +13,7 @@ const SignUp = () => {
 
   const handleSignUp = (event) => {
     event.preventDefault();
-    navigate("/sign-in");
+    navigate("/otp");
   };
 
   const handleSignIn = () => {
