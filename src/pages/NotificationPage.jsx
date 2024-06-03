@@ -1,10 +1,10 @@
-import Navbar from "../components/NavbarAccount";
+import NavbarAccount from "../components/NavbarAccount";
 import Notification from "../components/Notification";
 
 const NotificationPage = () => {
   return (
     <>
-      <Navbar />
+      <NavbarAccount />
       <Notification />
     </>
   );
