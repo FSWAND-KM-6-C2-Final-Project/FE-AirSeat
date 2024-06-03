@@ -21,21 +21,19 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center">
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="text-5xl font-bold text-customBlue2">AirSeat</h1>
-          <p className="text-2xl text-customBlue2 mt-4">
-            Your Traveling Partner
-          </p>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-8">
+        <div className="flex flex-col justify-center items-center text-center md:text-left">
+          <h1 className="text-3xl md:text-5xl font-bold text-customBlue2">AirSeat</h1>
+          <p className="text-lg md:text-2xl text-customBlue2 mt-4">Your Traveling Partner</p>
         </div>
-        <div className="absolute bottom-0 mb-20">
-          <img src={plantsImage} alt="Decoration" />
+        <div className="hidden md:block absolute bottom-0 mb-10 md:mb-20">
+          <img src={plantsImage} alt="Decoration" className="w-40 md:w-auto" />
         </div>
       </div>
-      <div className="flex-1 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md px-8">
-          <h2 className="text-2xl font-bold mb-7">Sign Up</h2>
+      <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-8">
+        <div className="w-full max-w-md">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Sign Up</h2>
           <form onSubmit={handleSignUp}>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold">Full Name</label>
@@ -71,9 +69,8 @@ const SignUp = () => {
                   className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
                 />
                 <div
-                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-500"
                   onClick={togglePasswordVisibility}
-                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   {passwordVisible ? (
                     <AiFillEyeInvisible size={24} />
