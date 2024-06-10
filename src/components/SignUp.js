@@ -47,8 +47,8 @@ const SignUp = () => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      alert("Registration successful! Please log in.");
-      navigate("/sign-in");
+      alert("Registration successful! Please verify your email.");
+      navigate("/otp", { state: { email } });
     } catch (error) {
       alert(error.message);
     }
@@ -62,8 +62,12 @@ const SignUp = () => {
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-8">
         <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h1 className="text-3xl md:text-5xl font-bold text-customBlue2">AirSeat</h1>
-          <p className="text-lg md:text-2xl text-customBlue2 mt-4">Your Traveling Partner</p>
+          <h1 className="text-3xl md:text-5xl font-bold text-customBlue2">
+            AirSeat
+          </h1>
+          <p className="text-lg md:text-2xl text-customBlue2 mt-4">
+            Your Traveling Partner
+          </p>
         </div>
         <div className="hidden md:block absolute bottom-0 mb-10 md:mb-20">
           <img src={plantsImage} alt="Decoration" className="w-40 md:w-auto" />
@@ -71,7 +75,9 @@ const SignUp = () => {
       </div>
       <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-8">
         <div className="w-full max-w-md">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Sign Up</h2>
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+            Sign Up
+          </h2>
           <form onSubmit={handleSignUp}>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold">Full Name</label>

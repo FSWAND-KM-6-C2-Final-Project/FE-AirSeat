@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 
 const OTPInput = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [timer, setTimer] = useState(60);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state || {};
 
   useEffect(() => {
     if (timer > 0) {
@@ -30,10 +32,35 @@ const OTPInput = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle OTP submit logic
-    console.log("OTP Submitted:", otp.join(""));
+    const otpCode = otp.join("");
+
+    try {
+      const response = await fetch(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            code: otpCode,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "OTP verification failed");
+      }
+
+      alert("OTP verification successful! Please log in.");
+      navigate("/sign-in");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -50,9 +77,12 @@ const OTPInput = () => {
         </h2>
       </div>
       <p className="mt-5 text-center text-sm text-gray-600">
-        We have sent the verification code to <strong>j*****@gmail.com</strong>
+        We have sent the verification code to <strong>{email}</strong>
       </p>
-      <form className="mt-4 mb-8 space-y-6 w-full max-w-md" onSubmit={handleSubmit}>
+      <form
+        className="mt-4 mb-8 space-y-6 w-full max-w-md"
+        onSubmit={handleSubmit}
+      >
         <div className="flex justify-center space-x-2">
           {otp.map((data, index) => (
             <input
@@ -68,10 +98,18 @@ const OTPInput = () => {
         </div>
         <div className="flex justify-center mt-4">
           {timer > 0 ? (
-            <p className="text-gray-600">Resend OTP in <strong>{timer}s</strong></p>
+            <p className="text-gray-600">
+              Resend OTP in <strong>{timer}s</strong>
+            </p>
           ) : (
             <p className="text-gray-600">
-              Didn’t receive the code? <button className="text-customBlue2 hover:text-customBlue1" onClick={() => setTimer(60)}><strong> Resend Code</strong></button>
+              Didn’t receive the code?{" "}
+              <button
+                className="text-customBlue2 hover:text-customBlue1"
+                onClick={() => setTimer(60)}
+              >
+                <strong> Resend Code</strong>
+              </button>
             </p>
           )}
         </div>
