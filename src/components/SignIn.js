@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 
 const SignIn = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
@@ -49,27 +50,28 @@ const SignIn = () => {
     navigate("/sign-up");
   };
 
+  const handleGoogleSignIn = () => {
+    // Add your Google sign-in logic here
+    console.log("Google sign-in clicked");
+  };
+
   return (
-    <div className="min-h-screen flex">
-      <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center">
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="text-5xl font-bold text-customBlue2">AirSeat</h1>
-          <p className="text-2xl text-customBlue2 mt-4">
-            Your Traveling Partner
-          </p>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-0">
+        <div className="flex flex-col justify-center items-center text-center md:text-left">
+          <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">AirSeat</h1>
+          <p className="text-lg md:text-2xl text-customBlue2 mt-4">Your Traveling Partner</p>
         </div>
-        <div className="absolute bottom-0 mb-20">
+        <div className="absolute bottom-0 mb-10 md:mb-20 hidden md:block">
           <img src={plantsImage} alt="Decoration" />
         </div>
       </div>
-      <div className="flex-1 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md px-8">
-          <h2 className="text-2xl font-bold mb-4">Sign In</h2>
+      <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-0">
+        <div className="w-full max-w-md px-4 md:px-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">Sign In</h2>
           <form onSubmit={handleSignIn}>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold">
-                Email or Phone
-              </label>
+              <label className="block text-gray-700 font-bold">Email or Phone</label>
               <input
                 type="email"
                 value={emailOrPhone}
@@ -114,6 +116,18 @@ const SignIn = () => {
               Sign In
             </button>
           </form>
+          <div className="flex items-center my-4">
+            <hr className="flex-grow border-t border-gray-300" />
+            <span className="mx-4 text-gray-500">or</span>
+            <hr className="flex-grow border-t border-gray-300" />
+          </div>
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md flex items-center justify-center hover:bg-gray-100"
+          >
+            <FcGoogle size={24} className="mr-2" />
+            Continue with Google
+          </button>
           <p className="mt-4 text-center">
             Don't have an account?{" "}
             <span
