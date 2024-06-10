@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const OTPInput = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -56,15 +58,41 @@ const OTPInput = () => {
         throw new Error(errorData.message || "OTP verification failed");
       }
 
-      alert("OTP verification successful! Please log in.");
+      toast.success("OTP verification successful! Please log in.");
       navigate("/sign-in");
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      const response = await fetch(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/resend",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to resend OTP");
+      }
+
+      toast.success("OTP has been resent. Please check your email.");
+      setTimer(60);
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
   return (
     <div className="flex flex-col justify-center items-center px-4">
+      <ToastContainer />
       <div className="flex items-center w-full max-w-md mb-2 mt-20">
         <button
           onClick={() => navigate(-1)}
@@ -105,10 +133,11 @@ const OTPInput = () => {
             <p className="text-gray-600">
               Didn’t receive the code?{" "}
               <button
+                type="button"
                 className="text-customBlue2 hover:text-customBlue1"
-                onClick={() => setTimer(60)}
+                onClick={handleResend}
               >
-                <strong> Resend Code</strong>
+                <strong>Resend Code</strong>
               </button>
             </p>
           )}
