@@ -11,6 +11,8 @@ import SuccessPage from "./pages/SuccessPage";
 import NotificationPage from "./pages/NotificationPage";
 import AccountPage from "./pages/AccountPage";
 import SearchPage from "./pages/SearchPage";
+import OrderHistory from "./pages/OrderHistoryPage";
+import OrderHistoryEmpty from "./pages/OrderHistoryEmptyPage";
 import "./index.css";
 
 function App() {
@@ -29,6 +31,9 @@ function App() {
           <Route path="/payment-success" element={<SuccessPage />} />
           <Route path="/profile" element={<AccountPage />} />
           <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/order-history-empty" element={<OrderHistoryEmpty />} />
+          
         </Routes>
       </div>
     </Router>
