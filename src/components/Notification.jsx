@@ -4,7 +4,7 @@ import { BiFilterAlt } from "react-icons/bi";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoNotificationsCircleSharp } from "react-icons/io5";
 
-const NotificationPage = () => {
+const Notification = () => {
   return (
     <>
       <div className="p-10 shadow-md h-44 mx-auto">
@@ -76,4 +76,4 @@ const NotificationPage = () => {
   );
 };
 
-export default NotificationPage;
+export default Notification;
