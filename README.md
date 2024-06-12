@@ -1,5 +1,7 @@
 # C2-AirSeat
 
+Airseat is an android and web-based application that has features to be able to purchase airplane tickets easily and quickly.
+
 ## Getting Started
 
 Make sure you have the following installed on your local development environment:
