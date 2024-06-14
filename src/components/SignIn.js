@@ -33,6 +33,8 @@ const SignIn = () => {
 
     const data = await response.json();
     if (response.ok) {
+      const token = data.token;
+      localStorage.setItem("token", token);
       // Navigate to home page or dashboard
       navigate("/");
     } else {
