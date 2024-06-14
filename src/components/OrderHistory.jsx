@@ -207,7 +207,7 @@ const OrderHistory = () => {
   return (
     <>
       {/* Navigasi Beranda dan Filter */}
-      <div className="container mx-auto px-60 mt-11 shadow-md pb-1">
+      <div className="container mx-auto mt-11 shadow-md pb-1">
         <h1 className="font-bold text-lg mb-5">Riwayat Pemesanan</h1>
         <div class="grid grid-cols-12 items-center py-2">
           <div class="col-span-9 p-2">
@@ -252,7 +252,7 @@ const OrderHistory = () => {
       {/* End Navigasi Beranda dan Filter */}
 
       {/* Konten History */}
-      <div className="container mx-auto px-[15.5rem]">
+      <div className="container mx-auto ">
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-7 ">
             {/* MARET 2023 */}

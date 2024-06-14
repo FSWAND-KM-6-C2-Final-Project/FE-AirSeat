@@ -62,7 +62,7 @@ const OrderHistoryEmpty = () => {
   return (
     <>
       {/* Navigasi Beranda dan Filter */}
-      <div className="container mx-auto px-60 mt-11 shadow-md pb-1">
+      <div className="container mx-auto  mt-11 shadow-md pb-1">
         <h1 className="font-bold text-lg mb-5">Riwayat Pemesanan</h1>
         <div class="grid grid-cols-12 items-center py-2">
           <div class="col-span-9 p-2">
