@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 const Error = ({ statusCode, errorTitle, errorMessage, errorImage }) => {
   return (
     <div>
-      <div className="flex flex-col items-center justify-center min-h-screen text-center error-message">
+      <div className="flex flex-col items-center justify-center min-h-screen text-center error-message p-5">
         {errorImage && (
           <img
-            className="w-[300px] h-auto mb-10"
+            className="w-[200px] sm:w-[300px] h-auto mb-10"
             src={errorImage}
             alt={errorTitle}
           />
