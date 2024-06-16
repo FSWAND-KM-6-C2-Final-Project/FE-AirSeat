@@ -40,7 +40,7 @@ const FavoriteDestination = ({ data, isFetching }) => {
               </span>
               <div className="mt-2 text-sm">
                 <h3 className="mt-2 text-lg font-bold">
-                  {destination.departureAirport.airport_city} {"->"}
+                  {destination.departureAirport.airport_city} {"→ "}
                   {destination.arrivalAirport.airport_city}
                 </h3>
                 <p>{destination.airline.airline_name}</p>

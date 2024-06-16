@@ -64,6 +64,9 @@ const Home = () => {
     } else if (continentParams === "all") {
       setSelectedButton("All");
       setContinent("all");
+    } else {
+      setSelectedButton("All");
+      setContinent("all");
     }
     fetchData(continent);
 
