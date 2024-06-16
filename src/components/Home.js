@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
-import bangkokImage from "../images/bangkok.svg";
+import Banner from "./Banner";
+import FavoriteDestination from "./FavoriteDestination";
+
+import { getFavoriteDestinations } from "../services/favoriteDestination.service";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState("All");
   const [showReturnDate, setShowReturnDate] = useState(false);
   const [showPassengerModal, setShowPassengerModal] = useState(false);
@@ -18,7 +23,73 @@ const Home = () => {
     children: 0,
     infants: 0,
   });
-  const handleClick = (button) => {
+  const [isFetching, setIsFetching] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [favoriteDestination, setFavoriteDestination] = useState([]);
+  const [continent, setContinent] = useState("");
+
+  async function fetchData(data) {
+    setIsFetching(true);
+    try {
+      const continentData = data;
+      if (continentData) {
+        const response = await getFavoriteDestinations(continentData);
+
+        setFavoriteDestination(response.data.flights);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    setIsFetching(false);
+  }
+
+  useEffect(() => {
+    setFavoriteDestination([]);
+    const continentParams = searchParams.get("continent");
+    if (continentParams === "asia") {
+      setSelectedButton("Asia");
+      setContinent("asia");
+    } else if (continentParams === "america") {
+      setSelectedButton("America");
+      setContinent("america");
+    } else if (continentParams === "australia") {
+      setSelectedButton("Australia");
+      setContinent("australia");
+    } else if (continentParams === "europe") {
+      setSelectedButton("Europe");
+      setContinent("europe");
+    } else if (continentParams === "africa") {
+      setSelectedButton("Africa");
+      setContinent("africa");
+    } else if (continentParams === "all") {
+      setSelectedButton("All");
+      setContinent("all");
+    }
+    fetchData(continent);
+
+    console.log(favoriteDestination);
+  }, [continent, selectedButton]);
+
+  const handleClickContinent = (button) => {
+    if (button === "Asia") {
+      navigate("?continent=asia");
+      setContinent("asia");
+    } else if (button === "America") {
+      navigate("?continent=america");
+      setContinent("america");
+    } else if (button === "Australia") {
+      navigate("?continent=australia");
+      setContinent("australia");
+    } else if (button === "Europe") {
+      navigate("?continent=europe");
+      setContinent("europe");
+    } else if (button === "Africa") {
+      navigate("?continent=africa");
+      setContinent("africa");
+    } else if (button === "All") {
+      navigate("?continent=all");
+      setContinent("all");
+    }
     setSelectedButton(button);
   };
   const [tempPassengers, setTempPassengers] = useState({
@@ -98,116 +169,106 @@ const Home = () => {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <main className="flex flex-col items-center mt-14">
-      <div className="relative w-full max-w-7xl">
-        <div className="absolute inset-0 bg-purple-100 opacity-50 rounded-lg"></div>
-        <div className="relative flex justify-between items-center p-6 bg-customYellow rounded-lg min-h-[200px]">
-          <div className="flex flex-col items-start">
-            <span className="text-2xl font-bold text-black mb-2">
-              Diskon Hari ini
-            </span>
-            <span className="text-4xl font-extrabold text-customBlue2">
-              85%!
-            </span>
+    <main className="flex flex-col items-center p-2 lg:p-0">
+      <Banner />
+      <div className="w-full lg:max-w-[70%] mb-10 m-10   lg:mt-[-100px] md:mt-[-50px] ">
+        <div className="bg-white rounded-t-xl  p-6  shadow-xl">
+          <h2 className="text-xl font-bold mb-4">
+            Choose a special flight schedule at{" "}
+            <span className="text-customBlue2">AirSeat!</span>
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700">From</label>
+              <input
+                type="text"
+                value={fromCity}
+                onClick={() => setShowFromCityModal(true)}
+                readOnly
+                className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">To</label>
+              <input
+                type="text"
+                value={toCity}
+                onClick={() => setShowToCityModal(true)}
+                readOnly
+                className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
+              />
+            </div>
+            <div className="col-span-2 flex items-center space-x-4">
+              <div className="flex-grow">
+                <label className="block text-gray-700">Date</label>
+                <input
+                  type="date"
+                  defaultValue={today}
+                  min={today}
+                  className="w-1/2 border border-gray-300 rounded py-2 px-4"
+                />
+              </div>
+
+              <div className="flex-grow">
+                <label className="block text-gray-700">Return Date</label>
+                <input
+                  type="date"
+                  disabled={!showReturnDate}
+                  className={`w-1/2 border rounded py-2 px-4 ${
+                    showReturnDate
+                      ? "border-gray-300 bg-white"
+                      : "border-gray-300 bg-gray-200 cursor-not-allowed"
+                  }`}
+                />
+              </div>
+              <div className="flex items-end">
+                <input
+                  type="checkbox"
+                  className="toggle-checkbox"
+                  id="returnToggle"
+                  onChange={toggleReturnDate}
+                />
+                <label htmlFor="returnToggle" className="toggle-label"></label>
+              </div>
+            </div>
+            <div>
+              <label className="block text-gray-700">Passengers</label>
+              <input
+                type="text"
+                value={displayPassengers()}
+                onClick={() => {
+                  setTempPassengers(passengers);
+                  setShowPassengerModal(true);
+                }}
+                readOnly
+                className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">Seat Class</label>
+              <input
+                type="text"
+                value={seatClass}
+                onClick={() => {
+                  setTempSeatClass("");
+                  setShowClassModal(true);
+                }}
+                readOnly
+                className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-7xl mb-10">
-        <h2 className="text-xl font-bold mb-4">
-          Choose a special flight schedule at{" "}
-          <span className="text-customBlue2">AirSeat!</span>
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700">From</label>
-            <input
-              type="text"
-              value={fromCity}
-              onClick={() => setShowFromCityModal(true)}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">To</label>
-            <input
-              type="text"
-              value={toCity}
-              onClick={() => setShowToCityModal(true)}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div className="col-span-2 flex items-center space-x-4">
-            <div className="flex-grow">
-              <label className="block text-gray-700">Date</label>
-              <input
-                type="date"
-                defaultValue={today}
-                min={today}
-                className="w-1/2 border border-gray-300 rounded py-2 px-4"
-              />
-            </div>
-
-            <div className="flex-grow">
-              <label className="block text-gray-700">Return Date</label>
-              <input
-                type="date"
-                disabled={!showReturnDate}
-                className={`w-1/2 border rounded py-2 px-4 ${
-                  showReturnDate
-                    ? "border-gray-300 bg-white"
-                    : "border-gray-300 bg-gray-200 cursor-not-allowed"
-                }`}
-              />
-            </div>
-            <div className="flex items-end">
-              <input
-                type="checkbox"
-                className="toggle-checkbox"
-                id="returnToggle"
-                onChange={toggleReturnDate}
-              />
-              <label htmlFor="returnToggle" className="toggle-label"></label>
-            </div>
-          </div>
-          <div>
-            <label className="block text-gray-700">Passengers</label>
-            <input
-              type="text"
-              value={displayPassengers()}
-              onClick={() => {
-                setTempPassengers(passengers);
-                setShowPassengerModal(true);
-              }}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">Seat Class</label>
-            <input
-              type="text"
-              value={seatClass}
-              onClick={() => {
-                setTempSeatClass("");
-                setShowClassModal(true);
-              }}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
+        <div className="rounded-b-xl ">
+          <button
+            onClick={() => {
+              window.location.href = "/search";
+            }}
+            className="w-full bg-customBlue2 hover:bg-customBlue1 shadow-xl rounded-b-xl text-white  py-3"
+          >
+            Search Flights
+          </button>
         </div>
-
-        <button
-          onClick={() => {
-            window.location.href = "/search";
-          }}
-          className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
-        >
-          Search Flights
-        </button>
       </div>
 
       {showPassengerModal && (
@@ -387,7 +448,7 @@ const Home = () => {
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("All")}
+            onClick={() => handleClickContinent("All")}
           >
             <FiSearch className="mr-3" />
             All
@@ -398,40 +459,30 @@ const Home = () => {
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Asia")}
+            onClick={() => handleClickContinent("Asia")}
           >
             <FiSearch className="mr-3" />
             Asia
           </button>
           <button
             className={`px-4 py-2 flex items-center rounded ${
-              selectedButton === "North America"
+              selectedButton === "America"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("North America")}
+            onClick={() => handleClickContinent("America")}
           >
             <FiSearch className="mr-3" />
-            North America
+            America
           </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded ${
-              selectedButton === "South America"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClick("South America")}
-          >
-            <FiSearch className="mr-3" />
-            South America
-          </button>
+
           <button
             className={`px-4 py-2 flex items-center rounded ${
               selectedButton === "Australia"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Australia")}
+            onClick={() => handleClickContinent("Australia")}
           >
             <FiSearch className="mr-3" />
             Australia
@@ -442,7 +493,7 @@ const Home = () => {
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Europe")}
+            onClick={() => handleClickContinent("Europe")}
           >
             <FiSearch className="mr-3" />
             Europe
@@ -453,37 +504,16 @@ const Home = () => {
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Africa")}
+            onClick={() => handleClickContinent("Africa")}
           >
             <FiSearch className="mr-3" />
             Africa
           </button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {[...Array(10)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-md p-4 grid-item relative mb-10"
-            >
-              <img
-                src={bangkokImage}
-                alt="Bangkok"
-                className="rounded-t-lg w-full"
-              />
-              <span className="bg-customBlue2 text-white px-2 py-1 rounded absolute top-0 right-0 mt-2 mr-2">
-                Limited!
-              </span>
-              <div className="mt-2 text-sm">
-                <h3 className="mt-2 text-lg font-bold">
-                  Jakarta &rarr; Bangkok
-                </h3>
-                <p>AirAsia</p>
-                <p>20 - 30 March 2023</p>
-                <p className="text-red-600 font-bold">Start from IDR 950.000</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <FavoriteDestination
+          data={favoriteDestination}
+          isFetching={isFetching}
+        />
       </div>
 
       <style>
