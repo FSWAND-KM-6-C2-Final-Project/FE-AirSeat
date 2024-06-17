@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
-import bangkokImage from "../images/bangkok.svg";
+import Banner from "./Banner";
+import FavoriteDestination from "./FavoriteDestination";
+import { IoIosWoman } from "react-icons/io";
+import { MdOutlineMan } from "react-icons/md";
+import { FaBaby } from "react-icons/fa6";
+import { FaPlaneArrival, FaPlaneDeparture } from "react-icons/fa";
+import { MdAirplaneTicket } from "react-icons/md";
+import { IoCalendarSharp } from "react-icons/io5";
+import { TbArrowsExchange } from "react-icons/tb";
+import { getFavoriteDestinations } from "../services/favoriteDestination.service";
+import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState("All");
   const [showReturnDate, setShowReturnDate] = useState(false);
   const [showPassengerModal, setShowPassengerModal] = useState(false);
   const [showClassModal, setShowClassModal] = useState(false);
   const [showFromCityModal, setShowFromCityModal] = useState(false);
   const [showToCityModal, setShowToCityModal] = useState(false);
-  const [fromCity, setFromCity] = useState("Jakarta (JKTA)");
-  const [toCity, setToCity] = useState("Melbourne (MLB)");
+  const [fromCity, setFromCity] = useState("");
+  const [toCity, setToCity] = useState("");
   const [fromCitySearch, setFromCitySearch] = useState("");
   const [toCitySearch, setToCitySearch] = useState("");
   const [passengers, setPassengers] = useState({
@@ -18,7 +30,84 @@ const Home = () => {
     children: 0,
     infants: 0,
   });
-  const handleClick = (button) => {
+  const [seatClass, setSeatClass] = useState("Economy");
+  const [tempSeatClass, setTempSeatClass] = useState("Economy");
+  const [isFetching, setIsFetching] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [favoriteDestination, setFavoriteDestination] = useState([]);
+  const [continent, setContinent] = useState("");
+
+  async function fetchData(data) {
+    setIsFetching(true);
+    try {
+      const continentData = data;
+      if (continentData) {
+        const response = await getFavoriteDestinations(continentData);
+
+        setFavoriteDestination(response.data.flights);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    setIsFetching(false);
+  }
+
+  useEffect(() => {
+    setFavoriteDestination([]);
+    const continentParams = searchParams.get("continent");
+    if (continentParams === "asia") {
+      setSelectedButton("Asia");
+      setContinent("asia");
+    } else if (continentParams === "america") {
+      setSelectedButton("America");
+      setContinent("america");
+    } else if (continentParams === "australia") {
+      setSelectedButton("Australia");
+      setContinent("australia");
+    } else if (continentParams === "europe") {
+      setSelectedButton("Europe");
+      setContinent("europe");
+    } else if (continentParams === "africa") {
+      setSelectedButton("Africa");
+      setContinent("africa");
+    } else if (continentParams === "all") {
+      setSelectedButton("All");
+      setContinent("all");
+    } else {
+      setSelectedButton("All");
+      setContinent("all");
+    }
+    fetchData(continent);
+
+    console.log(favoriteDestination);
+  }, [continent, selectedButton]);
+
+  useEffect(() => {
+    if (showClassModal) {
+      setTempSeatClass("Economy");
+    }
+  }, [showClassModal]);
+
+  const handleClickContinent = (button) => {
+    if (button === "Asia") {
+      navigate("?continent=asia");
+      setContinent("asia");
+    } else if (button === "America") {
+      navigate("?continent=america");
+      setContinent("america");
+    } else if (button === "Australia") {
+      navigate("?continent=australia");
+      setContinent("australia");
+    } else if (button === "Europe") {
+      navigate("?continent=europe");
+      setContinent("europe");
+    } else if (button === "Africa") {
+      navigate("?continent=africa");
+      setContinent("africa");
+    } else if (button === "All") {
+      navigate("?continent=all");
+      setContinent("all");
+    }
     setSelectedButton(button);
   };
   const [tempPassengers, setTempPassengers] = useState({
@@ -26,8 +115,6 @@ const Home = () => {
     children: 0,
     infants: 0,
   });
-  const [seatClass, setSeatClass] = useState("Economy");
-  const [tempSeatClass, setTempSeatClass] = useState("");
 
   const cities = [
     "Jakarta (JKTA)",
@@ -84,9 +171,14 @@ const Home = () => {
       display.push(`${children} ${children === 1 ? "Child" : "Children"}`);
     if (infants > 0)
       display.push(`${infants} ${infants === 1 ? "Infant" : "Infant"}`);
-    return display.length > 0 ? display.join(", ") : "Passengers";
+    return display.length > 0 ? display.join(", ") : "";
   };
 
+  const handleExchange = () => {
+    const temp = fromCity;
+    setFromCity(toCity);
+    setToCity(temp);
+  };
   const filteredFromCities = cities.filter((city) =>
     city.toLowerCase().includes(fromCitySearch.toLowerCase())
   );
@@ -98,121 +190,179 @@ const Home = () => {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <main className="flex flex-col items-center mt-14">
-      <div className="relative w-full max-w-7xl">
-        <div className="absolute inset-0 bg-purple-100 opacity-50 rounded-lg"></div>
-        <div className="relative flex justify-between items-center p-6 bg-customYellow rounded-lg min-h-[200px]">
-          <div className="flex flex-col items-start">
-            <span className="text-2xl font-bold text-black mb-2">
-              Diskon Hari ini
-            </span>
-            <span className="text-4xl font-extrabold text-customBlue2">
-              85%!
-            </span>
+    <main className="flex flex-col items-center">
+      <Banner />
+      <div className="p-2 lg:mt-[-100px] md:mt-[-50px]">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl mb-10">
+          <div className="p-8 space-y-8 md:space-y-4">
+            <h2 className="text-xl font-bold mb-4">
+              Choose a special flight schedule at{" "}
+              <span className="text-customBlue2">AirSeat!</span>
+            </h2>
+
+            <div className="flex flex-col md:flex-row p-2">
+              <div className="flex flex-1 items-center justify-center">
+                <div className="flex grid-cols-2 gap-4 items-center w-full">
+                  <div className="flex flex-none w-28 grid-cols-2 gap-4 items-center justify-center">
+                    <FaPlaneDeparture className="text-xl" />
+                    <label className="block text-gray-700">From</label>
+                  </div>
+                  <input
+                    type="text"
+                    value={fromCity}
+                    onClick={() => setShowFromCityModal(true)}
+                    readOnly
+                    placeholder="Select a location"
+                    className="w-8/12 border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <TbArrowsExchange
+                className="rounded-full bg-black text-white w-7 h-7 cursor-pointer"
+                onClick={handleExchange}
+              />
+
+              <div className="flex flex-1 items-center justify-center">
+                <div className="flex grid-cols-2 gap-4 items-center w-full">
+                  <div className="flex flex-none w-28 grid-cols-2 gap-4 items-center justify-center">
+                    <FaPlaneArrival className="text-xl" />
+                    <label className="block text-gray-700">To</label>
+                  </div>
+                  <input
+                    type="text"
+                    value={toCity}
+                    placeholder="Select a location"
+                    onClick={() => setShowToCityModal(true)}
+                    readOnly
+                    className="w-9/12 border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col 2xl:flex-row w-full space-y-0 md:space-y-4">
+              <div className="flex flex-1 items-center justify-center w-full">
+                <div className="flex w-full">
+                  <div className="flex flex-none w-32  items-center justify-center">
+                    <div className="flex grid-cols-2 gap-4 items-center">
+                      <IoCalendarSharp className="text-xl" />
+                      <label className="block text-gray-700">Date</label>
+                    </div>
+                  </div>
+                  <div className="grid w-full">
+                    <div className="flex flex-col md:flex-row w-full">
+                      <div className="flex flex-1 items-center justify-center  p-2">
+                        <div className="flex flex-col w-full space-y-2">
+                          <label className="block text-gray-700">
+                            Departure
+                          </label>
+                          <input
+                            type="date"
+                            defaultValue={today}
+                            min={today}
+                            className="w-full border-b-2  border-t-white border-l-white border-r-white rounded"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-1 items-center justify-center p-2">
+                        <div className="flex flex-col w-full space-y-2">
+                          <label className="block text-gray-700">Arrival</label>
+                          <input
+                            type="date"
+                            placeholder=""
+                            disabled={!showReturnDate}
+                            className={`w-full border-b-2  border-t-white border-l-white border-r-white rounded ${
+                              showReturnDate
+                                ? "border-b-2 border-t-white border-l-white border-r-white bg-white"
+                                : " cursor-not-allowed"
+                            }`}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end items-start mt-2">
+                        <input
+                          type="checkbox"
+                          className="toggle-checkbox"
+                          id="returnToggle"
+                          onChange={toggleReturnDate}
+                        />
+                        <label
+                          htmlFor="returnToggle"
+                          className="toggle-label"
+                        ></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-1 items-center justify-center">
+                <div className="flex w-full">
+                  <div className="flex flex-none w-32  items-center justify-center">
+                    <div className="flex grid-cols-2 gap-4 items-center">
+                      <MdOutlineAirlineSeatReclineNormal className="text-2xl" />
+                      <label className="block text-gray-700">Seat</label>
+                    </div>
+                  </div>
+                  <div className="flex flex-col md:flex-row w-full">
+                    <div className="flex flex-1  p-2 items-center justify-center">
+                      <div className="flex flex-col w-full space-y-2">
+                        <label className="block text-gray-700">
+                          Passengers
+                        </label>
+                        <input
+                          type="text"
+                          value={displayPassengers()}
+                          onClick={() => {
+                            setTempPassengers(passengers);
+                            setShowPassengerModal(true);
+                          }}
+                          readOnly
+                          placeholder="Choose passengers"
+                          className="w-full border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-1 p-2 items-center justify-center">
+                      <div className="flex flex-col w-full space-y-2">
+                        <label className="block text-gray-700">Class</label>
+                        <input
+                          type="text"
+                          value={seatClass}
+                          onClick={() => {
+                            setTempSeatClass("");
+                            setShowClassModal(true);
+                          }}
+                          readOnly
+                          className="w-full border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <button
+            onClick={() => {
+              window.location.href = "/search";
+            }}
+            className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
+            style={{
+              borderBottomLeftRadius: "12px",
+              borderBottomRightRadius: "12px",
+            }}
+          >
+            Search Flights
+          </button>
         </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-7xl mb-10">
-        <h2 className="text-xl font-bold mb-4">
-          Choose a special flight schedule at{" "}
-          <span className="text-customBlue2">AirSeat!</span>
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700">From</label>
-            <input
-              type="text"
-              value={fromCity}
-              onClick={() => setShowFromCityModal(true)}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">To</label>
-            <input
-              type="text"
-              value={toCity}
-              onClick={() => setShowToCityModal(true)}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div className="col-span-2 flex items-center space-x-4">
-            <div className="flex-grow">
-              <label className="block text-gray-700">Date</label>
-              <input
-                type="date"
-                defaultValue={today}
-                min={today}
-                className="w-1/2 border border-gray-300 rounded py-2 px-4"
-              />
-            </div>
-
-            <div className="flex-grow">
-              <label className="block text-gray-700">Return Date</label>
-              <input
-                type="date"
-                disabled={!showReturnDate}
-                className={`w-1/2 border rounded py-2 px-4 ${
-                  showReturnDate
-                    ? "border-gray-300 bg-white"
-                    : "border-gray-300 bg-gray-200 cursor-not-allowed"
-                }`}
-              />
-            </div>
-            <div className="flex items-end">
-              <input
-                type="checkbox"
-                className="toggle-checkbox"
-                id="returnToggle"
-                onChange={toggleReturnDate}
-              />
-              <label htmlFor="returnToggle" className="toggle-label"></label>
-            </div>
-          </div>
-          <div>
-            <label className="block text-gray-700">Passengers</label>
-            <input
-              type="text"
-              value={displayPassengers()}
-              onClick={() => {
-                setTempPassengers(passengers);
-                setShowPassengerModal(true);
-              }}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">Seat Class</label>
-            <input
-              type="text"
-              value={seatClass}
-              onClick={() => {
-                setTempSeatClass("");
-                setShowClassModal(true);
-              }}
-              readOnly
-              className="w-full border border-gray-300 rounded py-2 px-4 cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            window.location.href = "/search";
-          }}
-          className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
-        >
-          Search Flights
-        </button>
       </div>
 
       {showPassengerModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[50%]">
             <button
               onClick={() => setShowPassengerModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -221,41 +371,74 @@ const Home = () => {
             </button>
             <h3 className="text-lg font-bold mb-4">Select Passengers</h3>
             <div className="space-y-4">
-              <div>
-                <label className="block text-gray-700">Adult</label>
-                <input
-                  type="number"
-                  value={tempPassengers.adults}
-                  onChange={(e) =>
-                    handlePassengerChange("adults", parseInt(e.target.value))
-                  }
-                  className="w-full border border-gray-300 rounded py-2 px-4"
-                  min="0"
-                />
+              <div className="flex justify-between items-center border-b pb-5">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">
+                    <MdOutlineMan />
+                  </div>
+                  <div>
+                    <p>Adult</p>
+                    <p>(Age 12 and over)</p>
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={tempPassengers.adults}
+                    onChange={(e) =>
+                      handlePassengerChange("adults", parseInt(e.target.value))
+                    }
+                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    min="0"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-gray-700">Child</label>
-                <input
-                  type="number"
-                  value={tempPassengers.children}
-                  onChange={(e) =>
-                    handlePassengerChange("children", parseInt(e.target.value))
-                  }
-                  className="w-full border border-gray-300 rounded py-2 px-4"
-                  min="0"
-                />
+              <div className="flex justify-between items-center border-b pb-5 space-x-3">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">
+                    <IoIosWoman />
+                  </div>
+                  <div>
+                    <p>Child</p>
+                    <p>(Age 2 - 11) </p>
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={tempPassengers.children}
+                    onChange={(e) =>
+                      handlePassengerChange(
+                        "children",
+                        parseInt(e.target.value)
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    min="0"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-gray-700">Infant</label>
-                <input
-                  type="number"
-                  value={tempPassengers.infants}
-                  onChange={(e) =>
-                    handlePassengerChange("infants", parseInt(e.target.value))
-                  }
-                  className="w-full border border-gray-300 rounded py-2 px-4"
-                  min="0"
-                />
+              <div className="flex justify-between items-center ">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">
+                    <FaBaby />
+                  </div>
+                  <div>
+                    <p>Infant</p>
+                    <p>(Below age 2)</p>
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={tempPassengers.infants}
+                    onChange={(e) =>
+                      handlePassengerChange("infants", parseInt(e.target.value))
+                    }
+                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    min="0"
+                  />
+                </div>
               </div>
             </div>
             <button
@@ -270,38 +453,29 @@ const Home = () => {
 
       {showClassModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative">
+          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[60%]">
             <button
               onClick={() => setShowClassModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
             >
               &times;
             </button>
+
             <h3 className="text-lg font-bold mb-4">Select Seat Class</h3>
             <div className="space-y-4">
               {Object.keys(seatClassPrices).map((cls) => (
                 <div
                   key={cls}
-                  className={`flex justify-between items-center p-2 border rounded cursor-pointer hover:bg-customBlue2 ${
-                    tempSeatClass === cls ? "bg-customBlue2 text-white" : ""
+                  className={`flex justify-between items-center p-2 border rounded cursor-pointer ${
+                    tempSeatClass === cls
+                      ? "bg-customBlue2 text-white hover:text-white"
+                      : ""
                   }`}
                   onClick={() => setTempSeatClass(cls)}
                 >
                   <div>
-                    <h4
-                      className={`text-black ${
-                        tempSeatClass === cls ? "text-white" : ""
-                      }`}
-                    >
-                      {cls}
-                    </h4>
-                    <p
-                      className={`text-sm text-customBlue2 ${
-                        tempSeatClass === cls ? "text-white" : ""
-                      }`}
-                    >
-                      {seatClassPrices[cls]}
-                    </p>
+                    <h4>{cls}</h4>
+                    <p>{seatClassPrices[cls]}</p>
                   </div>
                 </div>
               ))}
@@ -318,25 +492,30 @@ const Home = () => {
 
       {showFromCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative min-w-[600px] max-w-lg max-h-[90%]">
-            <button
-              onClick={() => setShowFromCityModal(false)}
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
-            >
-              &times;
-            </button>
-            <input
-              type="text"
-              value={fromCitySearch}
-              onChange={(e) => setFromCitySearch(e.target.value)}
-              placeholder="Search for a country or city"
-              className="w-full border border-gray-300 rounded py-2 px-4 mb-4"
-            />
+          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+            <div className="flex item-center relative gap-3">
+              <button
+                onClick={() => setShowFromCityModal(false)}
+                className="absolute right-2 text-gray-700 text-3xl hover:text-gray-900"
+              >
+                &times;
+              </button>
+              <input
+                type="text"
+                value={fromCitySearch}
+                onChange={(e) => setFromCitySearch(e.target.value)}
+                placeholder="Please select a location"
+                className="w-11/12 border border-gray-300 rounded py-2 px-4 mb-4"
+              />
+            </div>
+            <div className="flex justify-between item-center ml-2 mt-3 mb-3 text-lg">
+              <p className="font-bold">Popular Cities or Airports</p>
+            </div>
             <div className="space-y-4 max-h-60 overflow-y-auto">
-              {filteredToCities.map((city) => (
+              {filteredFromCities.map((city) => (
                 <div
                   key={city}
-                  className="p-2 border rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
+                  className="p-2 border-b rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectFromCity(city)}
                 >
                   {city}
@@ -349,25 +528,30 @@ const Home = () => {
 
       {showToCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative  min-w-[600px] max-w-lg max-h-[90%]">
-            <button
-              onClick={() => setShowToCityModal(false)}
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
-            >
-              &times;
-            </button>
-            <input
-              type="text"
-              value={toCitySearch}
-              onChange={(e) => setToCitySearch(e.target.value)}
-              placeholder="Search for a country or city"
-              className="w-full border border-gray-300 rounded py-2 px-4 mb-4"
-            />
+          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+            <div className="flex item-center relative gap-3">
+              <button
+                onClick={() => setShowToCityModal(false)}
+                className="absolute right-2 text-gray-700 text-3xl hover:text-gray-900"
+              >
+                &times;
+              </button>
+              <input
+                type="text"
+                value={toCitySearch}
+                onChange={(e) => setToCitySearch(e.target.value)}
+                placeholder="Please select a location"
+                className="w-11/12 border border-gray-300 rounded py-2 px-4 mb-4"
+              />
+            </div>
+            <div className="flex justify-between item-center ml-2 mt-3 mb-4 text-lg">
+              <p className="font-bold">Popular Cities or Airports</p>
+            </div>
             <div className="space-y-4 max-h-60 overflow-y-auto">
               {filteredToCities.map((city) => (
                 <div
                   key={city}
-                  className="p-2 border rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
+                  className="p-2 border-b rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectToCity(city)}
                 >
                   {city}
@@ -380,110 +564,78 @@ const Home = () => {
 
       <div className="mt-10 w-full max-w-7xl px-4">
         <h2 className="text-2xl font-bold mb-6">Favorite Destinations</h2>
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-5 mb-4">
           <button
-            className={`px-4 py-2 flex items-center rounded ${
+            className={`px-4 py-3 flex items-center rounded-xl ${
               selectedButton === "All"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("All")}
+            onClick={() => handleClickContinent("All")}
           >
             <FiSearch className="mr-3" />
             All
           </button>
           <button
-            className={`px-4 py-2 flex items-center rounded ${
+            className={`px-4 py-2 flex items-center rounded-xl ${
               selectedButton === "Asia"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Asia")}
+            onClick={() => handleClickContinent("Asia")}
           >
             <FiSearch className="mr-3" />
             Asia
           </button>
           <button
-            className={`px-4 py-2 flex items-center rounded ${
-              selectedButton === "North America"
+            className={`px-4 py-2 flex items-center rounded-xl ${
+              selectedButton === "America"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("North America")}
+            onClick={() => handleClickContinent("America")}
           >
             <FiSearch className="mr-3" />
-            North America
+            America
           </button>
           <button
-            className={`px-4 py-2 flex items-center rounded ${
-              selectedButton === "South America"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClick("South America")}
-          >
-            <FiSearch className="mr-3" />
-            South America
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded ${
+            className={`px-4 py-2 flex items-center rounded-xl ${
               selectedButton === "Australia"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Australia")}
+            onClick={() => handleClickContinent("Australia")}
           >
             <FiSearch className="mr-3" />
             Australia
           </button>
           <button
-            className={`px-4 py-2 flex items-center rounded ${
+            className={`px-4 py-2 flex items-center rounded-xl ${
               selectedButton === "Europe"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Europe")}
+            onClick={() => handleClickContinent("Europe")}
           >
             <FiSearch className="mr-3" />
             Europe
           </button>
           <button
-            className={`px-4 py-2 flex items-center rounded ${
+            className={`px-4 py-2 flex items-center rounded-xl ${
               selectedButton === "Africa"
                 ? "bg-customBlue1 text-white"
                 : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
             }`}
-            onClick={() => handleClick("Africa")}
+            onClick={() => handleClickContinent("Africa")}
           >
             <FiSearch className="mr-3" />
             Africa
           </button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {[...Array(10)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-md p-4 grid-item relative mb-10"
-            >
-              <img
-                src={bangkokImage}
-                alt="Bangkok"
-                className="rounded-t-lg w-full"
-              />
-              <span className="bg-customBlue2 text-white px-2 py-1 rounded absolute top-0 right-0 mt-2 mr-2">
-                Limited!
-              </span>
-              <div className="mt-2 text-sm">
-                <h3 className="mt-2 text-lg font-bold">
-                  Jakarta &rarr; Bangkok
-                </h3>
-                <p>AirAsia</p>
-                <p>20 - 30 March 2023</p>
-                <p className="text-red-600 font-bold">Start from IDR 950.000</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <FavoriteDestination
+          data={favoriteDestination}
+          isFetching={isFetching}
+        />
       </div>
 
       <style>

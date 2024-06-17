@@ -13,7 +13,6 @@ import AccountPage from "./pages/AccountPage";
 import SearchPage from "./pages/SearchPage";
 import OrderHistory from "./pages/OrderHistoryPage";
 import OrderHistoryEmpty from "./pages/OrderHistoryEmptyPage";
-import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import "./index.css";
 
