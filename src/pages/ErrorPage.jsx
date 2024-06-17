@@ -6,12 +6,14 @@ const ErrorPage = () => {
   return (
     <div>
       <UserNavbar />
-      <Error
-        errorImage={notFoundImage}
-        statusCode={404}
-        errorTitle={"Page Not Found"}
-        errorMessage={"Sorry, the page you are looking for does not exist."}
-      />
+      <div>
+        <Error
+          errorImage={notFoundImage}
+          statusCode={404}
+          errorTitle={"Page Not Found"}
+          errorMessage={"Sorry, the page you are looking for does not exist."}
+        />
+      </div>
     </div>
   );
 };
