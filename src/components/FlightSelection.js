@@ -8,6 +8,8 @@ const FlightSelection = () => {
   const [hoveredDay, setHoveredDay] = useState(null);
   const [dates, setDates] = useState([]);
 
+  console.log(selectedDay)
+
   useEffect(() => {
     const today = new Date();
     setSelectedDay(0);
@@ -33,28 +35,29 @@ const FlightSelection = () => {
 
   return (
     <>
-      <div className="p-4 md:p-10 shadow-md">
+      <div className="grid p-10 shadow-md">
         <h2 className="font-bold text-xl text-left md:ml-24 lg:ml-32 xl:ml-44">
           Flight Details
         </h2>
-        <div className="flex flex-col md:flex-row md:justify-center">
+        <div className="flex justify-self-center w-full">
           <Link
             to={"/"}
-            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-7/12 mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
+            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-7/12 ml-2 md:ml-28 lg:ml-36 xl:ml-48 mt-8 font-semibold hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
-            JKT > MLB - 2 Passangers - Economy
+            JKT {">"} MLB - 2 Passangers - Economy
           </Link>
           <Link
             to={"/"}
-            className="flex items-center justify-center bg-[#73CA5C] text-white px-4 py-3 w-full md:w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248]"
+            className="flex items-center justify-center bg-[#73CA5C] text-white px-4 py-3 w-full md:w-2/12 ml-2 mt-8 rounded-xl font-semibold hover:bg-[#5EA248]"
           >
             Change Search
           </Link>
         </div>
 
-        <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 text-center">
+        
+        <div className="p-4 sm:p-6 max-w-7xl justify-self-center w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 mb-4 text-center">
             {dates.map((date, index) => (
               <div
                 key={index}
@@ -90,6 +93,7 @@ const FlightSelection = () => {
           </div>
         </div>
       </div>
+      
     </>
   );
 };
