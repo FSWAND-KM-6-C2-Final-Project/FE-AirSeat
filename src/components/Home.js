@@ -7,7 +7,6 @@ import { IoIosWoman } from "react-icons/io";
 import { MdOutlineMan } from "react-icons/md";
 import { FaBaby } from "react-icons/fa6";
 import { FaPlaneArrival, FaPlaneDeparture } from "react-icons/fa";
-import { MdAirplaneTicket } from "react-icons/md";
 import { IoCalendarSharp } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { getFavoriteDestinations } from "../services/favoriteDestination.service";
@@ -562,81 +561,82 @@ const Home = () => {
         </div>
       )}
 
-      <div className="mt-10 w-full max-w-7xl px-4">
-        <h2 className="text-2xl font-bold mb-6">Favorite Destinations</h2>
-        <div className="flex gap-5 mb-4">
-          <button
-            className={`px-4 py-3 flex items-center rounded-xl ${
-              selectedButton === "All"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("All")}
-          >
-            <FiSearch className="mr-3" />
-            All
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded-xl ${
-              selectedButton === "Asia"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("Asia")}
-          >
-            <FiSearch className="mr-3" />
-            Asia
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded-xl ${
-              selectedButton === "America"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("America")}
-          >
-            <FiSearch className="mr-3" />
-            America
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded-xl ${
-              selectedButton === "Australia"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("Australia")}
-          >
-            <FiSearch className="mr-3" />
-            Australia
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded-xl ${
-              selectedButton === "Europe"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("Europe")}
-          >
-            <FiSearch className="mr-3" />
-            Europe
-          </button>
-          <button
-            className={`px-4 py-2 flex items-center rounded-xl ${
-              selectedButton === "Africa"
-                ? "bg-customBlue1 text-white"
-                : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
-            }`}
-            onClick={() => handleClickContinent("Africa")}
-          >
-            <FiSearch className="mr-3" />
-            Africa
-          </button>
-        </div>
-        <FavoriteDestination
-          data={favoriteDestination}
-          isFetching={isFetching}
-        />
-      </div>
+<div className="mt-10 w-full max-w-7xl px-4">
+  <h2 className="text-2xl font-bold mb-6">Favorite Destinations</h2>
+  <div className="flex gap-5 mb-4 overflow-x-auto">
+    <button
+      className={`px-4 py-3 flex items-center rounded-xl ${
+        selectedButton === "All"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("All")}
+    >
+      <FiSearch className="mr-3" />
+      All
+    </button>
+    <button
+      className={`px-4 py-2 flex items-center rounded-xl ${
+        selectedButton === "Asia"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("Asia")}
+    >
+      <FiSearch className="mr-3" />
+      Asia
+    </button>
+    <button
+      className={`px-4 py-2 flex items-center rounded-xl ${
+        selectedButton === "America"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("America")}
+    >
+      <FiSearch className="mr-3" />
+      America
+    </button>
+    <button
+      className={`px-4 py-2 flex items-center rounded-xl ${
+        selectedButton === "Australia"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("Australia")}
+    >
+      <FiSearch className="mr-3" />
+      Australia
+    </button>
+    <button
+      className={`px-4 py-2 flex items-center rounded-xl ${
+        selectedButton === "Europe"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("Europe")}
+    >
+      <FiSearch className="mr-3" />
+      Europe
+    </button>
+    <button
+      className={`px-4 py-2 flex items-center rounded-xl ${
+        selectedButton === "Africa"
+          ? "bg-customBlue1 text-white"
+          : "bg-blue-100 text-black hover:bg-customBlue2 hover:text-white"
+      }`}
+      onClick={() => handleClickContinent("Africa")}
+    >
+      <FiSearch className="mr-3" />
+      Africa
+    </button>
+  </div>
+  <FavoriteDestination
+    data={favoriteDestination}
+    isFetching={isFetching}
+  />
+</div>
+
 
       <style>
         {`
