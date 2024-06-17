@@ -37,14 +37,27 @@ const Home = () => {
   const [favoriteDestination, setFavoriteDestination] = useState([]);
   const [continent, setContinent] = useState("");
 
+  // Pagination
+  const [totalData, setTotalData] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageNum, setPageNum] = useState(1);
+  const [pageSize, setPageSize] = useState(1);
+
   async function fetchData(data) {
     setIsFetching(true);
     try {
       const continentData = data;
       if (continentData) {
-        const response = await getFavoriteDestinations(continentData);
+        const page = searchParams.get("page");
+        const response = await getFavoriteDestinations(continentData, page);
 
         setFavoriteDestination(response.data.flights);
+
+        // Pagination
+        setTotalData(response.pagination.totalData);
+        setTotalPages(response.pagination.totalPages);
+        setPageNum(response.pagination.pageNum);
+        setPageSize(response.pagination.pageSize);
       }
     } catch (err) {
       console.log(err);
@@ -78,8 +91,6 @@ const Home = () => {
       setContinent("all");
     }
     fetchData(continent);
-
-    console.log(favoriteDestination);
   }, [continent, selectedButton]);
 
   useEffect(() => {
@@ -192,18 +203,18 @@ const Home = () => {
   return (
     <main className="flex flex-col items-center">
       <Banner />
-      <div className="p-2 lg:mt-[-100px] md:mt-[-50px]">
+      <div className="max-w-full p-2 lg:mt-[-100px] md:mt-[-50px]">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl mb-10">
-          <div className="p-8 space-y-8 md:space-y-4">
+          <div className="lg:p-8 p-5 space-y-8 md:space-y-4">
             <h2 className="text-xl font-bold mb-4">
               Choose a special flight schedule at{" "}
               <span className="text-customBlue2">AirSeat!</span>
             </h2>
 
-            <div className="flex flex-col md:flex-row p-2">
+            <div className="flex flex-col md:flex-row p-2 space-y-4 md:space-y-0">
               <div className="flex flex-1 items-center justify-center">
-                <div className="flex grid-cols-2 gap-4 items-center w-full">
-                  <div className="flex flex-none w-28 grid-cols-2 gap-4 items-center justify-center">
+                <div className="flex w-full gap-4 items-center">
+                  <div className="flex flex-none w-28 items-center justify-center gap-2">
                     <FaPlaneDeparture className="text-xl" />
                     <label className="block text-gray-700">From</label>
                   </div>
@@ -213,47 +224,45 @@ const Home = () => {
                     onClick={() => setShowFromCityModal(true)}
                     readOnly
                     placeholder="Select a location"
-                    className="w-8/12 border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                    className="w-full md:w-8/12 border-b-2 border-t-white border-l-white border-r-white rounded cursor-pointer"
                   />
                 </div>
               </div>
 
               <TbArrowsExchange
-                className="rounded-full bg-black text-white w-7 h-7 cursor-pointer"
+                className="rounded-full bg-black text-white w-7 h-7 cursor-pointer self-center md:self-auto"
                 onClick={handleExchange}
               />
 
               <div className="flex flex-1 items-center justify-center">
-                <div className="flex grid-cols-2 gap-4 items-center w-full">
-                  <div className="flex flex-none w-28 grid-cols-2 gap-4 items-center justify-center">
+                <div className="flex w-full gap-4 items-center">
+                  <div className="flex flex-none w-28 items-center justify-center gap-2">
                     <FaPlaneArrival className="text-xl" />
                     <label className="block text-gray-700">To</label>
                   </div>
                   <input
                     type="text"
                     value={toCity}
-                    placeholder="Select a location"
                     onClick={() => setShowToCityModal(true)}
                     readOnly
-                    className="w-9/12 border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                    placeholder="Select a location"
+                    className="w-full md:w-9/12 border-b-2 border-t-white border-l-white border-r-white rounded cursor-pointer"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col 2xl:flex-row w-full space-y-0 md:space-y-4">
+            <div className="flex flex-col xl:flex-row w-full space-y-4 xl:space-y-0">
               <div className="flex flex-1 items-center justify-center w-full">
-                <div className="flex w-full">
-                  <div className="flex flex-none w-32  items-center justify-center">
-                    <div className="flex grid-cols-2 gap-4 items-center">
-                      <IoCalendarSharp className="text-xl" />
-                      <label className="block text-gray-700">Date</label>
-                    </div>
+                <div className="flex w-full gap-4">
+                  <div className="flex flex-none w-32 items-center justify-center gap-2">
+                    <IoCalendarSharp className="text-xl" />
+                    <label className="block text-gray-700">Date</label>
                   </div>
-                  <div className="grid w-full">
-                    <div className="flex flex-col md:flex-row w-full">
-                      <div className="flex flex-1 items-center justify-center  p-2">
-                        <div className="flex flex-col w-full space-y-2">
+                  <div className="w-full">
+                    <div className="flex flex-col md:flex-row w-full gap-4">
+                      <div className="flex flex-1 items-center justify-center p-2">
+                        <div className="flex flex-col w-full space-y-2 max-w-xs">
                           <label className="block text-gray-700">
                             Departure
                           </label>
@@ -261,26 +270,24 @@ const Home = () => {
                             type="date"
                             defaultValue={today}
                             min={today}
-                            className="w-full border-b-2  border-t-white border-l-white border-r-white rounded"
+                            className="w-full border-b-2 border-t-white border-l-white border-r-white rounded"
                           />
                         </div>
                       </div>
                       <div className="flex flex-1 items-center justify-center p-2">
-                        <div className="flex flex-col w-full space-y-2">
+                        <div className="flex flex-col w-full space-y-2 max-w-xs">
                           <label className="block text-gray-700">Arrival</label>
                           <input
                             type="date"
                             placeholder=""
                             disabled={!showReturnDate}
-                            className={`w-full border-b-2  border-t-white border-l-white border-r-white rounded ${
-                              showReturnDate
-                                ? "border-b-2 border-t-white border-l-white border-r-white bg-white"
-                                : " cursor-not-allowed"
+                            className={`w-full border-b-2 border-t-white border-l-white border-r-white rounded ${
+                              showReturnDate ? "bg-white" : "cursor-not-allowed"
                             }`}
                           />
                         </div>
                       </div>
-                      <div className="flex justify-end items-start mt-2">
+                      <div className="flex justify-end items-start mt-2 p-2">
                         <input
                           type="checkbox"
                           className="toggle-checkbox"
@@ -297,16 +304,14 @@ const Home = () => {
                 </div>
               </div>
 
-              <div className="flex flex-1 items-center justify-center">
-                <div className="flex w-full">
-                  <div className="flex flex-none w-32  items-center justify-center">
-                    <div className="flex grid-cols-2 gap-4 items-center">
-                      <MdOutlineAirlineSeatReclineNormal className="text-2xl" />
-                      <label className="block text-gray-700">Seat</label>
-                    </div>
+              <div className="flex flex-1 items-center justify-center w-full">
+                <div className="flex w-full gap-4">
+                  <div className="flex flex-none w-32 items-center justify-center gap-2">
+                    <MdOutlineAirlineSeatReclineNormal className="text-2xl" />
+                    <label className="block text-gray-700">Seat</label>
                   </div>
-                  <div className="flex flex-col md:flex-row w-full">
-                    <div className="flex flex-1  p-2 items-center justify-center">
+                  <div className="w-full flex flex-col md:flex-row gap-4">
+                    <div className="flex flex-1 p-2 items-center justify-center">
                       <div className="flex flex-col w-full space-y-2">
                         <label className="block text-gray-700">
                           Passengers
@@ -320,7 +325,7 @@ const Home = () => {
                           }}
                           readOnly
                           placeholder="Choose passengers"
-                          className="w-full border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                          className="w-full border-b-2 border-t-white border-l-white border-r-white rounded cursor-pointer"
                         />
                       </div>
                     </div>
@@ -335,7 +340,7 @@ const Home = () => {
                             setShowClassModal(true);
                           }}
                           readOnly
-                          className="w-full border-b-2  border-t-white border-l-white border-r-white rounded cursor-pointer"
+                          className="w-full border-b-2 border-t-white border-l-white border-r-white rounded cursor-pointer"
                         />
                       </div>
                     </div>
@@ -564,7 +569,7 @@ const Home = () => {
 
       <div className="mt-10 w-full max-w-7xl px-4">
         <h2 className="text-2xl font-bold mb-6">Favorite Destinations</h2>
-        <div className="flex gap-5 mb-4">
+        <div className="flex overflow-x-auto whitespace-nowrap  gap-5 mb-4 ">
           <button
             className={`px-4 py-3 flex items-center rounded-xl ${
               selectedButton === "All"
@@ -635,6 +640,10 @@ const Home = () => {
         <FavoriteDestination
           data={favoriteDestination}
           isFetching={isFetching}
+          totalData={totalData}
+          totalPages={totalPages}
+          pageNum={pageNum}
+          pageSize={pageSize}
         />
       </div>
 

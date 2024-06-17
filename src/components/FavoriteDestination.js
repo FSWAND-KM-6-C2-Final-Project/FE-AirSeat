@@ -3,7 +3,14 @@ import Pagination from "./Paginations";
 
 const dayjs = require("dayjs");
 
-const FavoriteDestination = ({ data, isFetching }) => {
+const FavoriteDestination = ({
+  data,
+  isFetching,
+  totalData,
+  totalPages,
+  pageNum,
+  pageSize,
+}) => {
   return (
     <>
       {/* Future development (not found) */}
@@ -60,7 +67,19 @@ const FavoriteDestination = ({ data, isFetching }) => {
           ))}
       </div>
       <div className="m-auto text-center mb-5">
-        <Pagination />
+        {data &&
+          data.length > 0 &&
+          totalData &&
+          totalPages &&
+          pageNum &&
+          pageSize && (
+            <Pagination
+              totalData={totalData}
+              totalPages={totalPages}
+              pageNum={pageNum}
+              pageSize={pageSize}
+            />
+          )}
       </div>
     </>
   );
