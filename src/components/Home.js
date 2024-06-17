@@ -48,7 +48,7 @@ const Home = () => {
     try {
       const continentData = data;
       if (continentData) {
-        const page = searchParams.get("page");
+        const page = searchParams.get("page") || 1;
         const response = await getFavoriteDestinations(continentData, page);
 
         setFavoriteDestination(response.data.flights);
