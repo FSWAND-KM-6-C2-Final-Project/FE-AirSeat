@@ -10,8 +10,12 @@ import { FaPlaneArrival, FaPlaneDeparture } from "react-icons/fa";
 import { MdAirplaneTicket } from "react-icons/md";
 import { IoCalendarSharp } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
-import { getFavoriteDestinations } from "../services/favoriteDestination.service";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
+
+import { getFavoriteDestinations } from "../services/favoriteDestination.service";
+import { getAirportData } from "../services/airport.service";
+import dayjs from "dayjs";
+import { getFlightData } from "../services/flight.service";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -25,15 +29,24 @@ const Home = () => {
   const [toCity, setToCity] = useState("");
   const [fromCitySearch, setFromCitySearch] = useState("");
   const [toCitySearch, setToCitySearch] = useState("");
+  const [formData, setFormData] = useState({
+    deptAirport: null,
+    arrAirport: null,
+    deptTime: null,
+  });
+  const [deptDate, setDeptDate] = useState(0);
   const [passengers, setPassengers] = useState({
     adults: 0,
     children: 0,
     infants: 0,
   });
+  const [deptCity, setDeptCity] = useState();
+  const [arrCity, setArrCity] = useState();
   const [seatClass, setSeatClass] = useState("Economy");
   const [tempSeatClass, setTempSeatClass] = useState("Economy");
   const [isFetching, setIsFetching] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [cities, setCities] = useState([]);
   const [favoriteDestination, setFavoriteDestination] = useState([]);
   const [continent, setContinent] = useState("");
 
@@ -66,6 +79,7 @@ const Home = () => {
   }
 
   useEffect(() => {
+    fetchCity();
     setFavoriteDestination([]);
     const continentParams = searchParams.get("continent");
     if (continentParams === "asia") {
@@ -91,7 +105,7 @@ const Home = () => {
       setContinent("all");
     }
     fetchData(continent);
-  }, [continent, selectedButton]);
+  }, [continent, selectedButton, fromCity, toCity]);
 
   useEffect(() => {
     if (showClassModal) {
@@ -127,13 +141,21 @@ const Home = () => {
     infants: 0,
   });
 
-  const cities = [
-    "Jakarta (JKTA)",
-    "Surabaya (SBY)",
-    "Bandung (BDO)",
-    "Bali (DPS)",
-    "Melbourne (MLB)",
-  ];
+  const fetchCity = async () => {
+    try {
+      const response = await getAirportData();
+      const airports = response.data.airports;
+
+      const data = airports.map((airport) => ({
+        id: airport.id,
+        name: `${airport.airport_name} - ${airport.airport_city} (${airport.airport_city_code})`,
+      }));
+
+      setCities(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const seatClassPrices = {
     Economy: "IDR 1,500,000",
@@ -164,13 +186,53 @@ const Home = () => {
   };
 
   const handleSelectFromCity = (city) => {
-    setFromCity(city);
+    setFromCity(city.name);
+    setDeptCity(city.id);
     setShowFromCityModal(false);
   };
 
   const handleSelectToCity = (city) => {
-    setToCity(city);
+    setToCity(city.name);
+    setArrCity(city.id);
     setShowToCityModal(false);
+  };
+
+  useEffect(() => {
+    const storeFormData = () => ({
+      deptAirport: deptCity,
+      arrAirport: arrCity,
+      deptDate: deptDate ? dayjs(deptDate).format("DD-MM-YYYY") : undefined,
+    });
+
+    console.log(storeFormData());
+
+    setFormData(storeFormData());
+    if (
+      storeFormData().deptAirport &&
+      storeFormData().arrAirport &&
+      storeFormData().deptDate
+    ) {
+      fetchFlight(storeFormData());
+    }
+  }, [deptCity, arrCity, deptDate]);
+
+  const handleDepartureDate = (e) => {
+    e.preventDefault();
+    setDeptDate(e.target.value);
+  };
+
+  const fetchFlight = async (data) => {
+    try {
+      const deptAirport = data.deptAirport;
+      const arrAirport = data.arrAirport;
+      const deptDate = data.deptDate;
+
+      const response = await getFlightData(deptAirport, arrAirport, deptDate);
+
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const displayPassengers = () => {
@@ -189,13 +251,17 @@ const Home = () => {
     const temp = fromCity;
     setFromCity(toCity);
     setToCity(temp);
+
+    const tempId = deptCity;
+    setDeptCity(arrCity);
+    setArrCity(tempId);
   };
   const filteredFromCities = cities.filter((city) =>
-    city.toLowerCase().includes(fromCitySearch.toLowerCase())
+    city.name.toLowerCase().includes(fromCitySearch.toLowerCase())
   );
 
   const filteredToCities = cities.filter((city) =>
-    city.toLowerCase().includes(toCitySearch.toLowerCase())
+    city.name.toLowerCase().includes(toCitySearch.toLowerCase())
   );
 
   const today = new Date().toISOString().split("T")[0];
@@ -268,8 +334,8 @@ const Home = () => {
                           </label>
                           <input
                             type="date"
-                            defaultValue={today}
                             min={today}
+                            onChange={handleDepartureDate}
                             className="w-full border-b-2 border-t-white border-l-white border-r-white rounded"
                           />
                         </div>
@@ -519,11 +585,11 @@ const Home = () => {
             <div className="space-y-4 max-h-60 overflow-y-auto">
               {filteredFromCities.map((city) => (
                 <div
-                  key={city}
+                  key={city.id}
                   className="p-2 border-b rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectFromCity(city)}
                 >
-                  {city}
+                  {city.name}
                 </div>
               ))}
             </div>
@@ -555,11 +621,11 @@ const Home = () => {
             <div className="space-y-4 max-h-60 overflow-y-auto">
               {filteredToCities.map((city) => (
                 <div
-                  key={city}
+                  key={city.id}
                   className="p-2 border-b rounded cursor-pointer hover:bg-customBlue2 hover:text-white"
                   onClick={() => handleSelectToCity(city)}
                 >
-                  {city}
+                  {city.name}
                 </div>
               ))}
             </div>
