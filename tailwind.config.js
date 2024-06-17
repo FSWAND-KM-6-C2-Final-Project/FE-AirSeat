@@ -13,6 +13,7 @@ module.exports = {
         customBlue2: "#447C9D",
         customBlue3: "#9CBEC8",
         customBlue4: "#DEF2FD",
+        customRed: "#B22C45",
       },
     },
   },
