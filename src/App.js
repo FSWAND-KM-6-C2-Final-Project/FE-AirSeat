@@ -33,7 +33,6 @@ function App() {
           <Route path="/notification" element={<NotificationPage />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/order-history-empty" element={<OrderHistoryEmpty />} />
-          
         </Routes>
       </div>
     </Router>
