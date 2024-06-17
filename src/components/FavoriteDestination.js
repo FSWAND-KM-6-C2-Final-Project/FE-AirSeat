@@ -1,5 +1,8 @@
 import LoadingCard from "./LoadingCard";
 import Pagination from "./Paginations";
+import Error from "./Error";
+import NotFoundError from "./NotFoundError";
+import notFoundImage from "../images/not-found.png";
 
 const dayjs = require("dayjs");
 
@@ -14,8 +17,12 @@ const FavoriteDestination = ({ data, isFetching }) => {
       )} */}
 
       {!isFetching && data.length === 0 && (
-        <div className="text-center flex flex-col justify-center  min-h-[20vh]">
-          <p>Sorry, Favorite Destination is not found.</p>
+        <div className="text-center flex flex-col justify-center min-h-[20vh]">
+          <NotFoundError
+            errorImage={notFoundImage}
+            errorTitle={"Oopppss..."}
+            errorMessage={"Sorry, Favorite Destination data is not found."}
+          />
         </div>
       )}
 
