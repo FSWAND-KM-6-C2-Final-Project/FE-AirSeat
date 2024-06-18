@@ -11,7 +11,6 @@ import { IoIosWoman } from "react-icons/io";
 import { MdOutlineMan } from "react-icons/md";
 import { FaBaby } from "react-icons/fa6";
 import { FaPlaneArrival, FaPlaneDeparture } from "react-icons/fa";
-import { MdAirplaneTicket } from "react-icons/md";
 import { IoCalendarSharp } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
@@ -45,13 +44,9 @@ const Home = () => {
     deptTime: null,
   });
   const [deptDate, setDeptDate] = useState(0);
-  const [passengers, setPassengers] = useState({
-    adults: 0,
-    children: 0,
-    infants: 0,
-  });
   const [deptCity, setDeptCity] = useState();
   const [arrCity, setArrCity] = useState();
+
   const [seatClass, setSeatClass] = useState("Economy");
   const [tempSeatClass, setTempSeatClass] = useState("");
   const [isFetching, setIsFetching] = useState(false);
@@ -59,6 +54,11 @@ const Home = () => {
   const [cities, setCities] = useState([]);
   const [favoriteDestination, setFavoriteDestination] = useState([]);
   const [continent, setContinent] = useState("");
+  const [passengers, setPassengers] = useState({
+    adults: 0,
+    children: 0,
+    infants: 0,
+  });
 
   // Pagination
   const [totalData, setTotalData] = useState(1);
@@ -155,6 +155,7 @@ const Home = () => {
     }
     setSelectedButton(button);
   };
+
   const [tempPassengers, setTempPassengers] = useState({
     adults: 0,
     children: 0,
@@ -240,8 +241,6 @@ const Home = () => {
       }),
     });
 
-    console.log(storeFormData());
-
     setFormData(storeFormData());
     if (
       storeFormData().deptAirport &&
@@ -315,6 +314,7 @@ const Home = () => {
     setDeptCity(arrCity);
     setArrCity(tempId);
   };
+
   const filteredFromCities = cities.filter((city) =>
     city.name.toLowerCase().includes(fromCitySearch.toLowerCase())
   );
@@ -327,8 +327,6 @@ const Home = () => {
 
   const handleClickSearch = () => {
     const data = formData;
-
-    console.log(data);
 
     if (
       data.deptAirport &&
@@ -523,7 +521,7 @@ const Home = () => {
 
       {showPassengerModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[80%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[50%]">
             <button
               onClick={() => setShowPassengerModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -549,7 +547,7 @@ const Home = () => {
                     onChange={(e) =>
                       handlePassengerChange("adults", parseInt(e.target.value))
                     }
-                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    className="w-full border border-gray-300 rounded-lg py-2 px-4"
                     min="0"
                   />
                 </div>
@@ -574,7 +572,7 @@ const Home = () => {
                         parseInt(e.target.value)
                       )
                     }
-                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    className="w-full border border-gray-300 rounded-lg py-2 px-4"
                     min="0"
                   />
                 </div>
@@ -596,7 +594,7 @@ const Home = () => {
                     onChange={(e) =>
                       handlePassengerChange("infants", parseInt(e.target.value))
                     }
-                    className="w-full border border-gray-300 rounded py-2 px-4"
+                    className="w-full border border-gray-300 rounded-lg py-2 px-4"
                     min="0"
                   />
                 </div>
@@ -604,7 +602,7 @@ const Home = () => {
             </div>
             <button
               onClick={handleSavePassengers}
-              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-2"
+              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded-lg py-2"
             >
               Save
             </button>
@@ -614,7 +612,7 @@ const Home = () => {
 
       {showClassModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[60%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[80%] max-h-[70%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[60%]">
             <button
               onClick={() => setShowClassModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -627,7 +625,7 @@ const Home = () => {
               {Object.keys(seatClassPrices).map((cls) => (
                 <div
                   key={cls}
-                  className={`flex justify-between items-center p-2 border rounded cursor-pointer ${
+                  className={`flex justify-between items-center p-2 border rounded-lg cursor-pointer ${
                     tempSeatClass === cls
                       ? "bg-customBlue2 text-white hover:text-white"
                       : ""
@@ -668,7 +666,7 @@ const Home = () => {
             </div>
             <button
               onClick={handleSaveClass}
-              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-2"
+              className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded-lg py-2"
             >
               Save
             </button>
@@ -678,7 +676,7 @@ const Home = () => {
 
       {showFromCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
             <div className="flex item-center relative gap-3">
               <button
                 onClick={() => setShowFromCityModal(false)}
@@ -691,7 +689,7 @@ const Home = () => {
                 value={fromCitySearch}
                 onChange={(e) => setFromCitySearch(e.target.value)}
                 placeholder="Please select a location"
-                className="w-11/12 border border-gray-300 rounded py-2 px-4 mb-4"
+                className="w-11/12 border border-gray-300 rounded-lg py-2 px-4 mb-4"
               />
             </div>
             <div className="flex justify-between item-center ml-2 mt-3 mb-3 text-lg">
@@ -714,7 +712,7 @@ const Home = () => {
 
       {showToCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
             <div className="flex item-center relative gap-3">
               <button
                 onClick={() => setShowToCityModal(false)}
@@ -727,7 +725,7 @@ const Home = () => {
                 value={toCitySearch}
                 onChange={(e) => setToCitySearch(e.target.value)}
                 placeholder="Please select a location"
-                className="w-11/12 border border-gray-300 rounded py-2 px-4 mb-4"
+                className="w-11/12 border border-gray-300 rounded-lg py-2 px-4 mb-4"
               />
             </div>
             <div className="flex justify-between item-center ml-2 mt-3 mb-4 text-lg">
