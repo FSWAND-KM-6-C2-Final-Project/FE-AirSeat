@@ -46,7 +46,7 @@ const FlightSelection = () => {
           </Link>
           <Link
             to={"/"}
-            className="flex items-center justify-center bg-[#73CA5C] text-white px-4 py-3 w-full md:w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248]"
+            className="flex items-center justify-center bg-[#73CA5C] text-white text-center px-4 py-3 w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248] hidden md:block"
           >
             Change Search
           </Link>
