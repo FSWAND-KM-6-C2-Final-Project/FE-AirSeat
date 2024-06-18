@@ -47,7 +47,7 @@ export default function FlightAccordion(props) {
                   {airline} - {flightClass}
                 </p>
               </div>
-              <div className="flex items-center justify-items-between gap-4">
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex w-full items-center mt-5">
                   <div>
                     <p className="font-bold">{departureTime}</p>
@@ -62,14 +62,11 @@ export default function FlightAccordion(props) {
                     <p className="font-bold">{arrivalTime}</p>
                     <p className="font-semibold">{arrivalAirportId}</p>
                   </div>
-                  {/* <div className="px-8">
-                    <img src={baggage} alt="" />
-                  </div> */}
                 </div>
-                <div className="space-y-1">
+                <div className="flex flex-col items-center space-y-2 w-56">
                   <p className="text-customBlue1 font-bold text-xl">{price}</p>
                   <button className="bg-customBlue2 rounded-xl w-32 p-2 text-white">
-                    Pilih
+                    Select
                   </button>
                 </div>
               </div>
@@ -107,7 +104,7 @@ export default function FlightAccordion(props) {
           <div>
             <div>
               <p className="font-bold text-customBlue2 text-lg">
-                Detail Penerbangan
+                Flight Details
               </p>
             </div>
             <div className="flex justify-between mt-5">
@@ -118,7 +115,7 @@ export default function FlightAccordion(props) {
               </div>
               <div>
                 <p className="font-bold text-lg text-customBlue3">
-                  Keberangkatan
+                  Departure
                 </p>
               </div>
             </div>
@@ -137,7 +134,7 @@ export default function FlightAccordion(props) {
                   <p className="font-bold">{code}</p>
                 </div>
                 <div className="mt-3">
-                  <p className="font-bold">Informasi:</p>
+                  <p className="font-bold">Information:</p>
                   <p>Baggage 20 kg</p>
                   <p>Cabin Baggage 7 kg</p>
                   <p>In Flight Entertaimet</p>
@@ -154,7 +151,7 @@ export default function FlightAccordion(props) {
                 <p className="font-semibold">{arr_airport}</p>
               </div>
               <div>
-                <p className="font-bold text-lg text-customBlue3">Kedatangan</p>
+                <p className="font-bold text-lg text-customBlue3">Arrival</p>
               </div>
             </div>
           </div>
