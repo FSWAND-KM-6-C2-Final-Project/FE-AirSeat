@@ -326,7 +326,14 @@ const Home = () => {
   const handleClickSearch = () => {
     const data = formData;
 
-    if (data.length > 0) {
+    console.log(data);
+
+    if (
+      data.deptAirport &&
+      data.arrAirport &&
+      data.deptDate &&
+      (data.adult || data.infant || data.children)
+    ) {
       navigate({
         pathname: "/search",
         search: createSearchParams(data).toString(),
