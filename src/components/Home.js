@@ -53,7 +53,7 @@ const Home = () => {
   const [deptCity, setDeptCity] = useState();
   const [arrCity, setArrCity] = useState();
   const [seatClass, setSeatClass] = useState("Economy");
-  const [tempSeatClass, setTempSeatClass] = useState("Economy");
+  const [tempSeatClass, setTempSeatClass] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cities, setCities] = useState([]);
@@ -240,6 +240,8 @@ const Home = () => {
       }),
     });
 
+    console.log(storeFormData());
+
     setFormData(storeFormData());
     if (
       storeFormData().deptAirport &&
@@ -251,7 +253,7 @@ const Home = () => {
     ) {
       fetchFlight(storeFormData());
     }
-  }, [deptCity, arrCity, deptDate, tempPassengers]);
+  }, [deptCity, arrCity, deptDate, tempPassengers, tempSeatClass]);
 
   const handleDepartureDate = (e) => {
     e.preventDefault();
