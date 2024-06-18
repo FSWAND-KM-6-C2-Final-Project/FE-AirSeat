@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import Banner from "./Banner";
 import FavoriteDestination from "./FavoriteDestination";
@@ -11,6 +15,8 @@ import { MdAirplaneTicket } from "react-icons/md";
 import { IoCalendarSharp } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
+import slugify from "react-slugify";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 import { getFavoriteDestinations } from "../services/favoriteDestination.service";
 import { getAirportData } from "../services/airport.service";
@@ -29,6 +35,10 @@ const Home = () => {
   const [toCity, setToCity] = useState("");
   const [fromCitySearch, setFromCitySearch] = useState("");
   const [toCitySearch, setToCitySearch] = useState("");
+  const [economyPrice, setEconomyPrice] = useState("");
+  const [premiumEconomyPrice, setPremiumEconomyPrice] = useState("");
+  const [businessPrice, setBusinessPrice] = useState("");
+  const [firstClassPrice, setFirstClassPrice] = useState("");
   const [formData, setFormData] = useState({
     deptAirport: null,
     arrAirport: null,
@@ -73,7 +83,17 @@ const Home = () => {
         setPageSize(response.pagination.pageSize);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
     setIsFetching(false);
   }
@@ -153,7 +173,17 @@ const Home = () => {
 
       setCities(data);
     } catch (err) {
-      console.log(err);
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -202,19 +232,26 @@ const Home = () => {
       deptAirport: deptCity,
       arrAirport: arrCity,
       deptDate: deptDate ? dayjs(deptDate).format("DD-MM-YYYY") : undefined,
+      adult: tempPassengers.adults || 0,
+      infant: tempPassengers.infants || 0,
+      children: tempPassengers.children || 0,
+      class: slugify(tempSeatClass, {
+        delimiter: "_",
+      }),
     });
-
-    console.log(storeFormData());
 
     setFormData(storeFormData());
     if (
       storeFormData().deptAirport &&
       storeFormData().arrAirport &&
-      storeFormData().deptDate
+      storeFormData().deptDate &&
+      (storeFormData().adult ||
+        storeFormData().infant ||
+        storeFormData().children)
     ) {
       fetchFlight(storeFormData());
     }
-  }, [deptCity, arrCity, deptDate]);
+  }, [deptCity, arrCity, deptDate, tempPassengers]);
 
   const handleDepartureDate = (e) => {
     e.preventDefault();
@@ -229,9 +266,29 @@ const Home = () => {
 
       const response = await getFlightData(deptAirport, arrAirport, deptDate);
 
-      console.log(response);
+      if (response.data.flights.length > 0) {
+        setEconomyPrice(response.data.flights[0].price_economy);
+        setPremiumEconomyPrice(response.data.flights[0].price_premium_economy);
+        setBusinessPrice(response.data.flights[0].price_business);
+        setFirstClassPrice(response.data.flights[0].price_first_class);
+      } else {
+        setEconomyPrice(0);
+        setPremiumEconomyPrice(0);
+        setBusinessPrice(0);
+        setFirstClassPrice(0);
+      }
     } catch (err) {
-      console.log(err);
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -266,9 +323,35 @@ const Home = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
+  const handleClickSearch = () => {
+    const data = formData;
+
+    if (data.length > 0) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams(data).toString(),
+      });
+      navigate(0);
+    } else {
+      toast.error("Please choose your flight details first.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
+
   return (
     <main className="flex flex-col items-center">
       <Banner />
+      <ToastContainer />
+
       <div className="max-w-full p-2 lg:mt-[-100px] md:mt-[-50px]">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl mb-10">
           <div className="lg:p-8 p-5 space-y-8 md:space-y-4">
@@ -417,9 +500,7 @@ const Home = () => {
           </div>
 
           <button
-            onClick={() => {
-              window.location.href = "/search";
-            }}
+            onClick={handleClickSearch}
             className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
             style={{
               borderBottomLeftRadius: "12px",
@@ -546,7 +627,32 @@ const Home = () => {
                 >
                   <div>
                     <h4>{cls}</h4>
-                    <p>{seatClassPrices[cls]}</p>
+                    <p>
+                      {cls === "Economy" &&
+                        `${new Intl.NumberFormat("id", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(economyPrice)}`}
+                      {cls === "Premium Economy" &&
+                        `${new Intl.NumberFormat("id", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(premiumEconomyPrice)}`}
+                      {cls === "Business" &&
+                        `${new Intl.NumberFormat("id", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(businessPrice)}`}
+                      {cls === "First Class" &&
+                        `${new Intl.NumberFormat("id", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(firstClassPrice)}`}
+                    </p>
                   </div>
                 </div>
               ))}
