@@ -69,7 +69,11 @@ const sortingOptions = [
 ];
 
 const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(0);
+
+  useEffect(() => {
+    setSelectedOption(0);
+  }, [showModal]);
 
   const handleOptionClicked = (index) => {
     setSelectedOption(index);
@@ -95,7 +99,7 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
                 <button
                   onClick={toggleModal}
                   type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <svg
                     className="w-3 h-3"
@@ -120,8 +124,10 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
                   <div
                     key={index}
                     className={`p-5 border-b ${
-                      selectedOption === index ? "bg-customBlue2 text-white" : ""
-                    } cursor-pointer hover:bg-gray-200 hover:text-black`}
+                      selectedOption === index
+                        ? "bg-customBlue2 text-white"
+                        : ""
+                    } cursor-pointer`}
                     onClick={() => handleOptionClicked(index)}
                   >
                     <p className="font-bold text-md">{option}</p>
@@ -131,7 +137,7 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
               <div className="flex justify-end p-7">
                 <button
                   type="button"
-                  className="font-bold bg-customBlue2 rounded-2xl p-3 w-32 text-white"
+                  className="font-bold bg-customBlue2 hover:bg-customBlue1 rounded-2xl p-3 w-32 text-white"
                   onClick={handleSelectClick}
                 >
                   Select
@@ -174,13 +180,13 @@ const FlightResults = () => {
   };
 
   return (
-    <div className="grid p-4 space-y-4 max-w-7xl mx-auto">
+    <div className="grid p-4 space-y-2 max-w-7xl mx-auto">
       <button
         onClick={toggleModal}
         type="button"
-        className="border-2 border-customBlue2 text-customBlue2 px-8 py-2 rounded-full justify-self-end"
+        className="border-2 border-customBlue2 text-customBlue2 px-8 py-2 rounded-full justify-self-end hover:bg-customBlue2 hover:text-white"
       >
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-1 text-xs sm:text-sm md:text-base lg:text-base xl:text-base">
           <LuArrowUpDown />
           {sortingOptions[selectedSortOption]}
         </span>
@@ -191,16 +197,16 @@ const FlightResults = () => {
         handleOptionSelect={handleOptionSelect}
       />
 
-<div className="grid grid-cols-1 2xl:grid-cols-6">
-  <div className="p-4 hidden xl:block">
-    <div className="p-5 bg-background shadow-[0_3px_15px_-3px_rgba(0,0,0,0.3)] aspect-square w-40 rounded-2xl">
-      <div className="self-center space-y-2">
-        <div className="mt-3 mb-5">
-          <p className="font-semibold text-base">Filter</p>
-        </div>
-        <div className="flex items-center gap-2 border-b pb-2 text-lg">
-          <FiBox />
-          <p>Transit</p>
+      <div className="grid grid-cols-1 2xl:grid-cols-6">
+        <div className="p-4 hidden xl:block">
+          <div className="p-5 bg-background shadow-[0_3px_15px_-3px_rgba(0,0,0,0.3)] aspect-square w-40 rounded-2xl">
+            <div className="self-center space-y-2">
+              <div className="mt-3 mb-5">
+                <p className="font-semibold text-base">Filter</p>
+              </div>
+              <div className="flex items-center gap-2 border-b pb-2 text-lg">
+                <FiBox />
+                <p>Transit</p>
               </div>
               <div className="flex items-center gap-2 border-b pb-2 text-lg">
                 <CiHeart />

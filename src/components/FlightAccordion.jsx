@@ -43,12 +43,14 @@ export default function FlightAccordion(props) {
             <span className="w-full">
               <div className="flex items-center gap-3">
                 <img src={thumbnail} alt="" />
-                <p>
-                  {airline} - {flightClass}
-                </p>
+                <div className="">
+                  <p class="">
+                    {airline} - {flightClass}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <div className="flex w-full items-center mt-5">
+                <div className="flex w-full items-center mt-5 text-xs sm:text-xs md:text-base lg:text-base xl:text-base">
                   <div>
                     <p className="font-bold">{departureTime}</p>
                     <p className="font-semibold">{departureAirportId}</p>
@@ -63,9 +65,19 @@ export default function FlightAccordion(props) {
                     <p className="font-semibold">{arrivalAirportId}</p>
                   </div>
                 </div>
+                {/* <div className="flex flex-col items-center space-y-2 w-56">
+                  <p className="text-customBlue1 font-bold xl:text-xl lg:text-lg sm:text-sm">
+                    {price}
+                  </p>
+                  <button className="bg-customBlue2 rounded-xl w-20 p-1 sm:w-24 sm:p-2 md:w-28 md:p-3 lg:w-32 lg:p-4 hover:bg-customBlue1 text-white text-xs sm:text-sm md:text-base lg:text-lg">
+                    Select
+                  </button>
+                </div> */}
                 <div className="flex flex-col items-center space-y-2 w-56">
-                  <p className="text-customBlue1 font-bold text-xl">{price}</p>
-                  <button className="bg-customBlue2 rounded-xl w-32 p-2 text-white">
+                  <p className="text-customBlue1 font-bold xl:text-xl lg:text-lg sm:text-sm">
+                    {price}
+                  </p>
+                  <button className="bg-customBlue2 rounded-lg w-20 p-1 sm:w-20 sm:p-2 md:w-20 md:p-2 lg:w-32 lg:p-2 hover:bg-customBlue1 text-white text-xs sm:text-sm md:text-sm lg:text-lg">
                     Select
                   </button>
                 </div>
@@ -114,9 +126,7 @@ export default function FlightAccordion(props) {
                 <p className="font-semibold">{dep_airport}</p>
               </div>
               <div>
-                <p className="font-bold text-lg text-customBlue3">
-                  Departure
-                </p>
+                <p className="font-bold text-lg text-customBlue3">Departure</p>
               </div>
             </div>
             <div>
