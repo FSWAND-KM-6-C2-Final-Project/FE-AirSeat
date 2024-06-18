@@ -192,7 +192,7 @@ const FlightResults = () => {
       />
 
 <div className="grid grid-cols-1 2xl:grid-cols-6">
-  <div className="p-4 hidden md:block">
+  <div className="p-4 hidden xl:block">
     <div className="p-5 bg-background shadow-[0_3px_15px_-3px_rgba(0,0,0,0.3)] aspect-square w-40 rounded-2xl">
       <div className="self-center space-y-2">
         <div className="mt-3 mb-5">

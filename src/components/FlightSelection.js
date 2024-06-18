@@ -33,7 +33,7 @@ const FlightSelection = () => {
   return (
     <>
       <div className="p-4 md:p-10 shadow-md">
-        <h2 className="font-bold text-2xl text-left md:ml-24 lg:ml-32 xl:ml-44">
+        <h2 className="font-bold text-2xl text-left xl:ml-44">
           Flight Details
         </h2>
         <div className="flex flex-col md:flex-row md:justify-center">
@@ -46,7 +46,7 @@ const FlightSelection = () => {
           </Link>
           <Link
             to={"/"}
-            className="flex items-center justify-center bg-[#73CA5C] text-white text-center px-4 py-3 w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248] hidden md:block"
+            className="flex items-center justify-center bg-[#73CA5C] text-white text-center px-4 py-3 w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248] hidden lg:block"
           >
             Change Search
           </Link>
