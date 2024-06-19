@@ -5,7 +5,6 @@ import { format, addDays } from "date-fns";
 
 const FlightSelection = () => {
   const [selectedDay, setSelectedDay] = useState(null);
-  const [hoveredDay, setHoveredDay] = useState(null);
   const [dates, setDates] = useState([]);
 
   useEffect(() => {
@@ -34,7 +33,7 @@ const FlightSelection = () => {
   return (
     <>
       <div className="p-4 md:p-10 shadow-md">
-        <h2 className="font-bold text-xl text-left md:ml-24 lg:ml-32 xl:ml-44">
+        <h2 className="font-bold text-2xl text-left xl:ml-44">
           Flight Details
         </h2>
         <div className="flex flex-col md:flex-row md:justify-center">
@@ -47,45 +46,40 @@ const FlightSelection = () => {
           </Link>
           <Link
             to={"/"}
-            className="flex items-center justify-center bg-[#73CA5C] text-white px-4 py-3 w-full md:w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248]"
+            className="flex items-center justify-center bg-[#73CA5C] text-white text-center px-4 py-3 w-2/12 mt-4 md:mt-8 ml-0 md:ml-2 rounded-xl font-semibold hover:bg-[#5EA248] hidden lg:block"
           >
             Change Search
           </Link>
         </div>
 
         <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2 text-center">
+          <div className="flex flex-nowrap sm:grid-cols-3 md:grid-cols-7 gap-5 text-center overflow-x-auto">
             {dates.map((date, index) => (
-              <div
+              <button
                 key={index}
-                className={`p-1 rounded-lg ${
+                className={`px-4 rounded-lg ${
                   index === selectedDay
-                    ? "bg-customBlue1 text-white"
-                    : "bg-gray-200 text-black"
-                } hover:bg-customBlue2 hover:text-white cursor-pointer`}
+                    ? "bg-customBlue1 text-white text-sm"
+                    : "bg-gray-200 text-black text-sm"
+                } ${selectedDay !== null ? "" : "sm:p-4"}`}
+                style={{ width: "200px", height: "50px" }}
                 onClick={() => handleDayClick(index)}
-                onMouseEnter={() => setHoveredDay(index)}
-                onMouseLeave={() => setHoveredDay(null)}
               >
                 <div
                   className={`font-bold ${
-                    index === selectedDay || index === hoveredDay
-                      ? "text-white"
-                      : "text-black"
-                  }`}
+                    index === selectedDay ? "text-white" : "text-black"
+                  } sm:text-sm md:text-sm`}
                 >
                   {date.day}
                 </div>
                 <div
-                  className={`text-sm font-semibold ${
-                    index === selectedDay || index === hoveredDay
-                      ? "text-white"
-                      : "text-gray-500"
-                  }`}
+                  className={`font-semibold ${
+                    index === selectedDay ? "text-white" : "text-gray-500"
+                  } sm:text-sm md:text-sm`}
                 >
                   {date.date}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
