@@ -33,6 +33,8 @@ const SignIn = () => {
 
     const data = await response.json();
     if (response.ok) {
+      const token = data.token;
+      localStorage.setItem("token", token);
       // Navigate to home page or dashboard
       navigate("/");
     } else {
@@ -59,8 +61,12 @@ const SignIn = () => {
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-0">
         <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">AirSeat</h1>
-          <p className="text-lg md:text-2xl text-customBlue2 mt-4">Your Traveling Partner</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">
+            AirSeat
+          </h1>
+          <p className="text-lg md:text-2xl text-customBlue2 mt-4">
+            Your Traveling Partner
+          </p>
         </div>
         <div className="absolute bottom-0 mb-10 md:mb-20 hidden md:block">
           <img src={plantsImage} alt="Decoration" />
@@ -68,10 +74,14 @@ const SignIn = () => {
       </div>
       <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-0">
         <div className="w-full max-w-md px-4 md:px-8">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">Sign In</h2>
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">
+            Sign In
+          </h2>
           <form onSubmit={handleSignIn}>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Email or Phone</label>
+              <label className="block text-gray-700 font-bold">
+                Email or Phone
+              </label>
               <input
                 type="email"
                 value={emailOrPhone}
