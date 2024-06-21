@@ -1,12 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft, FiEdit3, FiSettings, FiLogOut } from "react-icons/fi";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 const Account = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("No authorization token found");
+        }
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await axios.get(
+          "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/me",
+          config
+        );
+        const userData = response.data.data.user;
+
+        setName(userData.full_name || "");
+        setPhoneNumber(userData.phone_number || "");
+        setEmail(userData.email || "");
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        toast.error("Failed to fetch profile data. Please try again.");
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const handleProfileClick = () => {
     setActiveSection("profile");
@@ -21,8 +56,44 @@ const Account = () => {
     window.location.href = "/";
   };
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault();
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authorization token found");
+      }
+
+      const response = await fetch(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/profile",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            full_name: name,
+            phone_number: phoneNumber,
+            email,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const responseData = await response.json();
+        throw new Error(
+          responseData.message ||
+            `Failed to update profile data: ${response.status} ${response.statusText}`
+        );
+      }
+
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Save profile error:", error);
+      toast.error(`Error: ${error.message}`);
+    }
   };
 
   return (
@@ -89,7 +160,7 @@ const Account = () => {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Harry"
+                  placeholder="Full Name"
                   className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-2"
                 />
               </div>
@@ -106,7 +177,7 @@ const Account = () => {
                   id="phoneNumber"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+62 897823232"
+                  placeholder="Phone Number"
                   className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-2"
                 />
               </div>
@@ -123,7 +194,7 @@ const Account = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Johndoe@gmail.com"
+                  placeholder="Email"
                   required
                   className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-4"
                 />
@@ -145,6 +216,23 @@ const Account = () => {
           </div>
         )}
       </div>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+        theme="colored"
+        toastStyle={{
+          width: "auto",
+          textAlign: "center",
+        }}
+      />
     </>
   );
 };
