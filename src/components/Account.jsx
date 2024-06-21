@@ -17,22 +17,12 @@ const Account = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("password");
     localStorage.removeItem("token");
     window.location.href = "/";
   };
 
   const handleSave = (event) => {
     event.preventDefault();
-    localStorage.setItem("name", name);
-    localStorage.setItem("phoneNumber", phoneNumber);
-    localStorage.setItem("email", email);
-    setActiveSection("settings");
-  };
-
-  const handleEditProfile = () => {
-    setActiveSection("profile");
   };
 
   return (
@@ -152,42 +142,6 @@ const Account = () => {
         {activeSection === "settings" && (
           <div className="p-6 pt-10 bg-white border border-gray-200 rounded-lg mt-12 shadow w-full  md:w-1/2 lg:w-1/3 md:ml-6">
             <h2 className="font-bold text-xl mb-4">Pengaturan Akun</h2>
-            <div className="flex flex-col space-y-4">
-              <p className="bg-customBlue2 text-white w-full h-10 rounded-t-lg p-2 mb-3">
-                Data Diri
-              </p>
-              <div>
-                <label className="block font-bold text-customBlue1 ml-5">
-                  Nama Lengkap
-                </label>
-                <p className="border-b w-11/12 ml-5 focus:outline-none rounded-md">
-                  {name}
-                </p>
-              </div>
-              <div>
-                <label className="block font-bold text-customBlue1 ml-5">
-                  Nomor Telepon
-                </label>
-                <p className="border-b w-11/12 ml-5 focus:outline-none rounded-md">
-                  {phoneNumber}
-                </p>
-              </div>
-              <div>
-                <label className="block font-bold text-customBlue1 ml-5">
-                  Email
-                </label>
-                <p className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-4">
-                  {email}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleEditProfile}
-                className="bg-customBlue2 text-white px-10 py-3 rounded-xl self-center hover:bg-customBlue1"
-              >
-                Edit Profile
-              </button>
-            </div>
           </div>
         )}
       </div>
