@@ -58,9 +58,7 @@ const BookingForm = ({ initialClass }) => {
     ]);
   };
 
-  const handleSeatSelection = (row, col) => {
-    const seat = `${row + 1}${col}`;
-    if (initialClass === "Economy" && row < 2) return;
+  const handleSeatSelection = (seat) => {
     if (!selectedSeats.includes(seat)) {
       setSelectedSeats([...selectedSeats, seat]);
     } else {
@@ -74,6 +72,74 @@ const BookingForm = ({ initialClass }) => {
     console.log("Passenger data:", passengers);
     console.log("Selected seats:", selectedSeats);
   };
+
+  const renderSeat = (seat, isDisabled) => {
+    const isSelected = selectedSeats.includes(seat);
+    const bgColor = isSelected
+      ? "bg-gray-500 text-white"
+      : "bg-green-500 text-white";
+    return (
+      <button
+        key={seat}
+        type="button"
+        className={`p-2 ${bgColor} rounded-md focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 hover:bg-opacity-75 ${
+          isDisabled ? "cursor-not-allowed" : ""
+        }`}
+        onClick={() => !isDisabled && handleSeatSelection(seat)}
+        disabled={isDisabled}
+      >
+        {seat}
+      </button>
+    );
+  };
+
+  const seatLayout = [
+    {
+      type: "First Class",
+      rows: [
+        ["1A", "1B"],
+        ["2A", "2B"],
+      ],
+    },
+    {
+      type: "Business Class",
+      rows: [
+        ["3A", "3B", "3C", "3D"],
+        ["4A", "4B", "4C", "4D"],
+        ["5A", "5B", "5C", "5D"],
+        ["6A", "6B", "6C", "6D"],
+        ["7A", "7B", "7C", "7D"],
+      ],
+    },
+    {
+      type: "Premium Economy",
+      rows: [
+        ["8A", "8B", "8C", "8D"],
+        ["9A", "9B", "9C", "9D"],
+        ["10A", "10B", "10C", "10D"],
+        ["11A", "11B", "11C", "11D"],
+        ["12A", "12B", "12C", "12D"],
+        ["13A", "13B", "13C", "13D"],
+      ],
+    },
+    {
+      type: "Economy",
+      rows: [
+        ["14A", "14B", "14C", "", "14D", "14E", "14F"],
+        ["15A", "15B", "15C", "", "15D", "15E", "15F"],
+        ["16A", "16B", "16C", "", "16D", "16E", "16F"],
+        ["17A", "17B", "17C", "", "17D", "17E", "17F"],
+        ["18A", "18B", "18C", "", "18D", "18E", "18F"],
+        ["19A", "19B", "19C", "", "19D", "19E", "19F"],
+        ["20A", "20B", "20C", "", "20D", "20E", "20F"],
+        ["21A", "21B", "21C", "", "21D", "21E", "21F"],
+        ["22A", "22B", "22C", "", "22D", "22E", "22F"],
+        ["23A", "23B", "23C", "", "23D", "23E", "23F"],
+        ["24A", "24B", "24C", "", "24D", "24E", "24F"],
+        ["25A", "25B", "25C", "", "25D", "25E", "25F"],
+      ],
+    },
+  ];
 
   return (
     <div>
@@ -342,56 +408,29 @@ const BookingForm = ({ initialClass }) => {
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <div className="grid grid-cols-7 gap-2 p-4">
-                {["A", "B", "C", "", "D", "E", "F"].map((col, index) => (
-                  <div
-                    key={index}
-                    className="text-center font-semibold text-[#164765]"
-                  >
-                    {col}
+              {seatLayout.map((section, index) => (
+                <div key={index} className="mb-4">
+                  <h3 className="text-2xl font-semibold mb-2 text-[#164765]">
+                    {section.type}
+                  </h3>
+                  <div className="grid grid-cols-7 gap-2">
+                    {section.rows.map((row, rowIndex) => (
+                      <React.Fragment key={rowIndex}>
+                        {row.map((seat, seatIndex) =>
+                          seat === "" ? (
+                            <div key={seatIndex} className="col-span-1" />
+                          ) : (
+                            renderSeat(
+                              seat,
+                              initialClass === "Economy" && index < 1
+                            )
+                          )
+                        )}
+                      </React.Fragment>
+                    ))}
                   </div>
-                ))}
-                {[...Array(12)].map((_, row) => (
-                  <React.Fragment key={row}>
-                    <div className="col-span-7 grid grid-cols-7 gap-2">
-                      {["A", "B", "C", "", "D", "E", "F"].map((col, index) => {
-                        if (col === "") {
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center justify-center font-semibold text-[#164765]"
-                            >
-                              {row + 1}
-                            </div>
-                          );
-                        }
-                        const seat = `${row + 1}${col}`;
-                        const isBusinessClass = row < 2;
-                        const isSelected = selectedSeats.includes(seat);
-                        const isDisabled =
-                          initialClass === "Economy" && isBusinessClass;
-                        const bgColor = isDisabled
-                          ? "bg-red-500 cursor-not-allowed"
-                          : isSelected
-                          ? "bg-gray-500 text-white"
-                          : "bg-green-500 text-white";
-
-                        return (
-                          <button
-                            key={col}
-                            type="button"
-                            className={`p-2 ${bgColor} rounded-md focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 hover:bg-opacity-75`}
-                            onClick={() => handleSeatSelection(row, col)}
-                            disabled={isDisabled}
-                          >
-                            {seat}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
