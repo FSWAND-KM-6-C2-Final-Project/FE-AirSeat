@@ -1,5 +1,16 @@
 # C2-AirSeat
 
+Airseat is an android and web-based application that has features to be able to purchase airplane tickets easily and quickly.
+
+# TEAM (FRONTEND)
+
+| Name    | Job Description                    |
+| ------- | ---------------------------------- |
+| Nadilla | Home, Search Page                  |
+| Zhafira | Checkout Biodata, Checkout Payment |
+| Dhoni   | Checkout Completion, Order History |
+| Gita    | Notifications, Account             |
+
 ## Getting Started
 
 Make sure you have the following installed on your local development environment:
@@ -33,7 +44,7 @@ npm start
 - **Homepage**: Allows users to check the flight schedule and view favorite destinations.
 - **Sign In**: Users can log in to their accounts.
 - **Sign Up**: New users can create an account.
-- **Send OTP**:
+  -- **Send OTP**: Enhance security for user account management.
 - **Reset Password**: Users can reset their password if they forget it.
 - **Booking Form**: Allows users to fill in their booking details.
 - **Flight Results**: Displays available flights based on the user's search criteria.
@@ -43,14 +54,14 @@ npm start
 - **Profile**: Users can update their profile data.
 - **Notification**: Users receive notifications about discounts and any changes in flight schedules.
 
-
 ## Navigation
+
 The application uses React Router for navigation. Below are the routes defined:
 
 - **/**: Displays the homepage with a form to check flight schedules and favorite destinations.
 - **/sign-in**: Displays the sign-in page where users can log in.
 - **/sign-up**: Displays the sign-up page where new users can create an account.
-- **/otp**:
+- **/otp**: OTP verification page
 - **/reset-password**: Displays the reset password page where users can reset their password.
 - **/search**: Displays the homepage with a form to check flight schedules and favorite destinations.
 - **/booking**: Displays the booking form and flight details.
@@ -58,4 +69,3 @@ The application uses React Router for navigation. Below are the routes defined:
 - **/payment-success**: Displays the payment success message.
 - **/profile**: Displays the profile page where users can edit their profile data.
 - **/notification**: Displays notifications about discounts and any changes in flight schedules.
-

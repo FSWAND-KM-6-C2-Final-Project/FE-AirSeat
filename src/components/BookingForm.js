@@ -169,7 +169,6 @@ const BookingForm = ({ initialClass }) => {
             required
           />
         </div>
-
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
           Isi Data Penumpang
         </h2>
@@ -276,6 +275,21 @@ const BookingForm = ({ initialClass }) => {
             <div className="mb-4">
               <label className="block text-sm font-medium text-[#164765]">
                 KTP/Paspor
+              </label>
+              <select
+                name="idType"
+                value={passenger.idType}
+                onChange={(e) => handlePassengerChange(index, e)}
+                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
+                required
+              >
+                <option value="ktp">KTP</option>
+                <option value="paspor">Paspor</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-[#164765]">
+                ID Number
               </label>
               <input
                 type="text"
