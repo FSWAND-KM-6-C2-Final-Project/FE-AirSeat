@@ -9,6 +9,7 @@ const Account = () => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -65,27 +66,24 @@ const Account = () => {
         throw new Error("No authorization token found");
       }
 
-      const response = await fetch(
+      const response = await axios.patch(
         "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/profile",
         {
-          method: "PATCH",
+          full_name: name,
+          phone_number: phoneNumber,
+          email,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            full_name: name,
-            phone_number: phoneNumber,
-            email,
-          }),
         }
       );
 
-      if (!response.ok) {
-        const responseData = await response.json();
+      if (response.status !== 200) {
         throw new Error(
-          responseData.message ||
-            `Failed to update profile data: ${response.status} ${response.statusText}`
+          `Failed to update profile data: ${response.status} ${response.statusText}`
         );
       }
 
@@ -94,6 +92,44 @@ const Account = () => {
       console.error("Save profile error:", error);
       toast.error(`Error: ${error.message}`);
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authorization token found");
+      }
+
+      const response = await axios.delete(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Account deleted successfully!");
+        closeModal();
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      } else {
+        throw new Error("Failed to delete account");
+      }
+    } catch (error) {
+      console.error("Delete account error:", error);
+      toast.error(`Error: ${error.message}`);
+    }
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -117,14 +153,18 @@ const Account = () => {
         <div className="flex flex-col items-center space-y-4 p-5 mt-6 w-full md:w-1/3 lg:items-center lg:w-1/4">
           <button
             onClick={handleProfileClick}
-            className="flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300"
+            className={`flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300 ${
+              activeSection === "profile" ? "font-bold" : ""
+            }`}
           >
             <FiEdit3 className="text-customBlue1" size={24} />
             <span>Edit Profile</span>
           </button>
           <button
             onClick={handleSettingsClick}
-            className="flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300"
+            className={`flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300 ${
+              activeSection === "settings" ? "font-bold" : ""
+            }`}
           >
             <FiSettings className="text-customBlue1" size={24} />
             <span>Account Settings</span>
@@ -134,7 +174,7 @@ const Account = () => {
             className="flex items-center space-x-2 py-2 text-left w-10/12 border-b border-gray-300"
           >
             <FiLogOut className="text-customBlue1" size={24} />
-            <span>Keluar</span>
+            <span>Sign Out</span>
           </button>
           <h3 className="text-gray-500">Version 1.1.0</h3>
         </div>
@@ -142,10 +182,10 @@ const Account = () => {
         {/* edit profile card */}
         {activeSection === "profile" && (
           <div className="p-6 pt-10 bg-white border border-gray-200 rounded-lg mt-12 shadow w-full md:w-1/2 xl:w-1/3 md:ml-2">
-            <h2 className="font-bold text-xl mb-4">Ubah Data Profil</h2>
+            <h2 className="font-bold text-xl mb-4">Edit Profile Data</h2>
             <form className="flex flex-col" onSubmit={handleSave}>
               <p className="bg-customBlue2 text-white w-full h-10 rounded-t-lg p-2 mb-3">
-                Data Diri
+                Personal Data
               </p>
               <div>
                 <label
@@ -169,7 +209,7 @@ const Account = () => {
                   htmlFor="phoneNumber"
                   className="block font-bold text-customBlue1 ml-5"
                 >
-                  Nomor Telepon
+                  Phone Number
                 </label>
                 <input
                   type="tel"
@@ -209,10 +249,20 @@ const Account = () => {
           </div>
         )}
 
-        {/* account setting card */}
+        {/* Account Settings Card */}
         {activeSection === "settings" && (
-          <div className="p-6 pt-10 bg-white border border-gray-200 rounded-lg mt-12 shadow w-full  md:w-1/2 lg:w-1/3 md:ml-6">
-            <h2 className="font-bold text-xl mb-4">Pengaturan Akun</h2>
+          <div className="p-6 pt-10 bg-white border border-gray-200 rounded-lg mt-12 shadow w-full md:w-1/2 lg:w-1/3 md:ml-6">
+            <h2 className="font-bold text-xl mb-4">Delete Account</h2>
+            <p className="text-gray-600 mb-4">
+              This action cannot be undone. Please continue with caution
+            </p>
+
+            <button
+              onClick={openModal}
+              className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600"
+            >
+              Delete
+            </button>
           </div>
         )}
       </div>
@@ -233,6 +283,33 @@ const Account = () => {
           textAlign: "center",
         }}
       />
+
+      {/* Delete Account Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+          <div className="bg-white px-6 py-10 rounded-lg w-96">
+            <h2 className="text-lg font-bold mb-4">Confirm Delete Account</h2>
+            <p className="text-gray-600 text-left mb-6">
+              Are you sure you want to delete your account? <br /> This action
+              can not be cancelled.
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={closeModal}
+                className="text-gray-500 mr-4 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
