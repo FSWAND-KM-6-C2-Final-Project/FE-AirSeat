@@ -14,7 +14,10 @@ import SearchPage from "./pages/SearchPage";
 import OrderHistory from "./pages/OrderHistoryPage";
 import OrderHistoryEmpty from "./pages/OrderHistoryEmptyPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import UnauthenticatePage from "./pages/UnauthenticatePage";
+import RequestResetPasswordPage from "./pages/RequestResetPasswordPage";
 import "./index.css";
+import OTPResetPasswordPage from "./pages/OTPResetPasswordPage";
 
 function App() {
   return (
@@ -26,6 +29,14 @@ function App() {
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/activation/otp" element={<OTPPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/reset-password/request"
+            element={<RequestResetPasswordPage />}
+          />
+          <Route
+            path="/reset-password/otp"
+            element={<OTPResetPasswordPage />}
+          />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<PaymentPage />} />
@@ -34,6 +45,7 @@ function App() {
           <Route path="/notification" element={<NotificationPage />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/order-history-empty" element={<OrderHistoryEmpty />} />
+          <Route path="/restricted" element={<UnauthenticatePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
