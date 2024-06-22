@@ -22,6 +22,8 @@ import { getAirportData } from "../services/airport.service";
 import dayjs from "dayjs";
 import { getFlightData } from "../services/flight.service";
 
+import "react-toastify/dist/ReactToastify.css";
+
 const Home = () => {
   const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState("All");
