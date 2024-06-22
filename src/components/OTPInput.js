@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
 
 const OTPInput = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
-  const [timer, setTimer] = useState(60);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state || {};
+  const { email, resend_at } = location.state || {};
+
+  const initialTimer = Math.max(dayjs(resend_at).diff(dayjs(), "second"), 0);
+  const [timer, setTimer] = useState(initialTimer);
 
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
-        setTimer(timer - 1);
+        setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
       }, 1000);
 
       return () => clearInterval(interval);
@@ -58,10 +62,30 @@ const OTPInput = () => {
         throw new Error(errorData.message || "OTP verification failed");
       }
 
-      toast.success("OTP verification successful! Please log in.");
+      toast.success("OTP verification successful! Please log in.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       navigate("/sign-in");
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -83,10 +107,30 @@ const OTPInput = () => {
         throw new Error(errorData.message || "Failed to resend OTP");
       }
 
-      toast.success("OTP has been resent. Please check your email.");
+      toast.success("OTP has been resent. Please check your email.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       setTimer(60);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

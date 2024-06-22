@@ -24,7 +24,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/otp" element={<OTPPage />} />
+          <Route path="/activation/otp" element={<OTPPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/booking" element={<BookingPage />} />

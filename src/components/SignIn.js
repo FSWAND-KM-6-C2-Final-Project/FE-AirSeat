@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
 import Logo from "../images/logo_airseat.png";
 import { signIn } from "../services/auth.service";
 import { ToastContainer, toast, Bounce } from "react-toastify";
