@@ -14,7 +14,7 @@ const UnauthenticatePage = () => {
         />
         <h1 className="text-4xl font-bold">Oooppsss...</h1>
         <p className="text-lg mt-4">
-          Your session is expired, please sign in again.
+          Your are not logged in, please sign in again.
         </p>
         <Link
           to="/sign-in"
