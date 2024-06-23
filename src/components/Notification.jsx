@@ -65,18 +65,11 @@ const Notification = () => {
   };
 
   const filteredNotifications = notifications.filter((notification) => {
-    const matchesCategory =
+    return (
       selectedCategory === "All" ||
       notification.notification_type.toLowerCase() ===
-        selectedCategory.toLowerCase();
-    const matchesSearch =
-      notification.notification_title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      notification.notification_description
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+        selectedCategory.toLowerCase()
+    );
   });
 
   const indexOfLastNotification = currentPage * notificationsPerPage;
@@ -99,10 +92,10 @@ const Notification = () => {
     <>
       <div className="p-10 shadow-md h-44 mx-auto mb-10">
         <h2
-          className={`font-bold text-xl text-left ml-6 sm:ml-4 md:ml-12 lg:ml-16 xl:ml-32 2xl:ml-40 ${
+          className={`font-bold text-xl text-left ml-2 sm:ml-4 md:ml-12 lg:ml-16 xl:ml-32 2xl:ml-40 ${
             searchVisible
-              ? "transform translate-x-[-45px] sm:translate-x-[-35px] md:translate-x-[-60px] lg:translate-x-[-80px] xl:translate-x-[-135px] transition-transform duration-300"
-              : ""
+              ? "transform sm:translate-x-[-35px] md:translate-x-[-60px] lg:translate-x-[-80px] xl:translate-x-[-135px] transition-transform duration-300"
+              : "transition-transform duration-300"
           }`}
         >
           Notifikasi
@@ -110,8 +103,8 @@ const Notification = () => {
         <div
           className={`flex justify-center md:justify-start ${
             searchVisible
-              ? "transform translate-x-[-65px] lg:translate-x-[-80px] xl:translate-x-[-125px] transition-transform duration-300"
-              : ""
+              ? "transform sm:translate-x-[-65px] lg:translate-x-[-80px] xl:translate-x-[-125px] transition-transform duration-300"
+              : "transition-transform duration-300"
           }`}
         >
           <Link
@@ -151,7 +144,7 @@ const Notification = () => {
                     Notifikasi
                   </button>
                   <button
-                    onClick={() => handleCategoryChange("promosi")}
+                    onClick={() => handleCategoryChange("promotion")}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
                     Promosi
@@ -167,13 +160,28 @@ const Notification = () => {
               onClick={() => setSearchVisible(!searchVisible)}
             />
             {searchVisible && (
-              <input
-                type="text"
-                className="absolute top-0 left-10 border border-customBlue2 rounded-md px-4 py-1 w-32 md:w-36 xl:w-44 2xl:w-60"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <>
+                {window.innerWidth < 640 ? (
+                  <div className="absolute mt-4 right-1 sm:top-0 sm:left-10 bg-white border border-customBlue2 rounded-md shadow-md p-2">
+                    <div className="absolute top-[-5px] right-6 w-4 h-4 bg-white border-l border-t border-customBlue2 rotate-45 transform origin-bottom-right"></div>
+                    <input
+                      type="text"
+                      className="w-32 md:w-36 xl:w-44 2xl:w-60 px-4 py-1 mt-2 border-customBlue2 rounded-md"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    className="absolute top-0 left-10 border border-customBlue2 rounded-md px-4 py-1 w-32 md:w-36 xl:w-44 2xl:w-60"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
