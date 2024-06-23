@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import { CiHeart } from "react-icons/ci";
 import { LuArrowUpDown } from "react-icons/lu";
@@ -6,57 +7,6 @@ import FlightAccordion from "./FlightAccordion";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import loadingIcon from "../icons/loading.svg";
 import emptyIcon from "../icons/empty.svg";
-
-const flights = [
-  {
-    id: 1,
-    airline: "Jet Air",
-    class: "Economy",
-    departureTime: "07:00",
-    arrivalTime: "12:00",
-    totalTime: "4h 0m",
-    type: "Direct",
-    departureAirportId: "JKT",
-    arrivalAirportId: "MLB",
-    price: "IDR 98.950.000",
-    date: "3 Maret 2023",
-    dep_airport: "Soekarno Hatta - Terminal 1A Domestik",
-    code: "JT - 203",
-    arr_airport: "Melbourne International Airport",
-  },
-  {
-    id: 2,
-    airline: "AirAsia",
-    class: "Economy",
-    departureTime: "09:00",
-    arrivalTime: "14:00",
-    totalTime: "5h 0m",
-    type: "Direct",
-    departureAirportId: "JKT",
-    arrivalAirportId: "MLB",
-    price: "IDR 5.200.000",
-    date: "4 Maret 2023",
-    dep_airport: "Soekarno Hatta - Terminal 1B Domestik",
-    code: "AA - 101",
-    arr_airport: "Melbourne International Airport",
-  },
-  {
-    id: 3,
-    airline: "Garuda Indonesia",
-    class: "Business",
-    departureTime: "11:00",
-    arrivalTime: "16:00",
-    totalTime: "5h 0m",
-    type: "Direct",
-    departureAirportId: "JKT",
-    arrivalAirportId: "MLB",
-    price: "IDR 10.500.000",
-    date: "5 Maret 2023",
-    dep_airport: "Soekarno Hatta - Terminal 2F Internasional",
-    code: "GA - 305",
-    arr_airport: "Melbourne International Airport",
-  },
-];
 
 const sortingOptions = [
   "Price - Cheapest",
@@ -153,21 +103,23 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
 
 const FlightResults = () => {
   const [showModal, setShowModal] = useState(false);
-  const flightData = flights;
+  const [flightData, setFlightData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState(0);
 
   useEffect(() => {
-    setTimeout(() => {
-      handleLoading();
-    }, 1000);
+    fetchFlightData();
   }, []);
 
-  const handleLoading = () => {
-    if (!isLoading) {
-      setTimeout(() => {
-        setIsLoading(true);
-      }, 1000);
+  const fetchFlightData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/flight");
+      setFlightData(response.data);
+    } catch (error) {
+      console.error("Error fetching flight data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -222,7 +174,7 @@ const FlightResults = () => {
 
         <div className="p-4 col-span-5">
           <div className="space-y-5">
-            {!isLoading ? (
+            {isLoading ? (
               <div className="flex justify-center">
                 <img
                   src={loadingIcon}
