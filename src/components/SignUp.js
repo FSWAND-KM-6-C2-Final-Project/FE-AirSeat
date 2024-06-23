@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Logo from "../images/logo_airseat.png";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import Loading from "./Loading";
+import FormValidation from "./FormValidation";
+import { checkIsActivationExist, signUp } from "../services/auth.service";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -10,48 +16,140 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+
+  // Form Error state
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSignUp = async (event) => {
-    event.preventDefault();
+  const handleSignUp = async () => {
+    let valid = true;
+    if (!fullName) {
+      setFullNameError("Full name is required");
+      valid = false;
+    } else {
+      setFullNameError("");
+    }
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+    if (!email) {
+      setEmailError("Email is required");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!phoneNumber) {
+      setPhoneNumberError("Phone Number is required");
+      valid = false;
+    } else {
+      setPhoneNumberError("");
+    }
+
+    if (!confirmPassword) {
+      setConfirmPasswordError("Confirm Password is required");
+      valid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      valid = false;
+    } else if (password !== confirmPassword) {
+      setPasswordError("Password & Confirm Password do not match");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) {
       return;
     }
 
+    setIsFetching(true);
+
     try {
-      const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            full_name: fullName,
-            email: email,
-            phone_number: phoneNumber,
-            password: password,
-            confirm_password: confirmPassword,
-          }),
-        }
-      );
+      const reqBody = JSON.stringify({
+        full_name: fullName,
+        email: email,
+        phone_number: phoneNumber,
+        password: password,
+        confirm_password: confirmPassword,
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+      const response = await signUp(reqBody);
+
+      if (response) {
+        Swal.fire({
+          title: response.message,
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "Verify Your Account",
+          confirmButtonColor: "#447C9D",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/activation/otp", {
+              state: {
+                email: response.data.email,
+                resend_at: response.data.verification_user_resend_at,
+              },
+            });
+          }
+        });
       }
-
-      alert("Registration successful! Please verify your email.");
-      navigate("/otp", { state: { email } });
-    } catch (error) {
-      alert(error.message);
+    } catch (err) {
+      if (err.message === "Email is already registered") {
+        try {
+          const reqBodyCheck = JSON.stringify({
+            email,
+            code: "99999",
+          });
+          await checkIsActivationExist(reqBodyCheck);
+        } catch (errActivation) {
+          if (errActivation.message === "OTP Code is wrong") {
+            navigate("/activation/otp", {
+              state: {
+                email: email,
+              },
+            });
+          } else {
+            toast.error(err.message, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          }
+        }
+      } else {
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
+    setIsFetching(false);
   };
 
   const handleSignIn = () => {
@@ -62,6 +160,10 @@ const SignUp = () => {
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-8">
         <div className="flex flex-col justify-center items-center text-center md:text-left">
+          <ToastContainer />
+
+          <img className="w-[200px] mb-3" src={Logo} />
+
           <h1 className="text-3xl md:text-5xl font-bold text-customBlue2">
             AirSeat
           </h1>
@@ -78,91 +180,99 @@ const SignUp = () => {
           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
             Sign Up
           </h2>
-          <form onSubmit={handleSignUp}>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Full Name</label>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">Full Name</label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Full Name"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            {fullNameError && <FormValidation errorMessage={fullNameError} />}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            {emailError && <FormValidation errorMessage={emailError} />}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">Phone</label>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="Phone"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            {phoneNumberError && (
+              <FormValidation errorMessage={phoneNumberError} />
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">Password</label>
+            <div className="relative">
               <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Full Name"
+                type={passwordVisible ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Phone</label>
-              <input
-                type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Phone"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Password</label>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-                />
-                <div
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-500"
-                  onClick={togglePasswordVisibility}
-                >
-                  {passwordVisible ? (
-                    <AiFillEyeInvisible size={24} />
-                  ) : (
-                    <AiFillEye size={24} />
-                  )}
-                </div>
+              <div
+                className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                onClick={togglePasswordVisibility}
+              >
+                {passwordVisible ? (
+                  <AiFillEyeInvisible size={24} />
+                ) : (
+                  <AiFillEye size={24} />
+                )}
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm Password"
-                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-                />
-                <div
-                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
-                  onClick={togglePasswordVisibility}
-                  style={{ top: "50%", transform: "translateY(-50%)" }}
-                >
-                  {passwordVisible ? (
-                    <AiFillEyeInvisible size={24} />
-                  ) : (
-                    <AiFillEye size={24} />
-                  )}
-                </div>
+            {passwordError && <FormValidation errorMessage={passwordError} />}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                type={passwordVisible ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm Password"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+              />
+              <div
+                className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                onClick={togglePasswordVisibility}
+                style={{ top: "50%", transform: "translateY(-50%)" }}
+              >
+                {passwordVisible ? (
+                  <AiFillEyeInvisible size={24} />
+                ) : (
+                  <AiFillEye size={24} />
+                )}
               </div>
             </div>
-            <button
-              type="submit"
-              className="w-full bg-customBlue2 text-white py-2 rounded-md mt-12 flex items-center justify-center hover:bg-customBlue1"
-            >
-              Sign Up
-            </button>
-          </form>
+            {confirmPasswordError && (
+              <FormValidation errorMessage={confirmPasswordError} />
+            )}
+          </div>
+          <button
+            onClick={handleSignUp}
+            className="w-full bg-customBlue2 text-white py-2 rounded-md mt-12 flex items-center justify-center hover:bg-customBlue1"
+          >
+            {isFetching && <Loading />}
+            {!isFetching && "Sign Up"}
+          </button>
           <p className="mt-4 text-center">
             Already have an account?{" "}
             <span

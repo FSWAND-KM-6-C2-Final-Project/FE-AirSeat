@@ -2,65 +2,92 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
+import Logo from "../images/logo_airseat.png";
+import { signIn } from "../services/auth.service";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import Loading from "./Loading";
+import FormValidation from "./FormValidation";
 
 const SignIn = () => {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleSignIn = async (event) => {
-    event.preventDefault();
+  const handleSignIn = async () => {
+    setEmailError("");
+    setPasswordError("");
 
-    const response = await fetch(
-      "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailOrPhone,
-          password: password,
-        }),
-      }
-    );
-
-    const data = await response.json();
-    if (response.ok) {
-      const token = data.token;
-      localStorage.setItem("token", token);
-      // Navigate to home page or dashboard
-      navigate("/");
+    let valid = true;
+    if (!emailOrPhone) {
+      setEmailError("Email or Phone is required");
+      valid = false;
     } else {
-      // Handle error
-      console.error(data);
-      alert("Login failed. Please check your credentials.");
+      setEmailError("");
     }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) {
+      return;
+    }
+
+    setIsFetching(true);
+
+    try {
+      const reqBody = JSON.stringify({
+        email: emailOrPhone,
+        password: password,
+      });
+
+      const response = await signIn(reqBody);
+
+      const token = response.token;
+
+      localStorage.setItem("token", token);
+      navigate("/");
+    } catch (err) {
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+    setIsFetching(false);
   };
 
   const handleForgotPassword = () => {
-    navigate("/reset-password");
+    navigate("/reset-password/request");
   };
 
   const handleSignUp = () => {
     navigate("/sign-up");
   };
 
-  const handleGoogleSignIn = () => {
-    // Add your Google sign-in logic here
-    console.log("Google sign-in clicked");
-  };
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-0">
         <div className="flex flex-col justify-center items-center text-center md:text-left">
+          <ToastContainer />
+          <img className="w-[200px] mb-3" src={Logo} />
           <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">
             AirSeat
           </h1>
@@ -77,66 +104,57 @@ const SignIn = () => {
           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">
             Sign In
           </h2>
-          <form onSubmit={handleSignIn}>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">
-                Email or Phone
-              </label>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">
+              Email or Phone
+            </label>
+            <input
+              type="email"
+              value={emailOrPhone}
+              onChange={(e) => setEmailOrPhone(e.target.value)}
+              placeholder="Email/Phone"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            {emailError && <FormValidation errorMessage={emailError} />}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold">Password</label>
+            <div className="relative">
               <input
-                type="email"
-                value={emailOrPhone}
-                onChange={(e) => setEmailOrPhone(e.target.value)}
-                placeholder="Email/Phone"
+                type={passwordVisible ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Password</label>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-                />
-                <div
-                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
-                  onClick={togglePasswordVisibility}
-                  style={{ top: "50%", transform: "translateY(-50%)" }}
-                >
-                  {passwordVisible ? (
-                    <AiFillEyeInvisible size={24} />
-                  ) : (
-                    <AiFillEye size={24} />
-                  )}
-                </div>
-              </div>
-              <span
-                className="text-sm text-customBlue2 hover:text-customBlue1 font-bold float-right mb-10 mt-3 cursor-pointer"
-                onClick={handleForgotPassword}
+              <div
+                className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                onClick={togglePasswordVisibility}
+                style={{ top: "50%", transform: "translateY(-50%)" }}
               >
-                Forgot Password?
-              </span>
+                {passwordVisible ? (
+                  <AiFillEyeInvisible size={24} />
+                ) : (
+                  <AiFillEye size={24} />
+                )}
+              </div>
             </div>
-            <button
-              type="submit"
-              className="w-full bg-customBlue2 text-white py-2 rounded-md flex items-center justify-center hover:bg-customBlue1"
+            {passwordError && <FormValidation errorMessage={passwordError} />}
+
+            <span
+              className="text-sm text-customBlue2 hover:text-customBlue1 font-bold float-right mb-10 mt-3 cursor-pointer"
+              onClick={handleForgotPassword}
             >
-              Sign In
-            </button>
-          </form>
-          <div className="flex items-center my-4">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="mx-4 text-gray-500">or</span>
-            <hr className="flex-grow border-t border-gray-300" />
+              Forgot Password?
+            </span>
           </div>
           <button
-            onClick={handleGoogleSignIn}
-            className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-md flex items-center justify-center hover:bg-gray-100"
+            disabled={isFetching}
+            onClick={handleSignIn}
+            className="w-full bg-customBlue2 text-white py-2 rounded-md flex items-center justify-center hover:bg-customBlue1"
           >
-            <FcGoogle size={24} className="mr-2" />
-            Continue with Google
+            {isFetching && <Loading />}
+            {!isFetching && "Sign In"}
           </button>
           <p className="mt-4 text-center">
             Don't have an account?{" "}
