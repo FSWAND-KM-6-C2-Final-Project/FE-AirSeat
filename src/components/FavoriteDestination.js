@@ -5,6 +5,8 @@ import NotFoundError from "./NotFoundError";
 import notFoundImage from "../images/not-found.png";
 
 const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
 
 const FavoriteDestination = ({
   data,
@@ -55,7 +57,9 @@ const FavoriteDestination = ({
                 </h3>
                 <p>{destination.airline.airline_name}</p>
                 <p>
-                  {dayjs(destination.departure_time).format("DD MMMM YYYY")}
+                  {dayjs(destination.departure_time)
+                    .utc()
+                    .format("DD MMMM YYYY")}
                 </p>
                 <p className="text-red-600 font-bold">
                   Start from{" "}
