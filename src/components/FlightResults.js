@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import { CiHeart } from "react-icons/ci";
 import { LuArrowUpDown } from "react-icons/lu";
@@ -7,6 +6,12 @@ import FlightAccordion from "./FlightAccordion";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import loadingIcon from "../icons/loading.svg";
 import emptyIcon from "../icons/empty.svg";
+import { getFlightData } from "../services/flight.service";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 const sortingOptions = [
   "Price - Cheapest",
@@ -20,6 +25,10 @@ const sortingOptions = [
 
 const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
   const [selectedOption, setSelectedOption] = useState(0);
+
+  const dayjs = require("dayjs");
+  const utc = require("dayjs/plugin/utc");
+  dayjs.extend(utc);
 
   useEffect(() => {
     setSelectedOption(0);
@@ -106,6 +115,15 @@ const FlightResults = () => {
   const [flightData, setFlightData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const departure_airport_id = searchParams.get("deptAirport");
+  const arrival_airport_id = searchParams.get("arrAirport");
+  const departure_data = searchParams.get("deptDate");
+  const adult = searchParams.get("adult");
+  const children = searchParams.get("children");
+  const infant = searchParams.get("infant");
+  const seatClass = searchParams.get("class");
 
   useEffect(() => {
     fetchFlightData();
@@ -114,13 +132,17 @@ const FlightResults = () => {
   const fetchFlightData = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/flight");
-      setFlightData(response.data);
-    } catch (error) {
-      console.error("Error fetching flight data:", error);
-    } finally {
-      setIsLoading(false);
+      const flights = await getFlightData(
+        departure_airport_id,
+        arrival_airport_id,
+        departure_data
+      );
+
+      setFlightData(flights.data.flights);
+    } catch (err) {
+      console.log(err.message);
     }
+    setIsLoading(false);
   };
 
   const toggleModal = () => {
@@ -188,19 +210,23 @@ const FlightResults = () => {
                   flightData.map((data) => (
                     <FlightAccordion
                       key={data.id}
-                      airline={data.airline}
-                      flightClass={data.class}
-                      departureTime={data.departureTime}
-                      arrivalTime={data.arrivalTime}
-                      totalTime={data.totalTime}
-                      type={data.type}
-                      departureAirportId={data.departureAirportId}
-                      arrivalAirportId={data.arrivalAirportId}
-                      price={data.price}
+                      airline={data.airline.airline_name}
+                      flightClass={seatClass}
+                      departureTime={data.departure_time}
+                      arrivalTime={data.arrival_time}
+                      totalTime={data.duration}
+                      type={"Direct"}
+                      logo={data.airline.airline_picture}
+                      departureAirportId={
+                        data.departureAirport.airport_city_code
+                      }
+                      arrivalAirportId={data.arrivalAirport.airport_city_code}
+                      price={data.price_economy}
                       date={data.date}
-                      dep_airport={data.dep_airport}
-                      code={data.code}
-                      arr_airport={data.arr_airport}
+                      information={data.information}
+                      dep_airport={data.departureAirport.airport_name}
+                      code={data.flight_number}
+                      arr_airport={data.arrivalAirport.airport_name}
                     />
                   ))
                 ) : (

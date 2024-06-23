@@ -2,13 +2,48 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { format, addDays } from "date-fns";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { seoTitle } from "string-fn";
+import { getAirportDataById } from "../services/airport.service";
 
-const FlightSelection = ({ fromCity, toCity, passengers, seatClass }) => {
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const customParseFormat = require("dayjs/plugin/customParseFormat");
+dayjs.extend(customParseFormat);
+dayjs.extend(utc);
+
+const FlightSelection = ({ fromCity, toCity, passengers }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedDay, setSelectedDay] = useState(0);
   const [dates, setDates] = useState([]);
+  const [totalPassenger, setTotalPassenger] = useState(0);
+  const [seatClass, setSeatClass] = useState("");
+  const [departureAirport, setDepartureAirport] = useState("");
+  const [arrivalAirport, setArrivalAirport] = useState("");
 
   useEffect(() => {
-    const today = new Date();
+    const adult = parseInt(searchParams.get("adult"));
+    const infant = parseInt(searchParams.get("infant"));
+    const children = parseInt(searchParams.get("children"));
+
+    const total = adult + infant + children;
+
+    setTotalPassenger(total);
+    setSeatClass(searchParams.get("class"));
+
+    fetchDepartureAirport(searchParams.get("deptAirport"));
+    fetchArrivalAirport(searchParams.get("arrAirport"));
+
+    const departure_date = dayjs(
+      searchParams.get("deptDate"),
+      "DD-MM-YYYY"
+    ).toISOString();
+
+    const today = departure_date;
     const generateDates = () => {
       const dateArray = [];
       for (let i = 0; i < 7; i++) {
@@ -24,6 +59,26 @@ const FlightSelection = ({ fromCity, toCity, passengers, seatClass }) => {
     setDates(generateDates());
   }, []);
 
+  const fetchDepartureAirport = async (id) => {
+    try {
+      const airport = await getAirportDataById(id);
+
+      setDepartureAirport(airport.data.airport.airport_name);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const fetchArrivalAirport = async (id) => {
+    try {
+      const airport = await getAirportDataById(id);
+
+      setArrivalAirport(airport.data.airport.airport_name);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   const handleDayClick = (index) => {
     setSelectedDay(index);
   };
@@ -37,7 +92,11 @@ const FlightSelection = ({ fromCity, toCity, passengers, seatClass }) => {
           className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-7/12 mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
         >
           <FiArrowLeft size={24} className="mr-2" />
-          {`${fromCity} > ${toCity} - ${passengers} Passengers - ${seatClass}`}
+          {`${departureAirport && departureAirport}  →  ${
+            arrivalAirport && arrivalAirport
+          } - ${totalPassenger && totalPassenger} Passengers - ${seoTitle(
+            seatClass && seatClass
+          )}`}
         </Link>
         <Link
           to={"/"}

@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import thumbnail from "../icons/thumbnail.svg";
 import baggage from "../icons/baggage.svg";
+import { seoTitle } from "string-fn";
 
 export default function FlightAccordion(props) {
   const {
@@ -17,12 +18,18 @@ export default function FlightAccordion(props) {
     date,
     dep_airport,
     code,
+    information,
     arr_airport,
+    logo,
   } = props;
-  const [accordionOpen, setAccordionOpen] = useState(false); // State untuk mengontrol status terbuka atau tertutupnya accordion
+  const [accordionOpen, setAccordionOpen] = useState(false);
+
+  const dayjs = require("dayjs");
+  const utc = require("dayjs/plugin/utc");
+  dayjs.extend(utc);
 
   function toggleAccordion() {
-    setAccordionOpen(!accordionOpen); // Toggle state accordionOpen
+    setAccordionOpen(!accordionOpen);
   }
 
   return (
@@ -42,17 +49,19 @@ export default function FlightAccordion(props) {
           >
             <span className="w-full">
               <div className="flex items-center gap-3">
-                <img src={thumbnail} alt="" />
+                <img className="w-10" src={logo} alt="" />
                 <div className="">
                   <p class="">
-                    {airline} - {flightClass}
+                    {airline} - {seoTitle(flightClass)}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex w-full items-center mt-5 text-xs sm:text-xs md:text-base lg:text-base xl:text-base">
                   <div>
-                    <p className="font-bold">{departureTime}</p>
+                    <p className="font-bold">
+                      {dayjs(departureTime).utc().format("HH:mm")}
+                    </p>
                     <p className="font-semibold">{departureAirportId}</p>
                   </div>
                   <div className="flex-grow">
@@ -61,7 +70,9 @@ export default function FlightAccordion(props) {
                     <p>{type}</p>
                   </div>
                   <div>
-                    <p className="font-bold">{arrivalTime}</p>
+                    <p className="font-bold">
+                      {dayjs(arrivalTime).utc().format("HH:mm")}
+                    </p>
                     <p className="font-semibold">{arrivalAirportId}</p>
                   </div>
                 </div>
@@ -75,9 +86,16 @@ export default function FlightAccordion(props) {
                 </div> */}
                 <div className="flex flex-col items-center space-y-2 w-56">
                   <p className="text-customBlue1 font-bold xl:text-xl lg:text-lg sm:text-sm">
-                    {price}
+                    {new Intl.NumberFormat("id", {
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }).format(price)}
                   </p>
-                  <button className="bg-customBlue2 rounded-lg w-20 p-1 sm:w-20 sm:p-2 md:w-20 md:p-2 lg:w-32 lg:p-2 hover:bg-customBlue1 text-white text-xs sm:text-sm md:text-sm lg:text-lg">
+                  <button
+                    onClick={() => console.log("clicked")}
+                    className="bg-customBlue2 rounded-lg w-20 p-1 sm:w-20 sm:p-2 md:w-20 md:p-2 lg:w-32 lg:p-2 hover:bg-customBlue1 text-white text-xs sm:text-sm md:text-sm lg:text-lg"
+                  >
                     Select
                   </button>
                 </div>
@@ -121,8 +139,10 @@ export default function FlightAccordion(props) {
             </div>
             <div className="flex justify-between mt-5">
               <div>
-                <p className="font-bold">07:00</p>
-                <p>{date}</p>
+                <p className="font-bold">
+                  {dayjs(departureTime).utc().format("HH:mm")}
+                </p>
+                <p>{dayjs(departureTime).utc().format("DD MMMM YYYY")}</p>
                 <p className="font-semibold">{dep_airport}</p>
               </div>
               <div>
@@ -134,20 +154,18 @@ export default function FlightAccordion(props) {
             </div>
             <div className="flex items-center gap-5">
               <div>
-                <img src={thumbnail} alt="" />
+                <img className="w-10" src={logo} alt="" />
               </div>
               <div>
                 <div>
-                  <p className="font-bold">
-                    {airline} - {flightClass}
+                  <p className="font-bold ">
+                    {airline} - {seoTitle(flightClass)}
                   </p>
                   <p className="font-bold">{code}</p>
                 </div>
                 <div className="mt-3">
                   <p className="font-bold">Information:</p>
-                  <p>Baggage 20 kg</p>
-                  <p>Cabin Baggage 7 kg</p>
-                  <p>In Flight Entertaimet</p>
+                  <p className="whitespace-pre-wrap">{information}</p>
                 </div>
               </div>
             </div>
@@ -156,8 +174,10 @@ export default function FlightAccordion(props) {
             </div>
             <div className="flex justify-between mt-5">
               <div>
-                <p className="font-bold">{arrivalTime}</p>
-                <p>{date}</p>
+                <p className="font-bold">
+                  {dayjs(arrivalTime).utc().format("HH:mm")}
+                </p>
+                <p>{dayjs(arrivalTime).utc().format("DD MMMM YYYY")}</p>
                 <p className="font-semibold">{arr_airport}</p>
               </div>
               <div>

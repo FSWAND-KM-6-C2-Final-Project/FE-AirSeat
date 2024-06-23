@@ -7,3 +7,11 @@ export async function getAirportData() {
 
   return resData;
 }
+
+export async function getAirportDataById(id) {
+  const response = await fetch(`${BASE_URL}/api/v1/airport/${id}`);
+
+  const resData = await response.json();
+
+  return resData;
+}
