@@ -4,35 +4,33 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
+import { changePassword } from "../services/resetPassword.service";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Swal from "sweetalert2";
 
-const OTPInput = () => {
+const OTPInputResetPassword = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
 
   const navigate = useNavigate();
   const location = useLocation();
   const { email, resend_at } = location.state || {};
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
 
   const initialTimer = Math.max(dayjs(resend_at).diff(dayjs(), "second"), 0);
   const [timer, setTimer] = useState(initialTimer);
 
   useEffect(() => {
-    if (!email && !resend_at) {
-      Swal.fire({
-        title: "You don't have user activation request, please sign up first",
-        icon: "error",
-        showConfirmButton: true,
-        confirmButtonText: "Sign Up",
-        confirmButtonColor: "#447C9D",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate("/sign-up");
-        } else if (result.dismiss) {
-          navigate("/sign-up");
-        }
-      });
-    }
-
     if (timer > 0) {
       const interval = setInterval(() => {
         setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
@@ -55,46 +53,32 @@ const OTPInput = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const otpCode = otp.join("");
-
+  const handleSubmit = async () => {
+    const reqBody = JSON.stringify({
+      email: email,
+      password: newPassword,
+      confirm_password: confirmNewPassword,
+      code: otp.join(""),
+    });
     try {
-      const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/verify",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            code: otpCode,
-          }),
-        }
-      );
-
-      const resData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(resData.message || "OTP verification failed");
+      const response = await changePassword(reqBody);
+      if (response) {
+        Swal.fire({
+          title: response.message,
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "Sign In",
+          confirmButtonColor: "#447C9D",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/sign-in");
+          } else if (result.dismiss) {
+            navigate("/sign-in");
+          }
+        });
       }
-
-      Swal.fire({
-        title: resData.message,
-        icon: "success",
-        showConfirmButton: true,
-        confirmButtonText: "Sign In",
-        confirmButtonColor: "#447C9D",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate("/sign-in");
-        } else if (result.dismiss) {
-          navigate("/sign-in");
-        }
-      });
-    } catch (error) {
-      toast.error(error.message, {
+    } catch (err) {
+      toast.error(err.message, {
         position: "bottom-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -111,7 +95,7 @@ const OTPInput = () => {
   const handleResend = async () => {
     try {
       const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/resend",
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/password-reset/resend",
         {
           method: "POST",
           headers: {
@@ -170,10 +154,7 @@ const OTPInput = () => {
       <p className="mt-5 text-center text-sm text-gray-600">
         We have sent the verification code to <strong>{email}</strong>
       </p>
-      <form
-        className="mt-4 mb-8 space-y-6 w-full max-w-md"
-        onSubmit={handleSubmit}
-      >
+      <div className="mt-4 mb-8 space-y-6 w-full max-w-md">
         <div className="flex justify-center space-x-2">
           {otp.map((data, index) => (
             <input
@@ -205,17 +186,65 @@ const OTPInput = () => {
             </p>
           )}
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold">Password</label>
+          <div className="relative">
+            <input
+              type={passwordVisible ? "text" : "password"}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            <div
+              className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+              onClick={togglePasswordVisibility}
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              {passwordVisible ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={confirmPasswordVisible ? "text" : "password"}
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            <div
+              className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+              onClick={toggleConfirmPasswordVisibility}
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              {confirmPasswordVisible ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </div>
+          </div>
+        </div>
         <div className="flex justify-center mt-4">
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="w-full mt-10 py-2 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-customBlue2 hover:bg-customBlue1"
           >
-            Submit
+            Change Password
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
 
-export default OTPInput;
+export default OTPInputResetPassword;

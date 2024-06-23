@@ -5,7 +5,7 @@ const Error = ({ statusCode, errorTitle, errorMessage, errorImage }) => {
     <div className="flex flex-col items-center justify-center min-h-screen text-center error-message p-5">
       {errorImage && (
         <img
-          className="w-[200px] sm:w-[300px] h-auto mb-10"
+          className="h-[100px] sm:h-[200px] w-auto mb-10"
           src={errorImage}
           alt={errorTitle}
         />

@@ -40,6 +40,7 @@ const Home = () => {
   const [premiumEconomyPrice, setPremiumEconomyPrice] = useState("");
   const [businessPrice, setBusinessPrice] = useState("");
   const [firstClassPrice, setFirstClassPrice] = useState("");
+  const [returnDate, setReturnDate] = useState("");
   const [formData, setFormData] = useState({
     deptAirport: null,
     arrAirport: null,
@@ -56,6 +57,7 @@ const Home = () => {
   const [cities, setCities] = useState([]);
   const [favoriteDestination, setFavoriteDestination] = useState([]);
   const [continent, setContinent] = useState("");
+  const [deptDateVal, setDeptDateVal] = useState("");
   const [passengers, setPassengers] = useState({
     adults: 0,
     children: 0,
@@ -231,19 +233,28 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const storeFormData = () => ({
-      deptAirport: deptCity,
-      arrAirport: arrCity,
-      deptDate: deptDate ? dayjs(deptDate).format("DD-MM-YYYY") : undefined,
-      adult: tempPassengers.adults || 0,
-      infant: tempPassengers.infants || 0,
-      children: tempPassengers.children || 0,
-      class: slugify(tempSeatClass, {
-        delimiter: "_",
-      }),
-    });
+    const storeFormData = () => {
+      const formData = {
+        deptAirport: deptCity,
+        arrAirport: arrCity,
+        deptDate: deptDate ? dayjs(deptDate).format("DD-MM-YYYY") : undefined,
+        adult: tempPassengers.adults || 0,
+        infant: tempPassengers.infants || 0,
+        children: tempPassengers.children || 0,
+        class: slugify(tempSeatClass, {
+          delimiter: "_",
+        }),
+      };
+
+      if (returnDate) {
+        formData.returnDate = dayjs(returnDate).format("DD-MM-YYYY");
+      }
+
+      return formData;
+    };
 
     setFormData(storeFormData());
+
     if (
       storeFormData().deptAirport &&
       storeFormData().arrAirport &&
@@ -254,7 +265,7 @@ const Home = () => {
     ) {
       fetchFlight(storeFormData());
     }
-  }, [deptCity, arrCity, deptDate, tempPassengers, tempSeatClass]);
+  }, [deptCity, arrCity, deptDate, tempPassengers, tempSeatClass, returnDate]);
 
   const handleDepartureDate = (e) => {
     e.preventDefault();
@@ -356,6 +367,19 @@ const Home = () => {
     }
   };
 
+  const handleDestinationClick = (destination) => {
+    setFromCity(
+      `${destination.departureAirport.airport_name} - ${destination.departureAirport.airport_city} (${destination.departureAirport.airport_city_code})`
+    );
+    setToCity(
+      `${destination.arrivalAirport.airport_name} - ${destination.arrivalAirport.airport_city} (${destination.arrivalAirport.airport_city_code})`
+    );
+    setDeptCity(destination.departure_airport_id);
+    setArrCity(destination.arrival_airport_id);
+    setDeptDate(destination.departure_time);
+    setDeptDateVal(dayjs(destination.departure_time).format("YYYY-MM-DD"));
+  };
+
   return (
     <main className="flex flex-col items-center">
       <Banner />
@@ -427,6 +451,7 @@ const Home = () => {
                           <input
                             type="date"
                             min={today}
+                            value={deptDateVal}
                             onChange={handleDepartureDate}
                             className="w-full border-b-2 border-t-white border-l-white border-r-white rounded"
                           />
@@ -434,11 +459,12 @@ const Home = () => {
                       </div>
                       <div className="flex flex-1 items-center justify-center p-2">
                         <div className="flex flex-col w-full space-y-2 max-w-xs">
-                          <label className="block text-gray-700">Arrival</label>
+                          <label className="block text-gray-700">Return</label>
                           <input
                             type="date"
                             placeholder=""
                             disabled={!showReturnDate}
+                            onChange={(e) => setReturnDate(e.target.value)}
                             className={`w-full border-b-2 border-t-white border-l-white border-r-white rounded ${
                               showReturnDate ? "bg-white" : "cursor-not-allowed"
                             }`}
@@ -448,7 +474,7 @@ const Home = () => {
                       <div className="flex justify-end items-start mt-2 p-2">
                         <input
                           type="checkbox"
-                          className="toggle-checkbox"
+                          className="toggle-checkbox checked:bg-customBlue1"
                           id="returnToggle"
                           onChange={toggleReturnDate}
                         />
@@ -825,6 +851,7 @@ const Home = () => {
           totalPages={totalPages}
           pageNum={pageNum}
           pageSize={pageSize}
+          onDestinationClick={handleDestinationClick}
         />
       </div>
 

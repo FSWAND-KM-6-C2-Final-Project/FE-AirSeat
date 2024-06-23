@@ -52,12 +52,52 @@ const ResetPassword = () => {
           <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
           <form onSubmit={handleResetPassword}>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Email</label>
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-              />
+              <label className="block text-gray-700 font-bold">Password</label>
+              <div className="relative">
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                />
+                <div
+                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                  onClick={togglePasswordVisibility}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
+                >
+                  {passwordVisible ? (
+                    <AiFillEyeInvisible size={24} />
+                  ) : (
+                    <AiFillEye size={24} />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm Password"
+                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                />
+                <div
+                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
+                >
+                  {confirmPasswordVisible ? (
+                    <AiFillEyeInvisible size={24} />
+                  ) : (
+                    <AiFillEye size={24} />
+                  )}
+                </div>
+              </div>
             </div>
             <button
               type="submit"

@@ -13,16 +13,10 @@ const FavoriteDestination = ({
   totalPages,
   pageNum,
   pageSize,
+  onDestinationClick,
 }) => {
   return (
     <>
-      {/* Future development (not found) */}
-      {/* {!isFetching && data.length === 0 && (
-        <div className="text-center flex flex-col justify-center  min-h-[20vh]">
-          <h4></h4>
-        </div>
-      )} */}
-
       {!isFetching && data.length === 0 && (
         <div className="text-center flex flex-col justify-center min-h-[20vh]">
           <NotFoundError
@@ -33,7 +27,8 @@ const FavoriteDestination = ({
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {/* Onclick disini balikin data ke parent */}
+      <div className="grid grid-cols-2 cursor-pointer sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isFetching === true && <LoadingCard totalData={10} />}
 
         {data &&
@@ -43,6 +38,7 @@ const FavoriteDestination = ({
             <div
               className="bg-white rounded-lg shadow-md p-4 grid-item relative mb-10"
               key={destination.id}
+              onClick={() => onDestinationClick(destination)}
             >
               <img
                 src={destination.arrivalAirport.airport_picture}

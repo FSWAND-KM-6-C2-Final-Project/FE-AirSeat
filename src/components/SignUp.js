@@ -6,7 +6,8 @@ import Logo from "../images/logo_airseat.png";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import Loading from "./Loading";
 import FormValidation from "./FormValidation";
-import { signUp } from "../services/auth.service";
+import { checkIsActivationExist, signUp } from "../services/auth.service";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -88,40 +89,65 @@ const SignUp = () => {
       const response = await signUp(reqBody);
 
       if (response) {
-        toast.success(
-          "Registration successful! Please check your email for verification.",
-          {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
+        Swal.fire({
+          title: response.message,
+          icon: "success",
+          showConfirmButton: true,
+          confirmButtonText: "Verify Your Account",
+          confirmButtonColor: "#447C9D",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/activation/otp", {
+              state: {
+                email: response.data.email,
+                resend_at: response.data.verification_user_resend_at,
+              },
+            });
           }
-        );
-
-        navigate("/activation/otp", {
-          state: {
-            email: response.data.email,
-            resend_at: response.data.verification_user_resend_at,
-          },
         });
       }
     } catch (err) {
-      toast.error(err.message, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      if (err.message === "Email is already registered") {
+        try {
+          const reqBodyCheck = JSON.stringify({
+            email,
+            code: "99999",
+          });
+          await checkIsActivationExist(reqBodyCheck);
+        } catch (errActivation) {
+          if (errActivation.message === "OTP Code is wrong") {
+            navigate("/activation/otp", {
+              state: {
+                email: email,
+              },
+            });
+          } else {
+            toast.error(err.message, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+          }
+        }
+      } else {
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
     setIsFetching(false);
   };

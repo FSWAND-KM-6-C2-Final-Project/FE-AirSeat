@@ -18,8 +18,44 @@ export async function signIn(data) {
   return resData;
 }
 
+export async function getUser(token) {
+  const response = await fetch(`${BASE_URL}/api/v1/auth/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resData.message);
+  }
+
+  return resData;
+}
+
 export async function signUp(data) {
   const response = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: data,
+  });
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resData.message);
+  }
+
+  return resData;
+}
+
+export async function checkIsActivationExist(data) {
+  const response = await fetch(`${BASE_URL}/api/v1/auth/activation/verify`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

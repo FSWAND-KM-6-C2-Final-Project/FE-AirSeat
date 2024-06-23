@@ -75,7 +75,7 @@ const SignIn = () => {
   };
 
   const handleForgotPassword = () => {
-    navigate("/reset-password");
+    navigate("/reset-password/request");
   };
 
   const handleSignUp = () => {
