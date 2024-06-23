@@ -66,9 +66,16 @@ const Notification = () => {
 
   const filteredNotifications = notifications.filter((notification) => {
     return (
-      selectedCategory === "All" ||
-      notification.notification_type.toLowerCase() ===
-        selectedCategory.toLowerCase()
+      (selectedCategory === "All" ||
+        notification.notification_type.toLowerCase() ===
+          selectedCategory.toLowerCase()) &&
+      (searchQuery === "" ||
+        notification.notification_title
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        notification.notification_description
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()))
     );
   });
 
@@ -109,7 +116,7 @@ const Notification = () => {
         >
           <Link
             to="/"
-            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-1/10 sm:w-1/2 mt-8 md:w-6/12 lg:w-8/12 md:ml-20 lg:ml-20 xl:ml-36 2xl:ml-44 hover:bg-customBlue1"
+            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-2/3 sm:w-1/2 mt-8 md:w-6/12 lg:w-8/12 md:ml-20 lg:ml-20 xl:ml-36 2xl:ml-44 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
             Beranda
@@ -166,7 +173,7 @@ const Notification = () => {
                     <div className="absolute top-[-5px] right-6 w-4 h-4 bg-white border-l border-t border-customBlue2 rotate-45 transform origin-bottom-right"></div>
                     <input
                       type="text"
-                      className="w-32 md:w-36 xl:w-44 2xl:w-60 px-4 py-1 mt-2 border-customBlue2 rounded-md"
+                      className="w-60 px-4 py-1 mt-2 border-customBlue2 rounded-md"
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
