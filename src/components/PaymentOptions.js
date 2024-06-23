@@ -1,17 +1,33 @@
 import React, { useState } from "react";
+import { Listbox } from "@headlessui/react";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import DetailedFlightInfo from "./DetailedFlightInfo";
 
 const PaymentOptions = () => {
   const [selectedOption, setSelectedOption] = useState("Gopay");
+  const [selectedVirtualAccount, setSelectedVirtualAccount] = useState("");
+
+  const virtualAccountOptions = [
+    "Permata",
+    "Mandiri",
+    "BCA",
+    "BRI",
+    "BNI",
+    "CIMB",
+  ];
 
   return (
     <div>
       <style>
         {`
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&display=swap');
+          .font-plus-jakarta-sans {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+          }
         `}
       </style>
-      <div className="payment-container flex flex-col md:flex-row p-8 space-y-8 md:space-y-0 md:space-x-8">
-        <div className="w-full md:w-1/2 p-8 shadow-lg">
+      <div className="payment-container flex flex-col md:flex-row p-8 space-y-8 md:space-y-0 md:space-x-8 font-plus-jakarta-sans">
+        <div className="w-full md:w-1/2 p-8 shadow-lg rounded-lg bg-white">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             Isi Data Pembayaran
           </h2>
@@ -36,6 +52,59 @@ const PaymentOptions = () => {
             >
               Virtual Account
             </button>
+            {selectedOption === "Virtual Account" && (
+              <div className="mt-4">
+                <Listbox
+                  value={selectedVirtualAccount}
+                  onChange={setSelectedVirtualAccount}
+                >
+                  <div className="relative">
+                    <Listbox.Button className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 flex justify-between items-center">
+                      <span>
+                        {selectedVirtualAccount || "-- Pilih Bank --"}
+                      </span>
+                      <SelectorIcon className="h-5 w-5 text-gray-400" />
+                    </Listbox.Button>
+                    <Listbox.Options className="absolute mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                      {virtualAccountOptions.map((option, index) => (
+                        <Listbox.Option
+                          key={index}
+                          className={({ active }) =>
+                            `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                              active
+                                ? "text-white bg-gray-600"
+                                : "text-gray-900"
+                            }`
+                          }
+                          value={option}
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {option}
+                              </span>
+                              {selected ? (
+                                <span
+                                  className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                    active ? "text-white" : "text-gray-600"
+                                  }`}
+                                >
+                                  <CheckIcon className="h-5 w-5" />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </div>
+                </Listbox>
+              </div>
+            )}
             <button
               className={`w-full text-left p-4 border rounded-lg text-lg font-medium transition ${
                 selectedOption === "Credit Card"
