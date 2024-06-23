@@ -88,6 +88,21 @@ const SignUp = () => {
       const response = await signUp(reqBody);
 
       if (response) {
+        toast.success(
+          "Registration successful! Please check your email for verification.",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
+
         navigate("/activation/otp", {
           state: {
             email: response.data.email,
