@@ -29,7 +29,6 @@ const FavoriteDestination = ({
         </div>
       )}
 
-      {/* Onclick disini balikin data ke parent */}
       <div className="grid grid-cols-2 cursor-pointer sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isFetching === true && <LoadingCard totalData={10} />}
 
