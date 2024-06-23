@@ -6,7 +6,7 @@ const StepsSection = () => {
   const currentPath = location.pathname;
 
   return (
-    <div className="flex justify-start my-10 pl-40">
+    <div className="flex justify-start my-10 pl-5 sm:pl-40">
       <div className="flex items-center space-x-4 text-sm">
         <span
           className={`font-medium ${

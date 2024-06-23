@@ -73,6 +73,22 @@ const BookingForm = ({ initialClass }) => {
     console.log("Selected seats:", selectedSeats);
   };
 
+  const parseSeat = (seatCode) => {
+    const column = seatCode.slice(-1);
+
+    const row = seatCode.slice(0, -1);
+
+    const seatObject = {
+      seat_row: row.toUpperCase(),
+      seat_column: column,
+      seat_name: seatCode,
+    };
+
+    console.log(seatObject);
+
+    return seatObject;
+  };
+
   const renderSeat = (seat, isDisabled) => {
     const isSelected = selectedSeats.includes(seat);
     const bgColor = isSelected
@@ -97,29 +113,29 @@ const BookingForm = ({ initialClass }) => {
     {
       type: "First Class",
       rows: [
-        ["1A", "1B"],
-        ["2A", "2B"],
+        ["1A", "", "", "", "", "", "1B"],
+        ["2A", "", "", "", "", "", "2B"],
       ],
     },
     {
       type: "Business Class",
       rows: [
-        ["3A", "3B", "3C", "3D"],
-        ["4A", "4B", "4C", "4D"],
-        ["5A", "5B", "5C", "5D"],
-        ["6A", "6B", "6C", "6D"],
-        ["7A", "7B", "7C", "7D"],
+        ["3A", "3B", "", "", "", "3C", "3D"],
+        ["4A", "4B", "", "", "", "4C", "4D"],
+        ["5A", "5B", "", "", "", "5C", "5D"],
+        ["6A", "6B", "", "", "", "6C", "6D"],
+        ["7A", "7B", "", "", "", "7C", "7D"],
       ],
     },
     {
       type: "Premium Economy",
       rows: [
-        ["8A", "8B", "8C", "8D"],
-        ["9A", "9B", "9C", "9D"],
-        ["10A", "10B", "10C", "10D"],
-        ["11A", "11B", "11C", "11D"],
-        ["12A", "12B", "12C", "12D"],
-        ["13A", "13B", "13C", "13D"],
+        ["8A", "8B", "", "", "", "8C", "8D"],
+        ["9A", "9B", "", "", "", "9C", "9D"],
+        ["10A", "10B", "", "", "", "10C", "10D"],
+        ["11A", "11B", "", "", "", "11C", "11D"],
+        ["12A", "12B", "", "", "", "12C", "12D"],
+        ["13A", "13B", "", "", "", "13C", "13D"],
       ],
     },
     {
@@ -418,7 +434,11 @@ const BookingForm = ({ initialClass }) => {
                       <React.Fragment key={rowIndex}>
                         {row.map((seat, seatIndex) =>
                           seat === "" ? (
-                            <div key={seatIndex} className="col-span-1" />
+                            <div
+                              key={seatIndex}
+                              onClick={() => console.log(seat)}
+                              className="col-span-1"
+                            />
                           ) : (
                             renderSeat(
                               seat,
