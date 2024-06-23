@@ -4,6 +4,7 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 const OTPInput = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -16,6 +17,22 @@ const OTPInput = () => {
   const [timer, setTimer] = useState(initialTimer);
 
   useEffect(() => {
+    if (!email && !resend_at) {
+      Swal.fire({
+        title: "You don't have user activation request, please sign up first",
+        icon: "error",
+        showConfirmButton: true,
+        confirmButtonText: "Sign Up",
+        confirmButtonColor: "#447C9D",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/sign-up");
+        } else if (result.dismiss) {
+          navigate("/sign-up");
+        }
+      });
+    }
+
     if (timer > 0) {
       const interval = setInterval(() => {
         setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
@@ -57,23 +74,25 @@ const OTPInput = () => {
         }
       );
 
+      const resData = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "OTP verification failed");
+        throw new Error(resData.message || "OTP verification failed");
       }
 
-      toast.success("OTP verification successful! Please log in.", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+      Swal.fire({
+        title: resData.message,
+        icon: "success",
+        showConfirmButton: true,
+        confirmButtonText: "Sign In",
+        confirmButtonColor: "#447C9D",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/sign-in");
+        } else if (result.dismiss) {
+          navigate("/sign-in");
+        }
       });
-      navigate("/sign-in");
     } catch (error) {
       toast.error(error.message, {
         position: "bottom-right",

@@ -5,6 +5,7 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
 import { changePassword } from "../services/resetPassword.service";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Swal from "sweetalert2";
 
 const OTPInputResetPassword = () => {
@@ -15,6 +16,16 @@ const OTPInputResetPassword = () => {
   const { email, resend_at } = location.state || {};
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
 
   const initialTimer = Math.max(dayjs(resend_at).diff(dayjs(), "second"), 0);
   const [timer, setTimer] = useState(initialTimer);
@@ -51,7 +62,6 @@ const OTPInputResetPassword = () => {
     });
     try {
       const response = await changePassword(reqBody);
-      console.log(response);
       if (response) {
         Swal.fire({
           title: response.message,
@@ -61,6 +71,8 @@ const OTPInputResetPassword = () => {
           confirmButtonColor: "#447C9D",
         }).then((result) => {
           if (result.isConfirmed) {
+            navigate("/sign-in");
+          } else if (result.dismiss) {
             navigate("/sign-in");
           }
         });
@@ -175,26 +187,52 @@ const OTPInputResetPassword = () => {
           )}
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 font-bold">New Password</label>
-          <input
-            type="text"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="New Password"
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-          />
+          <label className="block text-gray-700 font-bold">Password</label>
+          <div className="relative">
+            <input
+              type={passwordVisible ? "text" : "password"}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            <div
+              className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+              onClick={togglePasswordVisibility}
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              {passwordVisible ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </div>
+          </div>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 font-bold">
-            Confirm New Password
+            Confirm Password
           </label>
-          <input
-            type="text"
-            placeholder="Confirm New Password"
-            value={confirmNewPassword}
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-          />
+          <div className="relative">
+            <input
+              type={confirmPasswordVisible ? "text" : "password"}
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+            />
+            <div
+              className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+              onClick={toggleConfirmPasswordVisibility}
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            >
+              {confirmPasswordVisible ? (
+                <AiFillEyeInvisible size={24} />
+              ) : (
+                <AiFillEye size={24} />
+              )}
+            </div>
+          </div>
         </div>
         <div className="flex justify-center mt-4">
           <button

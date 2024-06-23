@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaSearch, FaBell, FaUser, FaBars } from "react-icons/fa";
 
-const NavbarBook= () => {
+const NavbarBook = () => {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -27,7 +27,7 @@ const NavbarBook= () => {
       <div className="bg-white shadow-md">
         <div className="container mx-auto flex items-center justify-between py-4 px-6">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-customBlue2">AirSeat</h1>
+            <h1 className="text-xl font-bold text-customBlue1">AirSeat</h1>
           </div>
           <div className="absolute mx-20">
             <input
