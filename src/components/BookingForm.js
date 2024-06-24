@@ -17,6 +17,7 @@ const BookingForm = ({ initialClass }) => {
       lastName: "",
       dob: "",
       nationality: "",
+      idType: "ktp",
       idNumber: "",
       issuingCountry: "",
       expiryDate: "",
@@ -50,6 +51,7 @@ const BookingForm = ({ initialClass }) => {
         lastName: "",
         dob: "",
         nationality: "",
+        idType: "ktp",
         idNumber: "",
         issuingCountry: "",
         expiryDate: "",
@@ -66,27 +68,46 @@ const BookingForm = ({ initialClass }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Order data:", orderData);
-    console.log("Passenger data:", passengers);
-    console.log("Selected seats:", selectedSeats);
+
+    const bookingData = {
+      orderData,
+      passengers,
+      selectedSeats: selectedSeats.map(parseSeat),
+    };
+
+    try {
+      const response = await fetch(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/booking",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Booking successful:", result);
+    } catch (error) {
+      console.error("Error in booking:", error);
+    }
   };
 
   const parseSeat = (seatCode) => {
     const column = seatCode.slice(-1);
-
     const row = seatCode.slice(0, -1);
-
-    const seatObject = {
+    return {
       seat_row: row.toUpperCase(),
       seat_column: column,
       seat_name: seatCode,
     };
-
-    console.log(seatObject);
-
-    return seatObject;
   };
 
   const renderSeat = (seat, isDisabled) => {
@@ -382,32 +403,36 @@ const BookingForm = ({ initialClass }) => {
                 required
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
-                Negara Penerbit
-              </label>
-              <input
-                type="text"
-                name="issuingCountry"
-                value={passenger.issuingCountry}
-                onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
-                Berlaku Sampai
-              </label>
-              <input
-                type="date"
-                name="expiryDate"
-                value={passenger.expiryDate}
-                onChange={(e) => handlePassengerChange(index, e)}
-                className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
-                required
-              />
-            </div>
+            {passenger.idType === "paspor" && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[#164765]">
+                    Negara Penerbit
+                  </label>
+                  <input
+                    type="text"
+                    name="issuingCountry"
+                    value={passenger.issuingCountry}
+                    onChange={(e) => handlePassengerChange(index, e)}
+                    className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[#164765]">
+                    Berlaku Sampai
+                  </label>
+                  <input
+                    type="date"
+                    name="expiryDate"
+                    value={passenger.expiryDate}
+                    onChange={(e) => handlePassengerChange(index, e)}
+                    className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#447C9D] focus:ring focus:ring-[#447C9D] focus:ring-opacity-50"
+                    required
+                  />
+                </div>
+              </>
+            )}
           </div>
         ))}
         <button
