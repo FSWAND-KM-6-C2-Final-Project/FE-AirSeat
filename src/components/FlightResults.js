@@ -24,21 +24,151 @@ const sortingOptions = [
 ];
 
 const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
-  const [selectedOption, setSelectedOption] = useState(0);
+  const [selectedOption, setSelectedOption] = useState();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const dayjs = require("dayjs");
   const utc = require("dayjs/plugin/utc");
   dayjs.extend(utc);
 
   useEffect(() => {
-    setSelectedOption(0);
-  }, [showModal]);
+    const sortBy = searchParams.get("sortBy");
+    const order = searchParams.get("order");
+    const seatClass = searchParams.get("class");
 
-  const handleOptionClicked = (index) => {
+    if (sortBy === `price_${seatClass}` && order === "asc") {
+      setSelectedOption(0);
+    } else if (sortBy === `price_${seatClass}` && order === "desc") {
+      setSelectedOption(1);
+    } else if (sortBy === "duration" && order === "asc") {
+      setSelectedOption(2);
+    } else if (sortBy === "departure_time" && order === "asc") {
+      setSelectedOption(3);
+    } else if (sortBy === "departure_time" && order === "desc") {
+      setSelectedOption(4);
+    } else if (sortBy === "arrival_time" && order === "asc") {
+      setSelectedOption(5);
+    } else if (sortBy === "arrival_time" && order === "desc") {
+      setSelectedOption(6);
+    } else {
+      setSelectedOption(0);
+    }
+  }, [showModal, searchParams]);
+
+  const handleOptionClicked = (index, option) => {
     setSelectedOption(index);
   };
 
   const handleSelectClick = () => {
+    if (selectedOption === 0) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `price_${searchParams.get("class")}`,
+          order: "asc",
+        }).toString(),
+      });
+    } else if (selectedOption === 1) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `price_${searchParams.get("class")}`,
+          order: "desc",
+        }).toString(),
+      });
+    } else if (selectedOption === 2) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `duration`,
+          order: "asc",
+        }).toString(),
+      });
+    } else if (selectedOption === 3) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `departure_time`,
+          order: "asc",
+        }).toString(),
+      });
+    } else if (selectedOption === 4) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `departure_time`,
+          order: "desc",
+        }).toString(),
+      });
+    } else if (selectedOption === 5) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `arrival_time`,
+          order: "asc",
+        }).toString(),
+      });
+    } else if (selectedOption === 6) {
+      navigate({
+        pathname: "/search",
+        search: createSearchParams({
+          deptAirport: searchParams.get("deptAirport"),
+          arrAirport: searchParams.get("arrAirport"),
+          deptDate: searchParams.get("deptDate"),
+          adult: searchParams.get("adult"),
+          infant: searchParams.get("infant"),
+          children: searchParams.get("children"),
+          class: searchParams.get("class"),
+          sortBy: `arrival_time`,
+          order: "desc",
+        }).toString(),
+      });
+    }
+    navigate(0);
+
     handleOptionSelect(selectedOption);
     toggleModal();
   };
@@ -87,7 +217,7 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
                         ? "bg-customBlue2 text-white"
                         : ""
                     } cursor-pointer`}
-                    onClick={() => handleOptionClicked(index)}
+                    onClick={() => handleOptionClicked(index, option)}
                   >
                     <p className="font-bold text-md">{option}</p>
                   </div>
@@ -124,8 +254,31 @@ const FlightResults = () => {
   const children = searchParams.get("children");
   const infant = searchParams.get("infant");
   const seatClass = searchParams.get("class");
+  const sortBy = searchParams.get("sortBy") || `price_${seatClass}`;
+  const order = searchParams.get("order") || "asc";
 
   useEffect(() => {
+    const sortBy = searchParams.get("sortBy");
+    const order = searchParams.get("order");
+    const seatClass = searchParams.get("class");
+
+    if (sortBy === `price_${seatClass}` && order === "asc") {
+      setSelectedSortOption(0);
+    } else if (sortBy === `price_${seatClass}` && order === "desc") {
+      setSelectedSortOption(1);
+    } else if (sortBy === "duration" && order === "asc") {
+      setSelectedSortOption(2);
+    } else if (sortBy === "departure_time" && order === "asc") {
+      setSelectedSortOption(3);
+    } else if (sortBy === "departure_time" && order === "desc") {
+      setSelectedSortOption(4);
+    } else if (sortBy === "arrival_time" && order === "asc") {
+      setSelectedSortOption(5);
+    } else if (sortBy === "arrival_time" && order === "desc") {
+      setSelectedSortOption(6);
+    } else {
+      setSelectedSortOption(0);
+    }
     fetchFlightData();
   }, []);
 
@@ -135,7 +288,9 @@ const FlightResults = () => {
       const flights = await getFlightData(
         departure_airport_id,
         arrival_airport_id,
-        departure_data
+        departure_data,
+        sortBy,
+        order
       );
 
       setFlightData(flights.data.flights);
@@ -216,6 +371,7 @@ const FlightResults = () => {
                       arrivalTime={data.arrival_time}
                       totalTime={data.duration}
                       type={"Direct"}
+                      idFlight={data.id}
                       logo={data.airline.airline_picture}
                       departureAirportId={
                         data.departureAirport.airport_city_code

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-import { format, addDays } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import {
   createSearchParams,
   useNavigate,
@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { seoTitle } from "string-fn";
 import { getAirportDataById } from "../services/airport.service";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
@@ -18,12 +19,13 @@ dayjs.extend(utc);
 
 const FlightSelection = ({ fromCity, toCity, passengers }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedDay, setSelectedDay] = useState(0);
+  const [selectedDay, setSelectedDay] = useState(1);
   const [dates, setDates] = useState([]);
   const [totalPassenger, setTotalPassenger] = useState(0);
   const [seatClass, setSeatClass] = useState("");
   const [departureAirport, setDepartureAirport] = useState("");
   const [arrivalAirport, setArrivalAirport] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const adult = parseInt(searchParams.get("adult"));
@@ -46,7 +48,7 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
     const today = departure_date;
     const generateDates = () => {
       const dateArray = [];
-      for (let i = 0; i < 7; i++) {
+      for (let i = -1; i < 6; i++) {
         const nextDate = addDays(today, i);
         dateArray.push({
           day: format(nextDate, "eeee"),
@@ -62,29 +64,63 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
   const fetchDepartureAirport = async (id) => {
     try {
       const airport = await getAirportDataById(id);
-
       setDepartureAirport(airport.data.airport.airport_name);
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
   const fetchArrivalAirport = async (id) => {
     try {
       const airport = await getAirportDataById(id);
-
       setArrivalAirport(airport.data.airport.airport_name);
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
-  const handleDayClick = (index) => {
+  const handleDayClick = (index, date) => {
     setSelectedDay(index);
+
+    const newDate = dayjs(date.date, "DD/MM/YYYY").format("DD-MM-YYYY");
+    navigate({
+      pathname: "/search",
+      search: createSearchParams({
+        deptAirport: searchParams.get("deptAirport"),
+        arrAirport: searchParams.get("arrAirport"),
+        deptDate: newDate,
+        adult: searchParams.get("adult"),
+        infant: searchParams.get("infant"),
+        children: searchParams.get("children"),
+        class: searchParams.get("class"),
+      }).toString(),
+    });
+    navigate(0);
   };
 
   return (
     <div className="p-4 md:p-10 shadow-md">
+      <ToastContainer />
       <h2 className="font-bold text-2xl text-left xl:ml-44">Flight Details</h2>
       <div className="flex flex-col md:flex-row md:justify-center">
         <Link
@@ -117,7 +153,7 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
                   : "bg-gray-200 text-black"
               }`}
               style={{ width: "200px", height: "50px" }}
-              onClick={() => handleDayClick(index)}
+              onClick={() => handleDayClick(index, date)}
             >
               <div
                 className={`font-bold ${

@@ -1,8 +1,13 @@
 import React from "react";
 import { useState } from "react";
-import thumbnail from "../icons/thumbnail.svg";
-import baggage from "../icons/baggage.svg";
 import { seoTitle } from "string-fn";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { getUser } from "../services/auth.service";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 export default function FlightAccordion(props) {
   const {
@@ -11,6 +16,7 @@ export default function FlightAccordion(props) {
     departureTime,
     arrivalTime,
     totalTime,
+    idFlight,
     type,
     departureAirportId,
     arrivalAirportId,
@@ -23,6 +29,10 @@ export default function FlightAccordion(props) {
     logo,
   } = props;
   const [accordionOpen, setAccordionOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const navigate = useNavigate();
 
   const dayjs = require("dayjs");
   const utc = require("dayjs/plugin/utc");
@@ -31,6 +41,107 @@ export default function FlightAccordion(props) {
   function toggleAccordion() {
     setAccordionOpen(!accordionOpen);
   }
+
+  const handleSearchFlight = (flightId, e) => {
+    e.stopPropagation();
+
+    const departure_airport_id = searchParams.get("deptAirport");
+    const arrival_airport_id = searchParams.get("arrAirport");
+    const departure_data = searchParams.get("deptDate");
+    const adult = searchParams.get("adult");
+    const children = searchParams.get("children");
+    const infant = searchParams.get("infant");
+    const seatClass = searchParams.get("class");
+    const returnDate = searchParams.get("returnDate");
+    const sortBy = searchParams.get("sortBy");
+    const order = searchParams.get("order");
+
+    const tokenUser = localStorage.getItem("token");
+
+    const checkUser = async () => {
+      try {
+        const response = await getUser(tokenUser);
+
+        if (response) {
+          setIsAuthenticated(true);
+        } else {
+          toast.error("Please sign in first", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+              width: "100%",
+              textAlign: "center",
+            },
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        }
+      } catch (err) {
+        toast.error("Your session has expired, please log in again.", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        localStorage.removeItem("token");
+      }
+    };
+
+    if (returnDate) {
+      navigate({
+        pathname: "/search/return",
+        search: createSearchParams({
+          deptAirport: arrival_airport_id,
+          arrAirport: departure_airport_id,
+          deptDate: returnDate,
+          adult,
+          infant,
+          children,
+          class: seatClass,
+          flightId: flightId,
+        }).toString(),
+      });
+      navigate(0);
+    } else {
+      if (!tokenUser) {
+        toast.error("Please sign in first", {
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: { width: "100%", textAlign: "center" },
+          position: "top-center",
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      } else {
+        checkUser();
+        navigate({
+          pathname: "/booking",
+          search: createSearchParams({
+            adult,
+            infant,
+            children,
+            class: seatClass,
+            flightId: flightId,
+          }).toString(),
+        });
+        navigate(0);
+      }
+    }
+  };
 
   return (
     <div>
@@ -43,7 +154,7 @@ export default function FlightAccordion(props) {
                 ? "rounded-t-xl border border-t-customBlue2 border-l-customBlue2 border-r-customBlue2 border-b-none"
                 : "rounded-xl border"
             } shadow-inner gap-3`}
-            onClick={toggleAccordion}
+            onClick={() => toggleAccordion()}
             aria-expanded={accordionOpen ? "true" : "false"}
             aria-controls="accordion-collapse-body-1"
           >
@@ -51,7 +162,7 @@ export default function FlightAccordion(props) {
               <div className="flex items-center gap-3">
                 <img className="w-10" src={logo} alt="" />
                 <div className="">
-                  <p class="">
+                  <p>
                     {airline} - {seoTitle(flightClass)}
                   </p>
                 </div>
@@ -93,7 +204,7 @@ export default function FlightAccordion(props) {
                     }).format(price)}
                   </p>
                   <button
-                    onClick={() => console.log("clicked")}
+                    onClick={(e) => handleSearchFlight(idFlight, e)}
                     className="bg-customBlue2 rounded-lg w-20 p-1 sm:w-20 sm:p-2 md:w-20 md:p-2 lg:w-32 lg:p-2 hover:bg-customBlue1 text-white text-xs sm:text-sm md:text-sm lg:text-lg"
                   >
                     Select

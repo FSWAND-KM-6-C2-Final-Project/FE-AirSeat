@@ -4,10 +4,11 @@ export async function getFlightData(
   deptAirport,
   arrAirport,
   deptDate,
-  seatClass = ""
+  sort = "price_economy",
+  order = "asc"
 ) {
   const response = await fetch(
-    `${BASE_URL}/api/v1/flight?deptAirport=${deptAirport}&arrAirport=${arrAirport}&searchDate=${deptDate}`
+    `${BASE_URL}/api/v1/flight?deptAirport=${deptAirport}&arrAirport=${arrAirport}&searchDate=${deptDate}&sortBy=${sort}&order=${order}`
   );
 
   const resData = await response.json();
