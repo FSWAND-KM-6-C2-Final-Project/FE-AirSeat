@@ -45,7 +45,7 @@ const NotificationPage = () => {
   }, [navigate]);
 
   if (!isAuthenticated) {
-    return null; // or a loading spinner
+    return null;
   }
 
   return (
