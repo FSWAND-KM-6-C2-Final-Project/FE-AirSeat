@@ -1,7 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
-const BookingForm = ({ initialClass }) => {
+import { seoTitle } from "string-fn";
+
+const seatLayout = [
+  {
+    type: "First Class",
+    rows: [
+      ["1A", "", "", "", "", "", "1B"],
+      ["2A", "", "", "", "", "", "2B"],
+    ],
+  },
+  {
+    type: "Business Class",
+    rows: [
+      ["3A", "3B", "", "", "", "3C", "3D"],
+      ["4A", "4B", "", "", "", "4C", "4D"],
+      ["5A", "5B", "", "", "", "5C", "5D"],
+      ["6A", "6B", "", "", "", "6C", "6D"],
+      ["7A", "7B", "", "", "", "7C", "7D"],
+    ],
+  },
+  {
+    type: "Premium Economy",
+    rows: [
+      ["8A", "8B", "", "", "", "8C", "8D"],
+      ["9A", "9B", "", "", "", "9C", "9D"],
+      ["10A", "10B", "", "", "", "10C", "10D"],
+      ["11A", "11B", "", "", "", "11C", "11D"],
+      ["12A", "12B", "", "", "", "12C", "12D"],
+      ["13A", "13B", "", "", "", "13C", "13D"],
+    ],
+  },
+  {
+    type: "Economy",
+    rows: [
+      ["14A", "14B", "14C", "", "14D", "14E", "14F"],
+      ["15A", "15B", "15C", "", "15D", "15E", "15F"],
+      ["16A", "16B", "16C", "", "16D", "16E", "16F"],
+      ["17A", "17B", "17C", "", "17D", "17E", "17F"],
+      ["18A", "18B", "18C", "", "18D", "18E", "18F"],
+      ["19A", "19B", "19C", "", "19D", "19E", "19F"],
+      ["20A", "20B", "20C", "", "20D", "20E", "20F"],
+      ["21A", "21B", "21C", "", "21D", "21E", "21F"],
+      ["22A", "22B", "22C", "", "22D", "22E", "22F"],
+      ["23A", "23B", "23C", "", "23D", "23E", "23F"],
+      ["24A", "24B", "24C", "", "24D", "24E", "24F"],
+      ["25A", "25B", "25C", "", "25D", "25E", "25F"],
+    ],
+  },
+];
+
+const classTypes = {
+  economy: "Economy",
+  premium_economy: "Premium Economy",
+  business: "Business Class",
+  first_class: "First Class",
+};
+
+const BookingForm = ({ initialClass, onBookingData }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filteredSeats, setFilteredSeats] = useState([]);
+  const [maxSeatCount, setMaxSeatCount] = useState(0);
+
   const [orderData, setOrderData] = useState({
     fullName: "",
     lastName: "",
@@ -10,8 +77,18 @@ const BookingForm = ({ initialClass }) => {
     hasLastName: true,
   });
 
-  const [passengers, setPassengers] = useState([
-    {
+  const [passengers, setPassengers] = useState([]);
+
+  useEffect(() => {
+    const adultCount = parseInt(searchParams.get("adult")) || 0;
+    const infantCount = parseInt(searchParams.get("infant")) || 0;
+    const childrenCount = parseInt(searchParams.get("children")) || 0;
+    const seatClass = searchParams.get("class") || "economy";
+
+    const totalPassengers = adultCount + infantCount + childrenCount;
+    setMaxSeatCount(totalPassengers);
+
+    const adultFormTemplate = {
       title: "Mr.",
       fullName: "",
       lastName: "",
@@ -22,8 +99,57 @@ const BookingForm = ({ initialClass }) => {
       issuingCountry: "",
       expiryDate: "",
       hasLastName: true,
-    },
-  ]);
+      type: "adult",
+    };
+
+    const infantFormTemplate = {
+      title: "Mr.",
+      fullName: "",
+      lastName: "",
+      dob: "",
+      nationality: "",
+      idType: "ktp",
+      idNumber: "",
+      issuingCountry: "",
+      expiryDate: "",
+      hasLastName: true,
+      type: "infant",
+    };
+
+    const childrenFormTemplate = {
+      title: "Mr.",
+      fullName: "",
+      lastName: "",
+      dob: "",
+      nationality: "",
+      idType: "ktp",
+      idNumber: "",
+      issuingCountry: "",
+      expiryDate: "",
+      hasLastName: true,
+      type: "children",
+    };
+
+    const adults = Array(adultCount)
+      .fill()
+      .map(() => ({ ...adultFormTemplate }));
+    const infants = Array(infantCount)
+      .fill()
+      .map(() => ({ ...infantFormTemplate }));
+    const children = Array(childrenCount)
+      .fill()
+      .map(() => ({ ...childrenFormTemplate }));
+
+    const allPassengers = [...adults, ...infants, ...children];
+
+    setPassengers(allPassengers);
+
+    const selectedClassType = classTypes[seatClass];
+    const filtered = seatLayout.find(
+      (layout) => layout.type === selectedClassType
+    );
+    setFilteredSeats([filtered]);
+  }, []);
 
   const [selectedSeats, setSelectedSeats] = useState([]);
 
@@ -42,28 +168,10 @@ const BookingForm = ({ initialClass }) => {
     setPassengers(newPassengers);
   };
 
-  const addPassenger = () => {
-    setPassengers([
-      ...passengers,
-      {
-        title: "Mr.",
-        fullName: "",
-        lastName: "",
-        dob: "",
-        nationality: "",
-        idType: "ktp",
-        idNumber: "",
-        issuingCountry: "",
-        expiryDate: "",
-        hasLastName: true,
-      },
-    ]);
-  };
-
   const handleSeatSelection = (seat) => {
-    if (!selectedSeats.includes(seat)) {
+    if (!selectedSeats.includes(seat) && selectedSeats.length < maxSeatCount) {
       setSelectedSeats([...selectedSeats, seat]);
-    } else {
+    } else if (selectedSeats.includes(seat)) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
     }
   };
@@ -71,42 +179,67 @@ const BookingForm = ({ initialClass }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const bookingData = {
-      orderData,
-      passengers,
-      selectedSeats: selectedSeats.map(parseSeat),
-    };
+    const clickedSeats = selectedSeats.length;
 
-    try {
-      const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/booking",
+    console.log(clickedSeats);
+
+    if (clickedSeats < maxSeatCount) {
+      toast.error(
+        `You've just chosen ${clickedSeats} out of ${maxSeatCount} seats, choose the remaining ${
+          parseInt(maxSeatCount) - parseInt(clickedSeats)
+        }.`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingData),
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
         }
       );
+    } else {
+      const bookingData = {
+        flight_id: parseInt(searchParams.get("flightId")),
+        payment_method: "snap",
+        ordered_by: {
+          first_name: orderData.fullName,
+          last_name: orderData.lastName || "",
+          phone_number: orderData.phoneNumber,
+          email: orderData.email,
+        },
+        passenger: passengers.map((passenger, index) => ({
+          first_name: passenger.fullName,
+          last_name: passenger.lastName || "",
+          dob: passenger.dob,
+          title: passenger.title.toLowerCase().slice(0, -1),
+          nationality: passenger.nationality,
+          passenger_type: passenger.type,
+          identification_type: passenger.idType.toLowerCase(),
+          identification_number: passenger.idNumber,
+          identification_country: passenger.issuingCountry || "Indonesia",
+          identification_expired: passenger.expiryDate
+            ? passenger.expiryDate
+            : "",
+          seat_departure: parseSeat(selectedSeats[index]),
+          passenger_type: passenger.type,
+        })),
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log("Booking successful:", result);
-    } catch (error) {
-      console.error("Error in booking:", error);
+      console.log(JSON.stringify(bookingData));
+      onBookingData(bookingData);
     }
   };
 
   const parseSeat = (seatCode) => {
-    const column = seatCode.slice(-1);
+    console.log(seatCode);
     const row = seatCode.slice(0, -1);
+    const column = seatCode.slice(-1);
     return {
       seat_row: row.toUpperCase(),
       seat_column: column,
-      seat_name: seatCode,
     };
   };
 
@@ -130,54 +263,6 @@ const BookingForm = ({ initialClass }) => {
     );
   };
 
-  const seatLayout = [
-    {
-      type: "First Class",
-      rows: [
-        ["1A", "", "", "", "", "", "1B"],
-        ["2A", "", "", "", "", "", "2B"],
-      ],
-    },
-    {
-      type: "Business Class",
-      rows: [
-        ["3A", "3B", "", "", "", "3C", "3D"],
-        ["4A", "4B", "", "", "", "4C", "4D"],
-        ["5A", "5B", "", "", "", "5C", "5D"],
-        ["6A", "6B", "", "", "", "6C", "6D"],
-        ["7A", "7B", "", "", "", "7C", "7D"],
-      ],
-    },
-    {
-      type: "Premium Economy",
-      rows: [
-        ["8A", "8B", "", "", "", "8C", "8D"],
-        ["9A", "9B", "", "", "", "9C", "9D"],
-        ["10A", "10B", "", "", "", "10C", "10D"],
-        ["11A", "11B", "", "", "", "11C", "11D"],
-        ["12A", "12B", "", "", "", "12C", "12D"],
-        ["13A", "13B", "", "", "", "13C", "13D"],
-      ],
-    },
-    {
-      type: "Economy",
-      rows: [
-        ["14A", "14B", "14C", "", "14D", "14E", "14F"],
-        ["15A", "15B", "15C", "", "15D", "15E", "15F"],
-        ["16A", "16B", "16C", "", "16D", "16E", "16F"],
-        ["17A", "17B", "17C", "", "17D", "17E", "17F"],
-        ["18A", "18B", "18C", "", "18D", "18E", "18F"],
-        ["19A", "19B", "19C", "", "19D", "19E", "19F"],
-        ["20A", "20B", "20C", "", "20D", "20E", "20F"],
-        ["21A", "21B", "21C", "", "21D", "21E", "21F"],
-        ["22A", "22B", "22C", "", "22D", "22E", "22F"],
-        ["23A", "23B", "23C", "", "23D", "23E", "23F"],
-        ["24A", "24B", "24C", "", "24D", "24E", "24F"],
-        ["25A", "25B", "25C", "", "25D", "25E", "25F"],
-      ],
-    },
-  ];
-
   return (
     <div>
       <style>
@@ -193,11 +278,11 @@ const BookingForm = ({ initialClass }) => {
         className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg font-plus-jakarta-sans"
       >
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
-          Isi Data Pemesan
+          Fill Order Data
         </h2>
         <div className="mb-6">
           <label className="block text-sm font-medium text-[#164765]">
-            Nama Lengkap
+            Full Name
           </label>
           <input
             type="text"
@@ -210,7 +295,7 @@ const BookingForm = ({ initialClass }) => {
         </div>
         <div className="mb-6 flex items-center justify-between">
           <label className="block text-sm font-medium text-[#164765]">
-            Punya Nama Keluarga?
+            Have Family Name?
           </label>
           <Switch
             checked={orderData.hasLastName}
@@ -234,7 +319,7 @@ const BookingForm = ({ initialClass }) => {
         {orderData.hasLastName && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-[#164765]">
-              Nama Keluarga
+              Family Name
             </label>
             <input
               type="text"
@@ -248,7 +333,7 @@ const BookingForm = ({ initialClass }) => {
         )}
         <div className="mb-6">
           <label className="block text-sm font-medium text-[#164765]">
-            Nomor Telepon
+            Phone Number
           </label>
           <input
             type="tel"
@@ -273,7 +358,7 @@ const BookingForm = ({ initialClass }) => {
           />
         </div>
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
-          Isi Data Penumpang
+          Passenger Data
         </h2>
         {passengers.map((passenger, index) => (
           <div
@@ -281,7 +366,7 @@ const BookingForm = ({ initialClass }) => {
             className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50"
           >
             <h3 className="text-xl font-semibold mb-4 border-b pb-2 text-[#164765]">
-              Data Diri Penumpang {index + 1} - Adult
+              Passenger Personal Data {index + 1} - {seoTitle(passenger.type)}
             </h3>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[#164765]">
@@ -300,7 +385,7 @@ const BookingForm = ({ initialClass }) => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[#164765]">
-                Nama Lengkap
+                Full Name
               </label>
               <input
                 type="text"
@@ -313,7 +398,7 @@ const BookingForm = ({ initialClass }) => {
             </div>
             <div className="mb-4 flex items-center justify-between">
               <label className="block text-sm font-medium text-[#164765]">
-                Punya Nama Keluarga?
+                Have family name?
               </label>
               <Switch
                 checked={passenger.hasLastName}
@@ -337,7 +422,7 @@ const BookingForm = ({ initialClass }) => {
             {passenger.hasLastName && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#164765]">
-                  Nama Keluarga
+                  Family Name
                 </label>
                 <input
                   type="text"
@@ -351,7 +436,7 @@ const BookingForm = ({ initialClass }) => {
             )}
             <div className="mb-4">
               <label className="block text-sm font-medium text-[#164765]">
-                Tanggal Lahir
+                Date Of Birth
               </label>
               <input
                 type="date"
@@ -364,7 +449,7 @@ const BookingForm = ({ initialClass }) => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-[#164765]">
-                Kewarganegaraan
+                Nationality
               </label>
               <input
                 type="text"
@@ -407,7 +492,7 @@ const BookingForm = ({ initialClass }) => {
               <>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-[#164765]">
-                    Negara Penerbit
+                    Issuing Country
                   </label>
                   <input
                     type="text"
@@ -420,7 +505,7 @@ const BookingForm = ({ initialClass }) => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-[#164765]">
-                    Berlaku Sampai
+                    Expiry Date
                   </label>
                   <input
                     type="date"
@@ -435,21 +520,14 @@ const BookingForm = ({ initialClass }) => {
             )}
           </div>
         ))}
-        <button
-          type="button"
-          onClick={addPassenger}
-          className="mb-6 px-4 py-2 bg-[#164765] text-white rounded-md hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75"
-        >
-          Tambah Penumpang
-        </button>
 
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
-          Pilih Kursi
+          Choose Seat
         </h2>
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              {seatLayout.map((section, index) => (
+              {filteredSeats.map((section, index) => (
                 <div key={index} className="mb-4">
                   <h3 className="text-2xl font-semibold mb-2 text-[#164765]">
                     {section.type}
@@ -467,7 +545,7 @@ const BookingForm = ({ initialClass }) => {
                           ) : (
                             renderSeat(
                               seat,
-                              initialClass === "Economy" && index < 1
+                              initialClass === section.type && index < 1
                             )
                           )
                         )}
@@ -489,6 +567,7 @@ const BookingForm = ({ initialClass }) => {
           </button>
         </div>
       </form>
+      <ToastContainer />
     </div>
   );
 };

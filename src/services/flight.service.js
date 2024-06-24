@@ -15,3 +15,11 @@ export async function getFlightData(
 
   return resData;
 }
+
+export async function getFlightById(id) {
+  const response = await fetch(`${BASE_URL}/api/v1/flight/${id}`);
+
+  const resData = await response.json();
+
+  return resData;
+}
