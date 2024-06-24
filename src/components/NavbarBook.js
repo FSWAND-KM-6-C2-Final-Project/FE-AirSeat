@@ -1,16 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaBell, FaUser, FaBars } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const NavbarBook = () => {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      status: "Unpaid",
-      date: "20 Maret, 14:04",
-      message: "Selesaikan pembayaran Anda sebelum tanggal 10 Maret 2023!",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(
+        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/notification"
+      )
+      .then((response) => {
+        setNotifications(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching notifications:", error);
+      });
+
+    axios
+      .get("https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/me")
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching user information:", error);
+      });
+  }, []);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -20,6 +39,10 @@ const NavbarBook = () => {
     setNotifications(
       notifications.filter((notification) => notification.id !== id)
     );
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
   };
 
   return (
@@ -84,7 +107,13 @@ const NavbarBook = () => {
                 </div>
               )}
             </div>
-            <FaUser className="text-gray-500 cursor-pointer hover:text-gray-700" />
+            <div className="flex items-center">
+              {user && <span className="text-gray-700 mr-2">{user.name}</span>}
+              <FaUser
+                className="text-gray-500 cursor-pointer hover:text-gray-700"
+                onClick={handleProfileClick}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import NotFoundError from "./NotFoundError";
 import notFoundImage from "../images/not-found.png";
 
 const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
 
 const FavoriteDestination = ({
   data,
@@ -27,7 +29,6 @@ const FavoriteDestination = ({
         </div>
       )}
 
-      {/* Onclick disini balikin data ke parent */}
       <div className="grid grid-cols-2 cursor-pointer sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isFetching === true && <LoadingCard totalData={10} />}
 
@@ -55,7 +56,9 @@ const FavoriteDestination = ({
                 </h3>
                 <p>{destination.airline.airline_name}</p>
                 <p>
-                  {dayjs(destination.departure_time).format("DD MMMM YYYY")}
+                  {dayjs(destination.departure_time)
+                    .utc()
+                    .format("DD MMMM YYYY")}
                 </p>
                 <p className="text-red-600 font-bold">
                   Start from{" "}

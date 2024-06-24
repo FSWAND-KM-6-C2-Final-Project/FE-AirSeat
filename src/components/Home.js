@@ -19,10 +19,13 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 
 import { getFavoriteDestinations } from "../services/favoriteDestination.service";
 import { getAirportData } from "../services/airport.service";
-import dayjs from "dayjs";
 import { getFlightData } from "../services/flight.service";
 
 import "react-toastify/dist/ReactToastify.css";
+
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
 
 const Home = () => {
   const navigate = useNavigate();
@@ -50,7 +53,7 @@ const Home = () => {
   const [deptCity, setDeptCity] = useState();
   const [arrCity, setArrCity] = useState();
 
-  const [seatClass, setSeatClass] = useState("Economy");
+  const [seatClass, setSeatClass] = useState("");
   const [tempSeatClass, setTempSeatClass] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -241,9 +244,10 @@ const Home = () => {
         adult: tempPassengers.adults || 0,
         infant: tempPassengers.infants || 0,
         children: tempPassengers.children || 0,
-        class: slugify(tempSeatClass, {
-          delimiter: "_",
-        }),
+        class:
+          slugify(tempSeatClass, {
+            delimiter: "_",
+          }) || "economy",
       };
 
       if (returnDate) {
@@ -265,7 +269,19 @@ const Home = () => {
     ) {
       fetchFlight(storeFormData());
     }
-  }, [deptCity, arrCity, deptDate, tempPassengers, tempSeatClass, returnDate]);
+  }, [
+    deptCity,
+    arrCity,
+    deptDate,
+    tempPassengers,
+    tempSeatClass,
+    returnDate,
+    economyPrice,
+    premiumEconomyPrice,
+    businessPrice,
+    firstClassPrice,
+    ,
+  ]);
 
   const handleDepartureDate = (e) => {
     e.preventDefault();
@@ -376,8 +392,12 @@ const Home = () => {
     );
     setDeptCity(destination.departure_airport_id);
     setArrCity(destination.arrival_airport_id);
-    setDeptDate(destination.departure_time);
-    setDeptDateVal(dayjs(destination.departure_time).format("YYYY-MM-DD"));
+    setDeptDate(dayjs(destination.departure_time).utc());
+    setDeptDateVal(
+      dayjs(destination.departure_time).utc().format("YYYY-MM-DD")
+    );
+
+    console.log(destination);
   };
 
   return (
@@ -519,6 +539,7 @@ const Home = () => {
                         <input
                           type="text"
                           value={seatClass}
+                          placeholder="Choose Seat Class"
                           onClick={() => {
                             setTempSeatClass("");
                             setShowClassModal(true);

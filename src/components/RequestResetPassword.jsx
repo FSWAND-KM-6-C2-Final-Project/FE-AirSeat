@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import plantsImage from "../images/plants.png";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 import FormValidation from "./FormValidation";
 import validator from "validator";
 import Logo from "../images/logo_airseat.png";
@@ -60,7 +60,17 @@ const RequestResetPassword = () => {
           },
         });
       } else {
-        console.log(err.message);
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     }
 
@@ -73,7 +83,7 @@ const RequestResetPassword = () => {
         <div className="md:flex-1 bg-customBlue4 flex flex-col justify-center items-center">
           <div className="flex flex-col justify-center items-center">
             <img className="w-[200px] mb-3" src={Logo} />
-
+            <ToastContainer />
             <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">
               AirSeat
             </h1>
