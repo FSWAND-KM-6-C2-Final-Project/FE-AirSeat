@@ -4,7 +4,7 @@ import { CiHeart } from "react-icons/ci";
 import { LuArrowUpDown } from "react-icons/lu";
 import FlightAccordion from "./FlightAccordion";
 import LongArrowIcon from "../icons/long_arrow.svg";
-import loadingIcon from "../icons/loading.svg";
+import loadingIcon from "../images/loading.png";
 import emptyIcon from "../icons/empty.svg";
 import { getFlightData } from "../services/flight.service";
 import {
@@ -61,112 +61,51 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
   };
 
   const handleSelectClick = () => {
+    let searchParamsObject = {
+      deptAirport: searchParams.get("deptAirport"),
+      arrAirport: searchParams.get("arrAirport"),
+      deptDate: searchParams.get("deptDate"),
+      adult: searchParams.get("adult"),
+      infant: searchParams.get("infant"),
+      children: searchParams.get("children"),
+      class: searchParams.get("class"),
+    };
+
     if (selectedOption === 0) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `price_${searchParams.get("class")}`,
-          order: "asc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = `price_${searchParams.get("class")}`;
+      searchParamsObject.order = "asc";
     } else if (selectedOption === 1) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `price_${searchParams.get("class")}`,
-          order: "desc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = `price_${searchParams.get("class")}`;
+      searchParamsObject.order = "desc";
     } else if (selectedOption === 2) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `duration`,
-          order: "asc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = "duration";
+      searchParamsObject.order = "asc";
     } else if (selectedOption === 3) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `departure_time`,
-          order: "asc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = "departure_time";
+      searchParamsObject.order = "asc";
     } else if (selectedOption === 4) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `departure_time`,
-          order: "desc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = "departure_time";
+      searchParamsObject.order = "desc";
     } else if (selectedOption === 5) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `arrival_time`,
-          order: "asc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = "arrival_time";
+      searchParamsObject.order = "asc";
     } else if (selectedOption === 6) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams({
-          deptAirport: searchParams.get("deptAirport"),
-          arrAirport: searchParams.get("arrAirport"),
-          deptDate: searchParams.get("deptDate"),
-          adult: searchParams.get("adult"),
-          infant: searchParams.get("infant"),
-          children: searchParams.get("children"),
-          class: searchParams.get("class"),
-          sortBy: `arrival_time`,
-          order: "desc",
-        }).toString(),
-      });
+      searchParamsObject.sortBy = "arrival_time";
+      searchParamsObject.order = "desc";
     }
+
+    const flightId = searchParams.get("flightId");
+    if (flightId) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        flightId: flightId,
+      };
+    }
+
+    navigate({
+      pathname: "/search",
+      search: createSearchParams(searchParamsObject).toString(),
+    });
     navigate(0);
 
     handleOptionSelect(selectedOption);
@@ -242,6 +181,7 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
 
 const FlightResults = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showModalFilter, setShowModalFilter] = useState(false);
   const [flightData, setFlightData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState(0);
@@ -333,15 +273,15 @@ const FlightResults = () => {
               <div className="mt-3 mb-5">
                 <p className="font-semibold text-base">Filter</p>
               </div>
-              <div className="flex items-center gap-2 border-b pb-2 text-lg">
+              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
                 <FiBox />
                 <p>Transit</p>
               </div>
-              <div className="flex items-center gap-2 border-b pb-2 text-lg">
+              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
                 <CiHeart />
                 <p>Fasilitas</p>
               </div>
-              <div className="flex items-center gap-2 border-b pb-2 text-lg">
+              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
                 <FiDollarSign />
                 <p>Harga</p>
               </div>
@@ -356,7 +296,7 @@ const FlightResults = () => {
                 <img
                   src={loadingIcon}
                   alt="load"
-                  className="aspect-square w-1/5"
+                  className="w-[80%] sm:w-[20%]"
                 />
               </div>
             ) : (

@@ -53,6 +53,7 @@ export default function FlightAccordion(props) {
     const infant = searchParams.get("infant");
     const seatClass = searchParams.get("class");
     const returnDate = searchParams.get("returnDate");
+    const idFlight = searchParams.get("flightId");
     const sortBy = searchParams.get("sortBy");
     const order = searchParams.get("order");
 
@@ -82,6 +83,7 @@ export default function FlightAccordion(props) {
           });
         }
       } catch (err) {
+        console.log(err);
         toast.error("Your session has expired, please log in again.", {
           position: "bottom-right",
           autoClose: 5000,
@@ -93,26 +95,13 @@ export default function FlightAccordion(props) {
           theme: "light",
           transition: Bounce,
         });
-        localStorage.removeItem("token");
+        if (err.message === "jwt malformed" || err.message === "jwt expired") {
+          localStorage.removeItem("token");
+        }
       }
     };
 
-    if (returnDate) {
-      navigate({
-        pathname: "/search/return",
-        search: createSearchParams({
-          deptAirport: arrival_airport_id,
-          arrAirport: departure_airport_id,
-          deptDate: returnDate,
-          adult,
-          infant,
-          children,
-          class: seatClass,
-          flightId: flightId,
-        }).toString(),
-      });
-      navigate(0);
-    } else {
+    if (idFlight) {
       if (!tokenUser) {
         toast.error("Please sign in first", {
           autoClose: 5000,
@@ -135,10 +124,56 @@ export default function FlightAccordion(props) {
             infant,
             children,
             class: seatClass,
+            flightId: idFlight,
+            returnFlightId: flightId,
+          }).toString(),
+        });
+        navigate(0);
+      }
+    } else {
+      if (returnDate) {
+        navigate({
+          pathname: "/search/return",
+          search: createSearchParams({
+            deptAirport: arrival_airport_id,
+            arrAirport: departure_airport_id,
+            deptDate: returnDate,
+            adult,
+            infant,
+            children,
+            class: seatClass,
             flightId: flightId,
           }).toString(),
         });
         navigate(0);
+      } else {
+        if (!tokenUser) {
+          toast.error("Please sign in first", {
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: { width: "100%", textAlign: "center" },
+            position: "top-center",
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        } else {
+          checkUser();
+          navigate({
+            pathname: "/booking",
+            search: createSearchParams({
+              adult,
+              infant,
+              children,
+              class: seatClass,
+              flightId: flightId,
+            }).toString(),
+          });
+          navigate(0);
+        }
       }
     }
   };
@@ -147,6 +182,7 @@ export default function FlightAccordion(props) {
     <div>
       <div id="accordion-collapse" data-accordion="collapse">
         <h2 id="accordion-collapse-heading-1">
+          <ToastContainer />
           <button
             type="button"
             className={`flex items-center w-full justify-between p-5 font-medium rtl:text-right ${

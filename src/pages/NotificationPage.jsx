@@ -33,7 +33,9 @@ const NotificationPage = () => {
           theme: "light",
           transition: Bounce,
         });
-        localStorage.removeItem("token");
+        if (err.message === "jwt malformed" || err.message === "jwt expired") {
+          localStorage.removeItem("token");
+        }
       }
     };
 
