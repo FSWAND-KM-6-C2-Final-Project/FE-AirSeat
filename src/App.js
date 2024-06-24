@@ -18,6 +18,7 @@ import UnauthenticatePage from "./pages/UnauthenticatePage";
 import RequestResetPasswordPage from "./pages/RequestResetPasswordPage";
 import "./index.css";
 import OTPResetPasswordPage from "./pages/OTPResetPasswordPage";
+import ReturnSearchPage from "./pages/ReturnSearchPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             element={<OTPResetPasswordPage />}
           />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/search/return" element={<ReturnSearchPage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-success" element={<SuccessPage />} />

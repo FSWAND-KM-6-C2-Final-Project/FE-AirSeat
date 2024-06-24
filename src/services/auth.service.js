@@ -23,7 +23,6 @@ export async function getUser(token) {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
 
