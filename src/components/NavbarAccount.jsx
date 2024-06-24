@@ -23,6 +23,7 @@ const NavbarAccount = () => {
           setIsAuthenticated(true);
         }
       } catch (err) {
+        console.log(err);
         toast.error("Your session has expired, please log in again.", {
           position: "bottom-right",
           autoClose: 5000,
@@ -34,7 +35,9 @@ const NavbarAccount = () => {
           theme: "light",
           transition: Bounce,
         });
-        localStorage.removeItem("token");
+        if (err.message === "jwt malformed" || err.message === "jwt expired") {
+          localStorage.removeItem("token");
+        }
       }
       setIsFetching(false);
     };
