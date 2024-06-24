@@ -302,29 +302,51 @@ const FlightResults = () => {
             ) : (
               <div className="space-y-4">
                 {flightData.length > 0 ? (
-                  flightData.map((data) => (
-                    <FlightAccordion
-                      key={data.id}
-                      airline={data.airline.airline_name}
-                      flightClass={seatClass}
-                      departureTime={data.departure_time}
-                      arrivalTime={data.arrival_time}
-                      totalTime={data.duration}
-                      type={"Direct"}
-                      idFlight={data.id}
-                      logo={data.airline.airline_picture}
-                      departureAirportId={
-                        data.departureAirport.airport_city_code
-                      }
-                      arrivalAirportId={data.arrivalAirport.airport_city_code}
-                      price={data.price_economy}
-                      date={data.date}
-                      information={data.information}
-                      dep_airport={data.departureAirport.airport_name}
-                      code={data.flight_number}
-                      arr_airport={data.arrivalAirport.airport_name}
-                    />
-                  ))
+                  flightData.map((data) => {
+                    const seatClass = searchParams.get("class");
+                    let price;
+
+                    switch (seatClass) {
+                      case "economy":
+                        price = data.price_economy;
+                        break;
+                      case "premium_economy":
+                        price = data.price_premium_economy;
+                        break;
+                      case "business":
+                        price = data.price_business;
+                        break;
+                      case "first_class":
+                        price = data.price_first_class;
+                        break;
+                      default:
+                        price = data.price_economy;
+                    }
+
+                    return (
+                      <FlightAccordion
+                        key={data.id}
+                        airline={data.airline.airline_name}
+                        flightClass={seatClass}
+                        departureTime={data.departure_time}
+                        arrivalTime={data.arrival_time}
+                        totalTime={data.duration}
+                        type={"Direct"}
+                        idFlight={data.id}
+                        logo={data.airline.airline_picture}
+                        departureAirportId={
+                          data.departureAirport.airport_city_code
+                        }
+                        arrivalAirportId={data.arrivalAirport.airport_city_code}
+                        price={price}
+                        date={data.date}
+                        information={data.information}
+                        dep_airport={data.departureAirport.airport_name}
+                        code={data.flight_number}
+                        arr_airport={data.arrivalAirport.airport_name}
+                      />
+                    );
+                  })
                 ) : (
                   <div className="flex justify-center">
                     <img
