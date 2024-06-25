@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaPlaneDeparture, FaPlaneArrival, FaInfoCircle } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast, Bounce } from "react-toastify";
+import Swal from "sweetalert2";
 
 import { seoTitle } from "string-fn";
+import { bookingFlight } from "../services/booking.service";
 
 const FlightDetails = ({
   airline_name,
@@ -19,6 +22,8 @@ const FlightDetails = ({
   departure_terminal,
   arrival_airport,
   bookingData,
+  departure_airport_city_code,
+  arrival_airport_city_code,
 }) => {
   const navigate = useNavigate();
   const [seatClass, setSeatClass] = useState();
@@ -30,9 +35,170 @@ const FlightDetails = ({
   dayjs.extend(customParseFormat);
   dayjs.extend(utc);
 
-  const handlePaymentRedirect = () => {
-    console.log(bookingData);
-    // navigate("/payment");
+  const handlePaymentRedirect = async () => {
+    if (bookingData === null) {
+      toast.error("Fill your order data first", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } else {
+      Swal.fire({
+        title: "Check Your Order Data",
+        icon: "question",
+        width: "50%",
+
+        html: `
+       <div class="mb-3">
+        <p class="text-left text-xl font-bold mb-1">Ordered By </p>
+        <p class="text-left text-md font-medium">Name : ${
+          bookingData.ordered_by.first_name
+        } ${bookingData.ordered_by.last_name || ""}</p>
+         <p class="text-left text-md font-medium">Email : ${
+           bookingData.ordered_by.email
+         }</p>
+         <p class="text-left text-md font-medium">Phone Number : ${
+           bookingData.ordered_by.phone_number
+         }</p>
+       </div>
+
+        <hr>
+
+        <div class="mt-3 mb-3">
+          <p class="text-left text-xl font-bold mb-1 mr">Flight Order Detail </p>
+          <img class="w-[50px] my-3" src="${airline_picture}" />
+          <p class="text-left text-md font-bold">${airline_name} - ${flight_number}</p>
+          <p class="text-left text-md font-medium">${departure_airport} (${departure_airport_city_code}) → ${arrival_airport} (${arrival_airport_city_code})</p>
+          <p class="text-left text-md font-medium">${dayjs(
+            departure_time
+          ).format("DD MMMM YYYY HH:mm")} → ${dayjs(arrival_time).format(
+          "DD MMMM YYYY HH:mm"
+        )}</p>
+          <p class="text-left text-md font-medium">${seoTitle(
+            searchParams.get("class")
+          )}</p>
+        
+       </div>
+
+        <hr>
+
+       <div class="mt-3 mb-3">
+      <p class="text-left text-xl font-bold mb-1  ">Passenger Detail </p>
+      ${bookingData.passenger
+        .map(
+          (pass, index) => `
+        <div class="border shadow-md p-5 mt-2 rounded-lg">
+          <p class="text-left text-md font-bold">Passenger ${
+            index + 1
+          } - ${seoTitle(pass.passenger_type)}</p>
+          <p class="text-left text-md font-medium">
+            Name : ${pass.first_name} ${pass.last_name || ""}
+          </p>
+          <p class="text-left text-md font-medium">
+            Title : ${seoTitle(pass.title)}.
+          </p>
+          <p class="text-left text-md font-medium">
+            Date Of Birth : ${dayjs(pass.dob).format("DD MMMM YYYY")}
+          </p>
+          <p class="text-left text-md font-medium">
+            Identification Type : ${pass.identification_type.toUpperCase()}
+          </p>
+           <p class="text-left text-md font-medium">
+            Identification Number : ${pass.identification_number}
+          </p>
+          <p class="text-left text-md font-medium">
+            Identification Country : ${pass.identification_country}
+          </p>
+          <p class="text-left text-md font-medium">
+            Identification Expired : ${
+              dayjs(pass.identification_expired).format("DD MMMM YYYY") || "-"
+            }
+          </p>
+           <p class="text-left text-md font-medium">
+            Nationality : ${pass.nationality}
+          </p>
+          <p class="text-left text-md font-medium">
+            Seat : ${pass.seat_departure.seat_row}${
+            pass.seat_departure.seat_column
+          }
+          </p>
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+
+        <hr>
+`,
+        showConfirmButton: true,
+        confirmButtonText: "Proceed To Payment",
+        confirmButtonColor: "#447C9D",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await bookingFlightProcess(bookingData);
+
+          if (response) {
+            console.log(response.data.payment_data.token);
+            navigate("/payment", {
+              state: {
+                payment_token: response.data.payment_data.token,
+                booking_code: response.data.booking.booking_code,
+                airline_name,
+                airline_picture,
+                flight_number,
+                departure_time,
+                arrival_time,
+                information,
+                adult,
+                infant,
+                children,
+                price,
+                departure_airport,
+                departure_terminal,
+                arrival_airport,
+                bookingData,
+                departure_airport_city_code,
+                arrival_airport_city_code,
+                seatClass,
+              },
+            });
+          }
+        }
+      });
+    }
+  };
+
+  const bookingFlightProcess = async (flightData) => {
+    try {
+      const bookedFlight = await bookingFlight(
+        JSON.stringify(flightData),
+        localStorage.getItem("token")
+      );
+
+      if (bookedFlight) {
+        return bookedFlight;
+      }
+    } catch (err) {
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
   };
 
   useEffect(() => {
@@ -50,88 +216,132 @@ const FlightDetails = ({
           }
         `}
       </style>
-      <div className="md:w-1/3 max-h-screen p-6 bg-white rounded-lg shadow-lg my-6 border border-gray-200 flight-details overflow-y-hidden">
+
+      <div className="md:w-1/3 max-h-screen p-6 bg-white rounded-lg shadow-lg mb-6 border border-gray-200 flight-details overflow-y-hidden">
         <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b-2 border-gray-300 pb-3">
           Detail Flight
         </h2>
 
         <div className="mb-6">
           <div className="flex items-center mb-2">
-            <FaPlaneDeparture className="text-[#447C9D] mr-2" size={20} />
-            <h3 className="text-xl font-semibold text-[#164765]">Departure</h3>
+            <FaPlaneDeparture className="text-customBlue1 mr-3" size={20} />
+            <h3 className="text-xl font-bold text-customBlue1">Departure</h3>
           </div>
-          <p className="text-lg font-medium text-gray-700">
+          <p className="text-lg font-bold text-gray-700">
             {dayjs(departure_time).format("HH:mm")}
           </p>
-          <p className="text-md text-gray-600">
+          <p className="text-md font-medium text-gray-600">
             {dayjs(departure_time).format("DD MMMM YYYY")}
           </p>
-          <p className="text-md text-gray-600">
+          <p className="text-md font-medium text-gray-600">
             {departure_airport && departure_airport} –{" "}
             {departure_terminal && departure_terminal}
           </p>
         </div>
 
-        <div className="mb-6 border-t border-gray-200 pt-4">
-          <h3 className="text-xl font-semibold text-[#164765]">
-            {airline_name && airline_name} - {seatClass && seoTitle(seatClass)}
-          </h3>
-          <p className="text-md text">{flight_number && flight_number}</p>
-        </div>
-
-        <div className="mb-6 border-t border-gray-200 pt-4">
-          <div className="flex items-center mb-2">
-            <FaInfoCircle className="text-[#447C9D] mr-2" size={20} />
-            <h3 className="text-xl font-semibold text-[#164765]">
-              Information
+        <div className="mb-6 border-t flex items-center border-gray-200 pt-4">
+          <div>
+            <img className="w-[50px] mr-4" src={airline_picture} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-customBlue1">
+              {airline_name && airline_name} -{" "}
+              {seatClass && seoTitle(seatClass)}
             </h3>
+            <p className="text-lg mb-3 font-bold text-customBlue1">
+              {flight_number && flight_number}
+            </p>
+            <div className="flex items-center mt-2">
+              <h3 className="text-md font-bold  text-customBlue1">
+                Information :
+              </h3>
+            </div>
+            <ul className="list-disc list-inside text-md text">
+              <p className="whitespace-pre-wrap font-medium text-gray-600">
+                {information && information}
+              </p>
+            </ul>
           </div>
-          <ul className="list-disc list-inside text-md text">
-            <p className="whitespace-pre-wrap">{information && information}</p>
-          </ul>
         </div>
 
         <div className="mb-6 border-t border-gray-200 pt-4">
           <div className="flex items-center mb-2">
-            <FaPlaneArrival className="text-[#447C9D] mr-2" size={20} />
-            <h3 className="text-xl font-semibold text-[#164765]">Arrival</h3>
+            <FaPlaneArrival className="text-customBlue1 mr-2" size={20} />
+            <h3 className="text-xl font-bold text-customBlue1">Arrival</h3>
           </div>
-          <p className="text-lg font-medium text-gray-700">
+          <p className="text-lg font-bold text-gray-700">
             {dayjs(arrival_time).format("HH:mm")}
           </p>
-          <p className="text-md text-gray-600">
+          <p className="text-md font-medium text-gray-600">
             {dayjs(arrival_time).format("DD MMMM YYYY")}
           </p>
-          <p className="text-md text-gray-600">
+          <p className="text-md font-medium text-gray-600">
             {arrival_airport && arrival_airport}
           </p>
         </div>
 
-        <div className="mb-3 border-t border-gray-200 pt-max">
-          <h3 className="text-xl font-semibold text-[#164765]">
+        <div className="mb-3 border-t border-gray-200 pt-4">
+          <h3 className="text-xl font-bold text-customBlue1 pb-3">
             Price Details
           </h3>
-          <div className="flex justify-between py-1">
-            <span className="text-md text">2 Adults</span>
-            <span className="text-md text">IDR 9.550.000</span>
+          <div className="flex justify-between py-1 ">
+            <span className="text-md font-medium">{adult} Adults</span>
+            <span className="text-md font-medium">
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(parseFloat(price) * parseInt(adult))}
+            </span>
           </div>
           <div className="flex justify-between py-1">
-            <span className="text-md text">1 Baby</span>
-            <span className="text-md text">IDR 0</span>
+            <span className="text-md font-medium">{infant} Infant</span>
+            <span className="text-md font-medium">
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(parseFloat(price) * parseInt(infant))}
+            </span>
           </div>
           <div className="flex justify-between py-1">
-            <span className="text-md text">Tax</span>
-            <span className="text-md text">IDR 300.000</span>
+            <span className="text-md font-medium">{children} Children</span>
+            <span className="text-md font-medium">
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(parseFloat(price) * parseInt(children))}
+            </span>
           </div>
-          <div className="flex justify-between items-center border-t border-gray-200 pt-2">
-            <span className="text-xl font-bold text-[#164765]">Total</span>
-            <span className="text-xl font-bold text-[#447C9D]">
-              IDR 9.850.000
+          <div className="flex justify-between py-1 mb-2">
+            <span className="text-md font-medium">Tax</span>
+            <span className="text-md font-medium">
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(0)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center border-t border-gray-200 pt-4">
+            <span className="text-xl font-bold text-customBlue1">Total</span>
+            <span className="text-xl font-bold text-customBlue1">
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(
+                parseFloat(price) * parseInt(adult) +
+                  parseFloat(price) * parseInt(infant) +
+                  parseFloat(price) * parseInt(children)
+              )}
             </span>
           </div>
           <button
-            className="w-full py-3 md:py-3 sm:py-2 my-5 text-white bg-[#164765] rounded-lg hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 text-lg md:text-lg sm:text-md"
+            className="w-full py-3 md:py-3 sm:py-2 my-5 text-white bg-customBlue1 rounded-lg hover:bg-customBlue2 focus:outline-none focus:ring-2 focus:ring-customBlue2 focus:ring-opacity-75 text-lg md:text-lg sm:text-md disabled:cursor-not-allowed disabled:bg-customBlue2"
             onClick={handlePaymentRedirect}
+            disabled={false}
           >
             Continue To Payment
           </button>

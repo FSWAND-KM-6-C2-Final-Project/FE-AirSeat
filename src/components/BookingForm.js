@@ -5,9 +5,10 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { ToastContainer, toast, Bounce } from "react-toastify";
+import { toast, Bounce } from "react-toastify";
 
 import { seoTitle } from "string-fn";
+import dayjs from "dayjs";
 
 const seatLayout = [
   {
@@ -64,10 +65,11 @@ const classTypes = {
   first_class: "First Class",
 };
 
-const BookingForm = ({ initialClass, onBookingData }) => {
+const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filteredSeats, setFilteredSeats] = useState([]);
   const [maxSeatCount, setMaxSeatCount] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
 
   const [orderData, setOrderData] = useState({
     fullName: "",
@@ -154,6 +156,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
 
   const handleOrderChange = (e) => {
+    setIsSaved(false);
     const { name, value } = e.target;
     setOrderData({
       ...orderData,
@@ -162,6 +165,8 @@ const BookingForm = ({ initialClass, onBookingData }) => {
   };
 
   const handlePassengerChange = (index, e) => {
+    setIsSaved(false);
+
     const { name, value } = e.target;
     const newPassengers = [...passengers];
     newPassengers[index][name] = value;
@@ -169,6 +174,8 @@ const BookingForm = ({ initialClass, onBookingData }) => {
   };
 
   const handleSeatSelection = (seat) => {
+    setIsSaved(false);
+
     if (!selectedSeats.includes(seat) && selectedSeats.length < maxSeatCount) {
       setSelectedSeats([...selectedSeats, seat]);
     } else if (selectedSeats.includes(seat)) {
@@ -180,8 +187,6 @@ const BookingForm = ({ initialClass, onBookingData }) => {
     e.preventDefault();
 
     const clickedSeats = selectedSeats.length;
-
-    console.log(clickedSeats);
 
     if (clickedSeats < maxSeatCount) {
       toast.error(
@@ -213,7 +218,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
         passenger: passengers.map((passenger, index) => ({
           first_name: passenger.fullName,
           last_name: passenger.lastName || "",
-          dob: passenger.dob,
+          dob: dayjs(passenger.dob).toISOString(),
           title: passenger.title.toLowerCase().slice(0, -1),
           nationality: passenger.nationality,
           passenger_type: passenger.type,
@@ -221,15 +226,28 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           identification_number: passenger.idNumber,
           identification_country: passenger.issuingCountry || "Indonesia",
           identification_expired: passenger.expiryDate
-            ? passenger.expiryDate
+            ? dayjs(passenger.expiryDate).toISOString()
             : "",
           seat_departure: parseSeat(selectedSeats[index]),
           passenger_type: passenger.type,
         })),
       };
 
-      console.log(JSON.stringify(bookingData));
       onBookingData(bookingData);
+
+      setIsSaved(true);
+
+      toast.success(`Order data saved.`, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -238,23 +256,42 @@ const BookingForm = ({ initialClass, onBookingData }) => {
     const row = seatCode.slice(0, -1);
     const column = seatCode.slice(-1);
     return {
-      seat_row: row.toUpperCase(),
-      seat_column: column,
+      seat_row: column,
+      seat_column: row.toUpperCase(),
     };
   };
 
-  const renderSeat = (seat, isDisabled) => {
+  const renderSeat = (seat, isDisabled, index) => {
     const isSelected = selectedSeats.includes(seat);
+    let seatStatusClass = "";
+
+    if (seatStatus && seatStatus.length > 0) {
+      const seatInfo = seatStatus.find((s) => s.seat_name === seat);
+      if (seatInfo) {
+        if (seatInfo.seat_status === "available") {
+          seatStatusClass = "bg-[#56bf58] text-white font-medium text-sm";
+          isDisabled = false;
+        } else if (seatInfo.seat_status === "locked") {
+          seatStatusClass =
+            "bg-[#abadac] text-white font-medium text-sm cursor-not-allowed";
+          isDisabled = true;
+        } else if (seatInfo.seat_status === "unavailable") {
+          seatStatusClass =
+            "bg-[#abadac] text-white font-medium text-sm cursor-not-allowed";
+          isDisabled = true;
+        }
+      }
+    }
+
     const bgColor = isSelected
-      ? "bg-gray-500 text-white"
-      : "bg-green-500 text-white";
+      ? "bg-customBlue1 text-white font-medium text-sm"
+      : seatStatusClass;
+
     return (
       <button
         key={seat}
         type="button"
-        className={`p-2 ${bgColor} rounded-md focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 hover:bg-opacity-75 ${
-          isDisabled ? "cursor-not-allowed" : ""
-        }`}
+        className={`p-2 ${bgColor} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#447C9D]  focus:ring-opacity-75 hover:bg-opacity-75`}
         onClick={() => !isDisabled && handleSeatSelection(seat)}
         disabled={isDisabled}
       >
@@ -275,13 +312,13 @@ const BookingForm = ({ initialClass, onBookingData }) => {
       </style>
       <form
         onSubmit={handleSubmit}
-        className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg font-plus-jakarta-sans"
+        className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border  font-plus-jakarta-sans"
       >
-        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-customBlue1 border-b-2 border-gray-300 pb-3">
           Fill Order Data
         </h2>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[#164765]">
+          <label className="block text-sm font-medium text-customBlue1">
             Full Name
           </label>
           <input
@@ -294,7 +331,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           />
         </div>
         <div className="mb-6 flex items-center justify-between">
-          <label className="block text-sm font-medium text-[#164765]">
+          <label className="block text-sm font-medium text-customBlue1">
             Have Family Name?
           </label>
           <Switch
@@ -318,7 +355,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
         </div>
         {orderData.hasLastName && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-[#164765]">
+            <label className="block text-sm font-medium text-customBlue1">
               Family Name
             </label>
             <input
@@ -332,7 +369,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           </div>
         )}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[#164765]">
+          <label className="block text-sm font-medium text-customBlue1">
             Phone Number
           </label>
           <input
@@ -345,7 +382,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           />
         </div>
         <div className="mb-6">
-          <label className="block text-sm font-medium text-[#164765]">
+          <label className="block text-sm font-medium text-customBlue1">
             Email
           </label>
           <input
@@ -357,7 +394,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
             required
           />
         </div>
-        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-customBlue1 border-b pb-3">
           Passenger Data
         </h2>
         {passengers.map((passenger, index) => (
@@ -365,11 +402,11 @@ const BookingForm = ({ initialClass, onBookingData }) => {
             key={index}
             className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50"
           >
-            <h3 className="text-xl font-semibold mb-4 border-b pb-2 text-[#164765]">
+            <h3 className="text-xl font-semibold mb-4 border-b pb-2 text-customBlue1">
               Passenger Personal Data {index + 1} - {seoTitle(passenger.type)}
             </h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 Title
               </label>
               <select
@@ -384,7 +421,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 Full Name
               </label>
               <input
@@ -397,7 +434,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               />
             </div>
             <div className="mb-4 flex items-center justify-between">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 Have family name?
               </label>
               <Switch
@@ -421,7 +458,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
             </div>
             {passenger.hasLastName && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[#164765]">
+                <label className="block text-sm font-medium text-customBlue1">
                   Family Name
                 </label>
                 <input
@@ -435,7 +472,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               </div>
             )}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 Date Of Birth
               </label>
               <input
@@ -448,7 +485,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 Nationality
               </label>
               <input
@@ -461,7 +498,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 KTP/Paspor
               </label>
               <select
@@ -476,7 +513,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[#164765]">
+              <label className="block text-sm font-medium text-customBlue1">
                 ID Number
               </label>
               <input
@@ -491,7 +528,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
             {passenger.idType === "paspor" && (
               <>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[#164765]">
+                  <label className="block text-sm font-medium text-customBlue1">
                     Issuing Country
                   </label>
                   <input
@@ -504,7 +541,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[#164765]">
+                  <label className="block text-sm font-medium text-customBlue1">
                     Expiry Date
                   </label>
                   <input
@@ -521,7 +558,7 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           </div>
         ))}
 
-        <h2 className="text-3xl font-bold mb-6 text-[#164765] border-b pb-3">
+        <h2 className="text-3xl font-bold mb-6 text-customBlue1 border-b pb-3">
           Choose Seat
         </h2>
         <div className="overflow-x-auto">
@@ -529,23 +566,22 @@ const BookingForm = ({ initialClass, onBookingData }) => {
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               {filteredSeats.map((section, index) => (
                 <div key={index} className="mb-4">
-                  <h3 className="text-2xl font-semibold mb-2 text-[#164765]">
+                  <h3 className="text-xl font-semibold mb-5 text-customBlue1">
                     {section.type}
                   </h3>
-                  <div className="grid grid-cols-7 gap-2">
+                  <div className="grid grid-cols-7 gap-2 ">
                     {section.rows.map((row, rowIndex) => (
                       <React.Fragment key={rowIndex}>
                         {row.map((seat, seatIndex) =>
                           seat === "" ? (
-                            <div
-                              key={seatIndex}
-                              onClick={() => console.log(seat)}
-                              className="col-span-1"
-                            />
+                            <div key={seatIndex} className="col-span-1 ">
+                              <span className="text-center justify-center"></span>
+                            </div>
                           ) : (
                             renderSeat(
                               seat,
-                              initialClass === section.type && index < 1
+                              initialClass === section.type && index < 1,
+                              `${section.type}_${seat}`
                             )
                           )
                         )}
@@ -558,16 +594,17 @@ const BookingForm = ({ initialClass, onBookingData }) => {
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <button
-            type="submit"
-            className="mt-6 px-4 py-2 bg-[#164765] text-white rounded-md hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 w-full"
-          >
-            Simpan
-          </button>
-        </div>
+        {!isSaved && (
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="mt-6 px-4 py-2 bg-[#164765] text-white rounded-md hover:bg-[#447C9D] focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 w-full"
+            >
+              Save
+            </button>
+          </div>
+        )}
       </form>
-      <ToastContainer />
     </div>
   );
 };

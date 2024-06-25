@@ -14,7 +14,6 @@ import { FaPlaneArrival, FaPlaneDeparture } from "react-icons/fa";
 import { IoCalendarSharp } from "react-icons/io5";
 import { TbArrowsExchange } from "react-icons/tb";
 import { MdOutlineAirlineSeatReclineNormal } from "react-icons/md";
-import slugify from "react-slugify";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 import { getFavoriteDestinations } from "../services/favoriteDestination.service";
@@ -235,6 +234,10 @@ const Home = () => {
     setShowToCityModal(false);
   };
 
+  const slugMaker = (seatClass) => {
+    return seatClass.toLowerCase().replace(/\s+/g, "_");
+  };
+
   useEffect(() => {
     const storeFormData = () => {
       const formData = {
@@ -244,10 +247,7 @@ const Home = () => {
         adult: tempPassengers.adults || 0,
         infant: tempPassengers.infants || 0,
         children: tempPassengers.children || 0,
-        class:
-          slugify(tempSeatClass, {
-            delimiter: "_",
-          }) || "economy",
+        class: slugMaker(tempSeatClass),
       };
 
       if (returnDate) {
