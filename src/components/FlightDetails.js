@@ -183,7 +183,6 @@ const FlightDetails = ({
         cancelButtonText: "Cancel",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          console.log(bookingData);
           const response = await bookingFlightProcess(bookingData);
 
           if (response) {

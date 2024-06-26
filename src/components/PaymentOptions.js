@@ -107,6 +107,7 @@ const PaymentOptions = () => {
               theme: "light",
               transition: Bounce,
             });
+            navigate("/payment-success");
           },
           onPending: function () {
             toast.info("Waiting for your payment", {
