@@ -108,7 +108,7 @@ const FlightDetails = ({
           ? `
           <div class="mt-3 mb-3">
             <p class="text-left text-xl font-bold mb-1">Return Flight Order Detail</p>
-            <img class="w-[50px] my-3" src="${airline_picture}" alt="Airline" />
+            <img class="w-[50px] my-3" src="${return_airline_picture}" alt="Airline" />
             <p class="text-left text-md font-bold">${return_airline_name} - ${return_flight_number}</p>
             <p class="text-left text-md font-medium">${return_departure_airport} (${return_departure_airport_city_code}) → ${return_arrival_airport} (${return_arrival_airport_city_code})</p>
             <p class="text-left text-md font-medium">${dayjs(
@@ -168,6 +168,16 @@ const FlightDetails = ({
             pass.seat_departure.seat_column
           }
           </p>
+         <p class="text-left text-md font-medium">
+          Seat Return : ${
+            pass.seat_return
+              ? (pass.seat_return.seat_row ? pass.seat_return.seat_row : "-") +
+                (pass.seat_return.seat_column
+                  ? pass.seat_return.seat_column
+                  : "-")
+              : "-"
+          }
+        </p>
         </div>
       `
         )
@@ -426,7 +436,7 @@ const FlightDetails = ({
                     style: "currency",
                     currency: "IDR",
                     maximumFractionDigits: 0,
-                  }).format(parseFloat(price) * parseInt(infant))}
+                  }).format(parseFloat(0) * parseInt(infant))}
                 </span>
               </div>
               <div className="flex justify-between py-1">
@@ -460,7 +470,7 @@ const FlightDetails = ({
                     maximumFractionDigits: 0,
                   }).format(
                     parseFloat(price) * parseInt(adult) +
-                      parseFloat(price) * parseInt(infant) +
+                      parseFloat(0) * parseInt(infant) +
                       parseFloat(price) * parseInt(children)
                   )}
                 </span>
@@ -500,7 +510,7 @@ const FlightDetails = ({
                     style: "currency",
                     currency: "IDR",
                     maximumFractionDigits: 0,
-                  }).format(parseFloat(price) * parseInt(infant))}
+                  }).format(parseFloat(0) * parseInt(infant))}
                 </span>
               </div>
               <div className="flex justify-between py-1">
@@ -543,7 +553,7 @@ const FlightDetails = ({
                     style: "currency",
                     currency: "IDR",
                     maximumFractionDigits: 0,
-                  }).format(parseFloat(return_price) * parseInt(infant))}
+                  }).format(parseFloat(0) * parseInt(infant))}
                 </span>
               </div>
               <div className="flex justify-between py-1">
@@ -577,10 +587,10 @@ const FlightDetails = ({
                     maximumFractionDigits: 0,
                   }).format(
                     parseFloat(price) * parseInt(adult) +
-                      parseFloat(price) * parseInt(infant) +
+                      parseFloat(0) * parseInt(infant) +
                       parseFloat(price) * parseInt(children) +
                       parseFloat(return_price) * parseInt(adult) +
-                      parseFloat(return_price) * parseInt(infant) +
+                      parseFloat(0) * parseInt(infant) +
                       parseFloat(return_price) * parseInt(children)
                   )}
                 </span>
