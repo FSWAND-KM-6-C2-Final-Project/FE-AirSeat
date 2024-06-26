@@ -37,7 +37,7 @@ const options = {
     prev: () => <FiChevronLeft />,
     next: () => <FiChevronRight />,
   },
-  datepickerClassNames: "top-full mt-2",
+  datepickerClassNames: "top-full mt-2 ml-[-100px]",
   defaultDate: new Date("2022-01-01"),
   language: "en",
   disabledDates: [],
@@ -215,22 +215,25 @@ const OrderHistory = () => {
   return (
     <>
       <div className="p-4 md:p-10 shadow-md">
-        <h2 className="font-bold text-2xl text-left xl:ml-44">Order History</h2>
-        <div className="flex flex-col md:flex-row md:justify-between items-center ml-0 md:ml-48 mr-0 md:mr-48">
+        <h2 className="font-bold text-2xl text-left ml-2 sm:ml-10 md:ml-6 lg:ml-11 xl:ml-28 2xl:ml-36">
+          Order History
+        </h2>
+        <div className="flex justify-center md:justify-start">
           <Link
             to="/"
-            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-auto mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
+            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-1/2 md:w-3/5 lg:w-8/12 md:ml-16 lg:ml-20 xl:ml-36 2xl:ml-44 mr-4 mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
             Homepage
           </Link>
-          <div className="flex items-center justify-between w-full md:w-auto mt-4 md:mt-8 space-x-4">
+          <div className="flex items-center mt-4 md:mt-8 space-x-4">
             <div className="relative">
               <Datepicker
                 options={options}
                 onChange={handleChange}
                 show={show}
                 setShow={handleClose}
+                className="w-full"
               >
                 <div
                   onClick={toggleShow}
@@ -248,7 +251,7 @@ const OrderHistory = () => {
               onClick={() => setIsModalOpen(true)}
               className="relative"
             >
-              <img src={SearchIcon} className="h-8 w-8" alt="Search Icon" />
+              <img src={SearchIcon} className="h-7 w-7" alt="Search Icon" />
             </button>
           </div>
         </div>
@@ -655,7 +658,7 @@ const OrderHistory = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex justify-center items-start bg-black bg-opacity-50 pt-24 md:pt-32">
-          <div className="relative p-4 w-full max-w-md">
+          <div className="relative p-4 w-full max-w-md mt-16 md:mt-20 sm:ml-12 md:ml-40 lg:ml-96 xl:ml-[600px] 2xl:ml-[750px]">
             <div className="relative bg-white rounded-xl shadow">
               {/* Modal header */}
               <div className="flex justify-between items-center p-5 border-b rounded-t">
