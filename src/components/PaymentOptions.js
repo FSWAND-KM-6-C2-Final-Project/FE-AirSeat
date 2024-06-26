@@ -8,6 +8,7 @@ const PaymentOptions = () => {
   const [snapLoaded, setSnapLoaded] = useState(false);
   const [paymentInitiated, setPaymentInitiated] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const {
     payment_token,
@@ -44,6 +45,10 @@ const PaymentOptions = () => {
   } = location.state || {};
 
   useEffect(() => {
+    if (!payment_token) {
+      navigate("/");
+    }
+
     const script = document.createElement("script");
     script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
     script.setAttribute("data-client-key", "SB-Mid-client-sWHHfn6Rjgzxjvrc");
@@ -176,7 +181,7 @@ const PaymentOptions = () => {
       </style>
       <div className="payment-container flex flex-col md:flex-row p-8 lg:mx-[200px] md:mx-[20px] sm:mx-0 space-y-8 md:space-y-0 md:space-x-8 font-plus-jakarta-sans">
         <div className="w-full md:w-1/2 p-8 shadow-lg rounded-lg bg-white">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">
+          <h2 className="text-3xl font-bold text-customBlue1 mb-6 text-gray-800">
             Payment Options
           </h2>
           <div className="space-y-4">

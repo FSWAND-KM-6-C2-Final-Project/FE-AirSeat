@@ -21,10 +21,14 @@ const BookingPage = () => {
   const [priceReturn, setPriceReturn] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFetching, setIsFetching] = useState(false);
+  const navigate = useNavigate();
 
   const initialClass = "Economy";
 
   useEffect(() => {
+    if (!flight) {
+      navigate("/");
+    }
     fetchFlightById();
   }, []);
 
