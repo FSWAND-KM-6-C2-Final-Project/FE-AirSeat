@@ -105,7 +105,7 @@ const Notification = () => {
               : "transition-transform duration-300"
           }`}
         >
-          Notifikasi
+          Notification
         </h2>
         <div
           className={`flex justify-center md:justify-start ${
@@ -119,7 +119,7 @@ const Notification = () => {
             className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-2/3 sm:w-1/2 mt-8 md:w-6/12 lg:w-8/12 md:ml-20 lg:ml-20 xl:ml-36 2xl:ml-44 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
-            Beranda
+            Homepage
           </Link>
           <div className="relative inline-block text-left ml-6 mt-10">
             <button
@@ -148,13 +148,13 @@ const Notification = () => {
                     onClick={() => handleCategoryChange("notifikasi")}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
-                    Notifikasi
+                    Notification
                   </button>
                   <button
                     onClick={() => handleCategoryChange("promotion")}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
-                    Promosi
+                    Promotion
                   </button>
                 </div>
               </div>
