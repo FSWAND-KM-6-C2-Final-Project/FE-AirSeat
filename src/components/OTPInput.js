@@ -3,16 +3,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import dayjs from "dayjs";
-import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import "react-toastify/dist/ReactToastify.css";
 
 const OTPInput = () => {
-  const [otp, setOtp] = useState(Array(6).fill(""));
-
   const navigate = useNavigate();
+  const [otp, setOtp] = useState(Array(6).fill(""));
   const location = useLocation();
   const { email, resend_at } = location.state || {};
-
   const initialTimer = Math.max(dayjs(resend_at).diff(dayjs(), "second"), 0);
   const [timer, setTimer] = useState(initialTimer);
 
@@ -154,67 +152,69 @@ const OTPInput = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center px-4">
-      <ToastContainer />
-      <div className="flex items-center w-full max-w-md mb-2 mt-20">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900 focus:outline-none mr-4"
-        >
-          <IoArrowBackOutline className="h-6 w-6" />
-        </button>
-        <h2 className="flex-grow text-2xl font-bold text-gray-900">
-          Verification Code
-        </h2>
-      </div>
-      <p className="mt-5 text-center text-sm text-gray-600">
-        We have sent the verification code to <strong>{email}</strong>
-      </p>
-      <form
-        className="mt-4 mb-8 space-y-6 w-full max-w-md"
-        onSubmit={handleSubmit}
-      >
-        <div className="flex justify-center space-x-2">
-          {otp.map((data, index) => (
-            <input
-              key={index}
-              type="text"
-              maxLength="1"
-              className="w-12 h-12 border border-gray-300 rounded-2xl mt-5 mb-2 text-center text-2xl focus:outline-none focus:ring-2 focus:ring-customBlue2"
-              value={data}
-              onChange={(e) => handleChange(e.target, index)}
-              id={`otpInput${index}`}
-            />
-          ))}
-        </div>
-        <div className="flex justify-center mt-4">
-          {timer > 0 ? (
-            <p className="text-gray-600">
-              Resend OTP in <strong>{timer}s</strong>
-            </p>
-          ) : (
-            <p className="text-gray-600">
-              Didn’t receive the code?{" "}
-              <button
-                type="button"
-                className="text-customBlue2 hover:text-customBlue1"
-                onClick={handleResend}
-              >
-                <strong>Resend Code</strong>
-              </button>
-            </p>
-          )}
-        </div>
-        <div className="flex justify-center mt-4">
+    <>
+      <div className="flex flex-col justify-center items-center px-4">
+        <ToastContainer />
+        <div className="flex items-center w-full max-w-md mb-2 mt-20">
           <button
-            type="submit"
-            className="w-full mt-10 py-2 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-customBlue2 hover:bg-customBlue1"
+            onClick={() => navigate(-1)}
+            className="flex items-center text-gray-600 hover:text-gray-900 focus:outline-none mr-4"
           >
-            Submit
+            <IoArrowBackOutline className="h-6 w-6" />
           </button>
+          <h2 className="flex-grow text-2xl font-bold text-gray-900">
+            Verification Code
+          </h2>
         </div>
-      </form>
-    </div>
+        <p className="mt-5 text-center text-sm text-gray-600">
+          We have sent the verification code to <strong>{email}</strong>
+        </p>
+        <form
+          className="mt-4 mb-8 space-y-6 w-full max-w-md"
+          onSubmit={handleSubmit}
+        >
+          <div className="flex justify-center space-x-2">
+            {otp.map((data, index) => (
+              <input
+                key={index}
+                type="text"
+                maxLength="1"
+                className="w-12 h-12 border border-gray-300 rounded-2xl mt-5 mb-2 text-center text-2xl focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                value={data}
+                onChange={(e) => handleChange(e.target, index)}
+                id={`otpInput${index}`}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            {timer > 0 ? (
+              <p className="text-gray-600">
+                Resend OTP in <strong>{timer}s</strong>
+              </p>
+            ) : (
+              <p className="text-gray-600">
+                Didn’t receive the code?{" "}
+                <button
+                  type="button"
+                  className="text-customBlue2 hover:text-customBlue1"
+                  onClick={handleResend}
+                >
+                  <strong>Resend Code</strong>
+                </button>
+              </p>
+            )}
+          </div>
+          <div className="flex justify-center mt-4">
+            <button
+              type="submit"
+              className="w-full mt-10 py-2 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-customBlue2 hover:bg-customBlue1"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

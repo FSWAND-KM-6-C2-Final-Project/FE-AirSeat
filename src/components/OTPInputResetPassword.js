@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import dayjs from "dayjs";
-import "react-toastify/dist/ReactToastify.css";
 import { changePassword } from "../services/resetPassword.service";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Swal from "sweetalert2";
+import "react-toastify/dist/ReactToastify.css";
 
 const OTPInputResetPassword = () => {
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -138,6 +138,7 @@ const OTPInputResetPassword = () => {
   };
 
   return (
+    <>
     <div className="flex flex-col justify-center items-center px-4">
       <ToastContainer />
       <div className="flex items-center w-full max-w-md mb-2 mt-20">
@@ -244,6 +245,7 @@ const OTPInputResetPassword = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
