@@ -65,9 +65,15 @@ const classTypes = {
   first_class: "First Class",
 };
 
-const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
+const BookingForm = ({
+  initialClass,
+  onBookingData,
+  seatStatus,
+  seatStatusReturn,
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filteredSeats, setFilteredSeats] = useState([]);
+  const [filteredReturnSeats, setFilteredReturnSeats] = useState([]);
   const [maxSeatCount, setMaxSeatCount] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -154,6 +160,7 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
   }, []);
 
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [selectedSeatsReturn, setSelectedSeatsReturn] = useState([]);
 
   const handleOrderChange = (e) => {
     setIsSaved(false);
@@ -173,13 +180,27 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
     setPassengers(newPassengers);
   };
 
-  const handleSeatSelection = (seat) => {
+  const handleSeatSelection = (seat, isReturn = false) => {
     setIsSaved(false);
 
-    if (!selectedSeats.includes(seat) && selectedSeats.length < maxSeatCount) {
-      setSelectedSeats([...selectedSeats, seat]);
-    } else if (selectedSeats.includes(seat)) {
-      setSelectedSeats(selectedSeats.filter((s) => s !== seat));
+    if (isReturn) {
+      if (
+        !selectedSeatsReturn.includes(seat) &&
+        selectedSeatsReturn.length < maxSeatCount
+      ) {
+        setSelectedSeatsReturn([...selectedSeatsReturn, seat]);
+      } else if (selectedSeatsReturn.includes(seat)) {
+        setSelectedSeatsReturn(selectedSeatsReturn.filter((s) => s !== seat));
+      }
+    } else {
+      if (
+        !selectedSeats.includes(seat) &&
+        selectedSeats.length < maxSeatCount
+      ) {
+        setSelectedSeats([...selectedSeats, seat]);
+      } else if (selectedSeats.includes(seat)) {
+        setSelectedSeats(selectedSeats.filter((s) => s !== seat));
+      }
     }
   };
 
@@ -187,6 +208,7 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
     e.preventDefault();
 
     const clickedSeats = selectedSeats.length;
+    const clickedReturnSeats = selectedSeatsReturn.length;
 
     if (clickedSeats < maxSeatCount) {
       toast.error(
@@ -205,54 +227,116 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
           transition: Bounce,
         }
       );
+    } else if (seatStatusReturn && clickedReturnSeats < maxSeatCount) {
+      toast.error(
+        `You've just chosen ${clickedReturnSeats} out of ${maxSeatCount} return seats, choose the remaining ${
+          parseInt(maxSeatCount) - parseInt(clickedReturnSeats)
+        }.`,
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        }
+      );
     } else {
-      const bookingData = {
-        flight_id: parseInt(searchParams.get("flightId")),
-        payment_method: "snap",
-        ordered_by: {
-          first_name: orderData.fullName,
-          last_name: orderData.lastName || "",
-          phone_number: orderData.phoneNumber,
-          email: orderData.email,
-        },
-        passenger: passengers.map((passenger, index) => ({
-          first_name: passenger.fullName,
-          last_name: passenger.lastName || "",
-          dob: dayjs(passenger.dob).toISOString(),
-          title: passenger.title.toLowerCase().slice(0, -1),
-          nationality: passenger.nationality,
-          passenger_type: passenger.type,
-          identification_type: passenger.idType.toLowerCase(),
-          identification_number: passenger.idNumber,
-          identification_country: passenger.issuingCountry || "Indonesia",
-          identification_expired: passenger.expiryDate
-            ? dayjs(passenger.expiryDate).toISOString()
-            : "",
-          seat_departure: parseSeat(selectedSeats[index]),
-          passenger_type: passenger.type,
-        })),
-      };
+      if (seatStatusReturn) {
+        const bookingData = {
+          flight_id: parseInt(searchParams.get("flightId")),
+          return_flight_id: parseInt(searchParams.get("returnFlightId")),
+          payment_method: "snap",
+          ordered_by: {
+            first_name: orderData.fullName,
+            last_name: orderData.lastName || "",
+            phone_number: orderData.phoneNumber,
+            email: orderData.email,
+          },
+          passenger: passengers.map((passenger, index) => ({
+            first_name: passenger.fullName,
+            last_name: passenger.lastName || "",
+            dob: dayjs(passenger.dob).toISOString(),
+            title: passenger.title.toLowerCase().slice(0, -1),
+            nationality: passenger.nationality,
+            passenger_type: passenger.type,
+            identification_type: passenger.idType.toLowerCase(),
+            identification_number: passenger.idNumber,
+            identification_country: passenger.issuingCountry || "Indonesia",
+            identification_expired: passenger.expiryDate
+              ? dayjs(passenger.expiryDate).toISOString()
+              : "",
+            seat_departure: parseSeat(selectedSeats[index]),
+            seat_return: parseSeat(selectedSeatsReturn[index]),
+            passenger_type: passenger.type,
+          })),
+        };
+        onBookingData(bookingData);
 
-      onBookingData(bookingData);
+        setIsSaved(true);
 
-      setIsSaved(true);
+        toast.success(`Order data saved.`, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      } else {
+        const bookingData = {
+          flight_id: parseInt(searchParams.get("flightId")),
+          payment_method: "snap",
+          ordered_by: {
+            first_name: orderData.fullName,
+            last_name: orderData.lastName || "",
+            phone_number: orderData.phoneNumber,
+            email: orderData.email,
+          },
+          passenger: passengers.map((passenger, index) => ({
+            first_name: passenger.fullName,
+            last_name: passenger.lastName || "",
+            dob: dayjs(passenger.dob).toISOString(),
+            title: passenger.title.toLowerCase().slice(0, -1),
+            nationality: passenger.nationality,
+            passenger_type: passenger.type,
+            identification_type: passenger.idType.toLowerCase(),
+            identification_number: passenger.idNumber,
+            identification_country: passenger.issuingCountry || "Indonesia",
+            identification_expired: passenger.expiryDate
+              ? dayjs(passenger.expiryDate).toISOString()
+              : "",
+            seat_departure: parseSeat(selectedSeats[index]),
+            passenger_type: passenger.type,
+          })),
+        };
 
-      toast.success(`Order data saved.`, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+        onBookingData(bookingData);
+
+        setIsSaved(true);
+
+        toast.success(`Order data saved.`, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
   };
 
   const parseSeat = (seatCode) => {
-    console.log(seatCode);
     const row = seatCode.slice(0, -1);
     const column = seatCode.slice(-1);
     return {
@@ -261,21 +345,23 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
     };
   };
 
-  const renderSeat = (seat, isDisabled, index) => {
-    const isSelected = selectedSeats.includes(seat);
+  const renderSeat = (seat, isDisabled, isReturn = false) => {
+    const seatStatuses = isReturn ? seatStatusReturn : seatStatus;
+    const isSelected = isReturn
+      ? selectedSeatsReturn.includes(seat)
+      : selectedSeats.includes(seat);
     let seatStatusClass = "";
 
-    if (seatStatus && seatStatus.length > 0) {
-      const seatInfo = seatStatus.find((s) => s.seat_name === seat);
+    if (seatStatuses && seatStatuses.length > 0) {
+      const seatInfo = seatStatuses.find((s) => s.seat_name === seat);
       if (seatInfo) {
         if (seatInfo.seat_status === "available") {
           seatStatusClass = "bg-[#56bf58] text-white font-medium text-sm";
           isDisabled = false;
-        } else if (seatInfo.seat_status === "locked") {
-          seatStatusClass =
-            "bg-[#abadac] text-white font-medium text-sm cursor-not-allowed";
-          isDisabled = true;
-        } else if (seatInfo.seat_status === "unavailable") {
+        } else if (
+          seatInfo.seat_status === "locked" ||
+          seatInfo.seat_status === "unavailable"
+        ) {
           seatStatusClass =
             "bg-[#abadac] text-white font-medium text-sm cursor-not-allowed";
           isDisabled = true;
@@ -291,8 +377,8 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
       <button
         key={seat}
         type="button"
-        className={`p-2 ${bgColor} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#447C9D]  focus:ring-opacity-75 hover:bg-opacity-75`}
-        onClick={() => !isDisabled && handleSeatSelection(seat)}
+        className={`p-2 ${bgColor} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#447C9D] focus:ring-opacity-75 hover:bg-opacity-75`}
+        onClick={() => !isDisabled && handleSeatSelection(seat, isReturn)}
         disabled={isDisabled}
       >
         {seat}
@@ -312,7 +398,7 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
       </style>
       <form
         onSubmit={handleSubmit}
-        className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border  font-plus-jakarta-sans"
+        className="max-w-4xl  p-6 bg-white rounded-lg shadow-lg border  font-plus-jakarta-sans"
       >
         <h2 className="text-3xl font-bold mb-6 text-customBlue1 border-b-2 border-gray-300 pb-3">
           Fill Order Data
@@ -569,20 +655,16 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
                   <h3 className="text-xl font-semibold mb-5 text-customBlue1">
                     {section.type}
                   </h3>
-                  <div className="grid grid-cols-7 gap-2 ">
+                  <div className="grid grid-cols-7 gap-2">
                     {section.rows.map((row, rowIndex) => (
                       <React.Fragment key={rowIndex}>
                         {row.map((seat, seatIndex) =>
                           seat === "" ? (
-                            <div key={seatIndex} className="col-span-1 ">
+                            <div key={seatIndex} className="col-span-1">
                               <span className="text-center justify-center"></span>
                             </div>
                           ) : (
-                            renderSeat(
-                              seat,
-                              initialClass === section.type && index < 1,
-                              `${section.type}_${seat}`
-                            )
+                            renderSeat(seat, false)
                           )
                         )}
                       </React.Fragment>
@@ -593,6 +675,41 @@ const BookingForm = ({ initialClass, onBookingData, seatStatus }) => {
             </div>
           </div>
         </div>
+        {seatStatusReturn && Object.keys(seatStatusReturn).length > 0 && (
+          <>
+            <h2 className="text-3xl font-bold mb-6 text-customBlue1 border-b pb-3">
+              Choose Return Seat
+            </h2>
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                  {filteredSeats.map((section, index) => (
+                    <div key={index} className="mb-4">
+                      <h3 className="text-xl font-semibold mb-5 text-customBlue1">
+                        {section.type}
+                      </h3>
+                      <div className="grid grid-cols-7 gap-2">
+                        {section.rows.map((row, rowIndex) => (
+                          <React.Fragment key={rowIndex}>
+                            {row.map((seat, seatIndex) =>
+                              seat === "" ? (
+                                <div key={seatIndex} className="col-span-1">
+                                  <span className="text-center justify-center"></span>
+                                </div>
+                              ) : (
+                                renderSeat(seat, false, true)
+                              )
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         {!isSaved && (
           <div className="flex justify-center">

@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { FaPlaneDeparture, FaPlaneArrival, FaInfoCircle } from "react-icons/fa";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast, Bounce } from "react-toastify";
-import Swal from "sweetalert2";
+import React from "react";
+import { FaPlaneDeparture, FaPlaneArrival } from "react-icons/fa";
 
 import { seoTitle } from "string-fn";
-import { bookingFlight } from "../services/booking.service";
 
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
@@ -32,6 +28,18 @@ const DetailedFlightInfo = ({
   departure_airport_city_code,
   arrival_airport_city_code,
   seatClass,
+  return_flight_number,
+  return_airline_name,
+  return_information,
+  return_departure_airport,
+  return_departure_airport_city_code,
+  return_departure_terminal,
+  return_departure_time,
+  return_arrival_airport,
+  return_arrival_airport_city_code,
+  return_airline_picture,
+  return_arrival_time,
+  return_price,
 }) => {
   return (
     <div className="max-w-3xl mx-auto p-8 bg-white shadow-xl rounded-lg">
@@ -96,64 +104,241 @@ const DetailedFlightInfo = ({
         </p>
       </div>
 
+      {return_flight_number && (
+        <>
+          <h3 className="text-xl font-bold text-customBlue1 border-t-2 py-3">
+            Return Flight
+          </h3>
+
+          <div className="mb-6">
+            <div className="flex items-center mb-2">
+              <FaPlaneDeparture className="text-customBlue1 mr-3" size={20} />
+              <h3 className="text-xl font-bold text-customBlue1">Departure</h3>
+            </div>
+            <p className="text-lg font-bold text-gray-700">
+              {dayjs(return_departure_time).format("HH:mm")}
+            </p>
+            <p className="text-md font-medium text-gray-600">
+              {dayjs(return_departure_time).format("DD MMMM YYYY")}
+            </p>
+            <p className="text-md font-medium text-gray-600">
+              {return_departure_airport && return_departure_airport} –{" "}
+              {return_departure_terminal && return_departure_terminal}
+            </p>
+          </div>
+
+          <div className="mb-6 border-t flex items-center border-gray-200 pt-4">
+            <div>
+              <img className="w-[50px] mr-4" src={return_airline_picture} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-customBlue1">
+                {return_airline_name && return_airline_name} -{" "}
+                {seatClass && seoTitle(seatClass)}
+              </h3>
+              <p className="text-lg mb-3 font-bold text-customBlue1">
+                {return_flight_number && return_flight_number}
+              </p>
+              <div className="flex items-center mt-2">
+                <h3 className="text-md font-bold  text-customBlue1">
+                  Information :
+                </h3>
+              </div>
+              <ul className="list-disc list-inside text-md text">
+                <p className="whitespace-pre-wrap font-medium text-gray-600">
+                  {return_information && return_information}
+                </p>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mb-6 border-t border-gray-200 pt-4">
+            <div className="flex items-center mb-2">
+              <FaPlaneArrival className="text-customBlue1 mr-2" size={20} />
+              <h3 className="text-xl font-bold text-customBlue1">Arrival</h3>
+            </div>
+            <p className="text-lg font-bold text-gray-700">
+              {dayjs(return_arrival_time).format("HH:mm")}
+            </p>
+            <p className="text-md font-medium text-gray-600">
+              {dayjs(return_arrival_time).format("DD MMMM YYYY")}
+            </p>
+            <p className="text-md font-medium text-gray-600">
+              {return_arrival_airport && return_arrival_airport}
+            </p>
+          </div>
+        </>
+      )}
+
       <div className="mb-3 border-t border-gray-200 pt-4">
-        <h3 className="text-xl font-bold text-customBlue1 pb-3">
-          Price Details
-        </h3>
-        <div className="flex justify-between py-1 ">
-          <span className="text-md font-medium">{adult} Adults</span>
-          <span className="text-md font-medium">
-            {new Intl.NumberFormat("id", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            }).format(parseFloat(price) * parseInt(adult))}
-          </span>
-        </div>
-        <div className="flex justify-between py-1">
-          <span className="text-md font-medium">{infant} Infant</span>
-          <span className="text-md font-medium">
-            {new Intl.NumberFormat("id", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            }).format(parseFloat(price) * parseInt(infant))}
-          </span>
-        </div>
-        <div className="flex justify-between py-1">
-          <span className="text-md font-medium">{children} Children</span>
-          <span className="text-md font-medium">
-            {new Intl.NumberFormat("id", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            }).format(parseFloat(price) * parseInt(children))}
-          </span>
-        </div>
-        <div className="flex justify-between py-1 mb-2">
-          <span className="text-md font-medium">Tax</span>
-          <span className="text-md font-medium">
-            {new Intl.NumberFormat("id", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            }).format(0)}
-          </span>
-        </div>
-        <div className="flex justify-between items-center border-t border-gray-200 pt-4">
-          <span className="text-xl font-bold text-customBlue1">Total</span>
-          <span className="text-xl font-bold text-customBlue1">
-            {new Intl.NumberFormat("id", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            }).format(
-              parseFloat(price) * parseInt(adult) +
-                parseFloat(price) * parseInt(infant) +
-                parseFloat(price) * parseInt(children)
-            )}
-          </span>
-        </div>
+        {flight_number && !return_flight_number && (
+          <>
+            <h3 className="text-xl font-bold text-customBlue1 pb-3">
+              Price Details
+            </h3>
+            <div className="flex justify-between py-1 ">
+              <span className="text-md font-medium">{adult} Adults</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(adult))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{infant} Infant</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(infant))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{children} Children</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(children))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1 mb-2">
+              <span className="text-md font-medium">Tax</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(0)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center border-t border-gray-200 pt-4">
+              <span className="text-xl font-bold text-customBlue1">Total</span>
+              <span className="text-xl font-bold text-customBlue1">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(
+                  parseFloat(price) * parseInt(adult) +
+                    parseFloat(price) * parseInt(infant) +
+                    parseFloat(price) * parseInt(children)
+                )}
+              </span>
+            </div>
+          </>
+        )}
+        {flight_number && return_flight_number && (
+          <>
+            <h3 className="text-xl font-bold text-customBlue1 pb-3">
+              Price Details
+            </h3>
+            <div className="flex justify-between py-1 ">
+              <span className="text-md font-medium">{adult} Adults</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(adult))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{infant} Infant</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(infant))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{children} Children</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(price) * parseInt(children))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1 mb-2">
+              <span className="text-md font-medium">Tax</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(0)}
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-customBlue1 pb-3">
+              Return Price Details
+            </h3>
+            <div className="flex justify-between py-1 ">
+              <span className="text-md font-medium">{adult} Adults</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(return_price) * parseInt(adult))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{infant} Infant</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(return_price) * parseInt(infant))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1">
+              <span className="text-md font-medium">{children} Children</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(return_price) * parseInt(children))}
+              </span>
+            </div>
+            <div className="flex justify-between py-1 mb-2">
+              <span className="text-md font-medium">Tax</span>
+              <span className="text-md font-medium">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(0)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center border-t border-gray-200 pt-4">
+              <span className="text-xl font-bold text-customBlue1">Total</span>
+              <span className="text-xl font-bold text-customBlue1">
+                {new Intl.NumberFormat("id", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(
+                  parseFloat(price) * parseInt(adult) +
+                    parseFloat(price) * parseInt(infant) +
+                    parseFloat(price) * parseInt(children) +
+                    parseFloat(return_price) * parseInt(adult) +
+                    parseFloat(return_price) * parseInt(infant) +
+                    parseFloat(return_price) * parseInt(children)
+                )}
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

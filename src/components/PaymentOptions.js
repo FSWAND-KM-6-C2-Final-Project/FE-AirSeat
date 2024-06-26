@@ -29,6 +29,18 @@ const PaymentOptions = () => {
     departure_airport_city_code,
     arrival_airport_city_code,
     seatClass,
+    return_flight_number,
+    return_airline_name,
+    return_information,
+    return_departure_airport,
+    return_departure_airport_city_code,
+    return_departure_terminal,
+    return_departure_time,
+    return_arrival_airport,
+    return_arrival_airport_city_code,
+    return_airline_picture,
+    return_arrival_time,
+    return_price,
   } = location.state || {};
 
   useEffect(() => {
@@ -179,7 +191,7 @@ const PaymentOptions = () => {
             flight_number={flight_number}
             airline_name={airline_name}
             information={information}
-            departure_airport={departure_airport_city_code}
+            departure_airport={departure_airport}
             departure_airport_city_code={departure_airport_city_code}
             departure_terminal={departure_terminal}
             departure_time={departure_time}
@@ -193,6 +205,20 @@ const PaymentOptions = () => {
             seatClass={seatClass}
             price={price}
             booking_code={booking_code}
+            return_flight_number={return_flight_number}
+            return_airline_name={return_airline_name}
+            return_information={return_information}
+            return_departure_airport={return_departure_airport}
+            return_departure_airport_city_code={
+              return_departure_airport_city_code
+            }
+            return_departure_terminal={return_departure_terminal}
+            return_departure_time={return_departure_time}
+            return_arrival_airport={return_arrival_airport}
+            return_arrival_airport_city_code={return_arrival_airport_city_code}
+            return_airline_picture={return_airline_picture}
+            return_arrival_time={return_arrival_time}
+            return_price={return_price}
           />
         </div>
       </div>
