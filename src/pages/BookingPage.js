@@ -22,7 +22,7 @@ const BookingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(900);
 
   const initialClass = "Economy";
 
