@@ -22,14 +22,30 @@ const BookingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(10);
 
   const initialClass = "Economy";
 
   useEffect(() => {
-    if (!flight) {
+    const flightId = searchParams.get("flightId");
+    if (!flightId) {
       navigate("/");
     }
     fetchFlightById();
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 0) {
+          clearInterval(timer);
+          navigate(-1);
+          return 0;
+        } else {
+          return prevTime - 1;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const fetchFlightById = async () => {
@@ -103,10 +119,21 @@ const BookingPage = () => {
     setBookingData(data);
   };
 
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const formattedTime = `${minutes < 10 ? "0" : ""}${minutes}:${
+    seconds < 10 ? "0" : ""
+  }${seconds}`;
+
   return (
     <div>
       <UserNavbar />
       <StepsSection />
+      {!isFetching && (
+        <div className="w-[80%] m-auto bg-[#FF0000] rounded-xl px-5 py-[13px] shadow-lg font-bold text-center text-white">
+          Complete within {formattedTime}
+        </div>
+      )}
       <main className="mt-6 flex flex-col mx-[5px] md:mx-[5px] sm:mx-[100px] md:flex-row gap-2 justify-center">
         {!isFetching && seat && (
           <div className="w-full md:w-1/2">
