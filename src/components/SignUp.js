@@ -103,6 +103,13 @@ const SignUp = () => {
                 resend_at: response.data.verification_user_resend_at,
               },
             });
+          } else if (result.isDismissed) {
+            navigate("/activation/otp", {
+              state: {
+                email: response.data.email,
+                resend_at: response.data.verification_user_resend_at,
+              },
+            });
           }
         });
       }

@@ -1,4 +1,4 @@
-const BASE_URL = "https://plucky-agent-424606-s3.et.r.appspot.com";
+const BASE_URL = "http://localhost:3000";
 
 export async function getFlightData(
   deptAirport,
@@ -10,6 +10,14 @@ export async function getFlightData(
   const response = await fetch(
     `${BASE_URL}/api/v1/flight?deptAirport=${deptAirport}&arrAirport=${arrAirport}&searchDate=${deptDate}&sortBy=${sort}&order=${order}`
   );
+
+  const resData = await response.json();
+
+  return resData;
+}
+
+export async function getFlightById(id) {
+  const response = await fetch(`${BASE_URL}/api/v1/flight/${id}`);
 
   const resData = await response.json();
 

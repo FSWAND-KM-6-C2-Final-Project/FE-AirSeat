@@ -6,30 +6,30 @@ const StepsSection = () => {
   const currentPath = location.pathname;
 
   return (
-    <div className="flex justify-start my-10 pl-5 sm:pl-40">
+    <div className="flex justify-start my-10 pl-5 sm:pl-[280px]">
       <div className="flex items-center space-x-4 text-sm">
         <span
-          className={`font-medium ${
+          className={`font-bold text-sm sm:text-xl ${
             currentPath === "/booking" ? "text-black" : "text-gray-500"
           }`}
         >
-          Isi Data Diri
+          Order Data
         </span>
         <span className="text-gray-500">{">"}</span>
         <span
-          className={`font-medium ${
+          className={`font-bold text-sm sm:text-xl ${
             currentPath === "/payment" ? "text-black" : "text-gray-500"
           }`}
         >
-          Bayar
+          Payment
         </span>
         <span className="text-gray-500">{">"}</span>
         <span
-          className={`font-medium ${
+          className={`font-bold text-sm sm:text-xl ${
             currentPath === "/payment-success" ? "text-black" : "text-gray-500"
           }`}
         >
-          Selesai
+          Complete
         </span>
       </div>
     </div>
