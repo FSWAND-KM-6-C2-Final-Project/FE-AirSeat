@@ -49,7 +49,6 @@ const OrderHistoryEmpty = () => {
 
   const handleChange = (selectedDate) => {
     setSelectedDate(selectedDate);
-    // console.log(selectedDate);
   };
 
   const handleClose = (state) => {

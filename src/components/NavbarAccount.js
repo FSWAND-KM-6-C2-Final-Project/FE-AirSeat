@@ -23,7 +23,6 @@ const NavbarAccount = () => {
           setIsAuthenticated(true);
         }
       } catch (err) {
-        console.log(err);
         toast.error("Your session has expired, please log in again.", {
           position: "bottom-right",
           autoClose: 5000,

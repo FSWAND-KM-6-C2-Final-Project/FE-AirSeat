@@ -396,8 +396,6 @@ const Home = () => {
     setDeptDateVal(
       dayjs(destination.departure_time).utc().format("YYYY-MM-DD")
     );
-
-    console.log(destination);
   };
 
   return (
