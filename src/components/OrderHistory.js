@@ -7,7 +7,12 @@ import LongArrowIcon from "../icons/long_arrow.svg";
 import VietnamAirlinesLogo from "../images/vietnam_airlines_logo.png";
 import Datepicker from "tailwind-datepicker-react";
 import { Link } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiChevronLeft,
+  FiChevronRight,
+  FiX,
+} from "react-icons/fi";
 
 const options = {
   title: "Pilih waktu",
@@ -29,10 +34,10 @@ const options = {
     selected: "bg-customBlue2",
   },
   icons: {
-    prev: () => <span>Previous</span>,
-    next: () => <span>Next</span>,
+    prev: () => <FiChevronLeft />,
+    next: () => <FiChevronRight />,
   },
-  datepickerClassNames: "top-56 right-80",
+  datepickerClassNames: "top-full mt-2",
   defaultDate: new Date("2022-01-01"),
   language: "en",
   disabledDates: [],
@@ -50,17 +55,6 @@ const options = {
 const OrderHistory = () => {
   const [show, setShow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-
-  const handleChange = (selectedDate) => {
-    setSelectedDate(selectedDate);
-  };
-
-  const handleClose = (state) => {
-    setShow(state);
-  };
-  const toggleShow = () => {
-    setShow((prevShow) => !prevShow);
-  };
   const [selectedOrder, setSelectedOrder] = useState({
     status: "Issued",
     month: "January",
@@ -201,6 +195,18 @@ const OrderHistory = () => {
     },
   ];
 
+  const handleChange = (selectedDate) => {
+    setSelectedDate(selectedDate);
+  };
+
+  const handleClose = (state) => {
+    setShow(state);
+  };
+
+  const toggleShow = () => {
+    setShow((prevShow) => !prevShow);
+  };
+
   const handleCardClick = (order) => {
     setSelectedOrder(order);
     setSelectedOrderId(order.id);
@@ -208,44 +214,42 @@ const OrderHistory = () => {
 
   return (
     <>
-<div className="p-4 md:p-10 shadow-md">
-  <h2 className="font-bold text-2xl text-left xl:ml-44">
-    Order History
-  </h2>
-  <div className="flex flex-col md:flex-row md:justify-center ml-48 mr-48">
-    <Link
-      to={"/"}
-      className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-[430%] mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
-    >
-      <FiArrowLeft size={24} className="mr-2" />
-      Homepage
-    </Link>
-    <div className="flex items-center ml-3 justify-start w-full md:w-7/12 mt-4 md:mt-8">
-      <div className="relative">
-        <Datepicker
-          options={options}
-          onChange={handleChange}
-          show={show}
-          setShow={handleClose}
-        >
-          <div
-            onClick={toggleShow}
-            className="border border-customBlue1 cursor-pointer rounded-2xl h-8 flex items-center px-3"
+      <div className="p-4 md:p-10 shadow-md">
+        <h2 className="font-bold text-2xl text-left xl:ml-44">Order History</h2>
+        <div className="flex flex-col md:flex-row md:justify-between items-center ml-0 md:ml-48 mr-0 md:mr-48">
+          <Link
+            to="/"
+            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-auto mt-4 md:mt-8 font-semibold hover:bg-customBlue1"
           >
-            <img src={FilterIcon} className="mr-2" alt="" />
-            <span className="font-normal">Filter</span>
-          </div>
-        </Datepicker>
-      </div>
-      <button
-        data-modal-target="default-modal"
-        data-modal-toggle="default-modal"
-        className="ml-4"
-        type="button"
-        onClick={() => setIsModalOpen(true)}
-      >
-        <img src={SearchIcon} className="h-8 w-8" alt="Search" />
-      </button>
+            <FiArrowLeft size={24} className="mr-2" />
+            Homepage
+          </Link>
+          <div className="flex items-center justify-between w-full md:w-auto mt-4 md:mt-8 space-x-4">
+            <div className="relative">
+              <Datepicker
+                options={options}
+                onChange={handleChange}
+                show={show}
+                setShow={handleClose}
+              >
+                <div
+                  onClick={toggleShow}
+                  className="border border-customBlue1 cursor-pointer rounded-2xl h-8 flex items-center px-3 hover:bg-gray-200 transition"
+                >
+                  <img src={FilterIcon} className="mr-2" alt="Filter Icon" />
+                  <span className="font-normal">Filter</span>
+                </div>
+              </Datepicker>
+            </div>
+            <button
+              data-modal-target="default-modal"
+              data-modal-toggle="default-modal"
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="relative"
+            >
+              <img src={SearchIcon} className="h-8 w-8" alt="Search Icon" />
+            </button>
           </div>
         </div>
       </div>
@@ -283,30 +287,34 @@ const OrderHistory = () => {
                       </span>
                       <div className="grid grid-cols-12 my-4 gap-4">
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.departureAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold">
+                              {order.departureAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.departureDate}</p>
                           <p className="text-sm">{order.departureTime}</p>
                         </div>
                         <div className="col-span-4 text-center flex flex-col items-center justify-center">
                           <span>{order.totalTime}</span>
-                          <img src={LongArrowIcon} alt="" />
+                          <img src={LongArrowIcon} alt="Arrow Icon" />
                         </div>
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.arrivalAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold">
+                              {order.arrivalAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.arrivalDate}</p>
                           <p className="text-sm">{order.arrivalTime}</p>
                         </div>
@@ -363,30 +371,34 @@ const OrderHistory = () => {
                       </span>
                       <div className="grid grid-cols-12 my-4 gap-4">
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.departureAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold">
+                              {order.departureAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.departureDate}</p>
                           <p className="text-sm">{order.departureTime}</p>
                         </div>
                         <div className="col-span-4 text-center flex flex-col items-center justify-center">
                           <span>{order.totalTime}</span>
-                          <img src={LongArrowIcon} alt="" />
+                          <img src={LongArrowIcon} alt="Arrow Icon" />
                         </div>
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.arrivalAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold">
+                              {order.arrivalAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.arrivalDate}</p>
                           <p className="text-sm">{order.arrivalTime}</p>
                         </div>
@@ -443,30 +455,34 @@ const OrderHistory = () => {
                       </span>
                       <div className="grid grid-cols-12 my-4 gap-4">
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.departureAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold ">
+                              {order.departureAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.departureDate}</p>
                           <p className="text-sm">{order.departureTime}</p>
                         </div>
                         <div className="col-span-4 text-center flex flex-col items-center justify-center">
                           <span>{order.totalTime}</span>
-                          <img src={LongArrowIcon} alt="" />
+                          <img src={LongArrowIcon} alt="Arrow Icon" />
                         </div>
                         <div className="col-span-4 text-center">
-                          <img
-                            src={LocationIcon}
-                            alt=""
-                            className="inline-block"
-                          />
-                          <span className="block font-bold">
-                            {order.arrivalAirport.split(" - ")[0]}
-                          </span>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src={LocationIcon}
+                              alt="Location Icon"
+                              className="inline-block mr-2"
+                            />
+                            <span className="block font-bold">
+                              {order.arrivalAirport.split(" - ")[0]}
+                            </span>
+                          </div>
                           <p className="text-sm">{order.arrivalDate}</p>
                           <p className="text-sm">{order.arrivalTime}</p>
                         </div>
@@ -549,7 +565,10 @@ const OrderHistory = () => {
                   <div className="py-2">
                     <div className="grid grid-cols-12 justify-center items-center">
                       <div className="col-span-2 md:col-span-1 grid items-center">
-                        <img src={VietnamAirlinesLogo} alt="" />
+                        <img
+                          src={VietnamAirlinesLogo}
+                          alt="Vietnam Airlines Logo"
+                        />
                       </div>
                       <div className="col-span-10 md:col-span-11 grid text-sm font-semibold">
                         <span className="font-bold">
@@ -635,123 +654,67 @@ const OrderHistory = () => {
       {/* End Konten History */}
       {/* Modal */}
       {isModalOpen && (
-        <div
-          id="default-modal"
-          tabIndex="-1"
-          aria-hidden="true"
-          className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
-        >
-          <div className="relative p-4 left-[18.5rem] -top-3 w-[90%] max-w-2xl h-80">
-            {/* Modal content */}
-            <div className="relative pb-28 bg-white rounded-xl shadow ">
+        <div className="fixed inset-0 z-50 flex justify-center items-start bg-black bg-opacity-50 pt-24 md:pt-32">
+          <div className="relative p-4 w-full max-w-md">
+            <div className="relative bg-white rounded-xl shadow">
               {/* Modal header */}
-              <div className="flex items-center justify-stretch p-4 md:p-5 border-b rounded-t ">
-                <h3 className="text-xl font-semibold text-gray-900 ">
-                  <form className="w-full">
-                    <label
-                      htmlFor="default-search"
-                      className="mb-2 text-sm font-medium text-gray-900 sr-only"
-                    >
-                      Search
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg
-                          className="w-4 h-4 text-gray-500"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                          />
-                        </svg>
-                      </div>
-                      <input
-                        type="search"
-                        id="default-search"
-                        className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Please enter the flight number"
-                        required
-                      />
+              <div className="flex justify-between items-center p-5 border-b rounded-t">
+                <form className="w-full">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-500"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
                     </div>
-                  </form>
-                </h3>
-                <button
-                  type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-4 inline-flex justify-center items-center"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  <svg
-                    className="w-3 h-3"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 14 14"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    <input
+                      type="search"
+                      id="search"
+                      className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter Flight Number"
+                      required
                     />
-                  </svg>
-                  <span className="sr-only">Close modal</span>
-                </button>
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      <FiX className="w-5 h-5 text-gray-500" />
+                    </button>
+                  </div>
+                </form>
               </div>
               {/* Modal body */}
-              <div className="p-4 md:p-5 space-y-4 text-sm">
+              <div className="p-6 space-y-6">
                 <div className="flex justify-between mb-6">
-                  <span className="text-base font-semibold leading-relaxed text-black-500">
-                    Recent Results
+                  <span className="text-base font-semibold leading-relaxed text-gray-900">
+                    Recent search
                   </span>
-                  <span className="text-red-600 font-semibold">Clear</span>
+                  <span className="text-red-600 font-semibold cursor-pointer">
+                    Delete
+                  </span>
                 </div>
-                <div className="grid grid-cols-12 justify-between">
-                  <div className="col-span-6">1234ABC</div>
-                  <div className="col-span-6 flex justify-end items-center">
-                    <svg
-                      className="w-3 h-3"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14"
+                <div className="space-y-2">
+                  {["1234ABC", "7UY71912"].map((search, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
                     >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
-                  </div>
-                  <hr className="col-span-12 border my-2" />
-                  <div className="col-span-6">7UY71912</div>
-                  <div className="col-span-6 flex justify-end items-center">
-                    <svg
-                      className="w-3 h-3"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
-                  </div>
-                  <hr className="col-span-12 border my-2" />
+                      <span>{search}</span>
+                      <FiX className="text-gray-500 cursor-pointer" />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
