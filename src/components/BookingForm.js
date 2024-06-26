@@ -93,7 +93,7 @@ const BookingForm = ({
     const childrenCount = parseInt(searchParams.get("children")) || 0;
     const seatClass = searchParams.get("class") || "economy";
 
-    const totalPassengers = adultCount + infantCount + childrenCount;
+    const totalPassengers = adultCount + childrenCount;
     setMaxSeatCount(totalPassengers);
 
     const adultFormTemplate = {
@@ -161,6 +161,7 @@ const BookingForm = ({
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedSeatsReturn, setSelectedSeatsReturn] = useState([]);
+  const [selectedInfantSeats, setSelectedInfantSeats] = useState([]);
 
   const handleOrderChange = (e) => {
     setIsSaved(false);
@@ -189,8 +190,11 @@ const BookingForm = ({
         selectedSeatsReturn.length < maxSeatCount
       ) {
         setSelectedSeatsReturn([...selectedSeatsReturn, seat]);
+        // Saya mau tambahkan ini
+        setSelectedInfantSeats([seat]);
       } else if (selectedSeatsReturn.includes(seat)) {
         setSelectedSeatsReturn(selectedSeatsReturn.filter((s) => s !== seat));
+        setSelectedInfantSeats([]);
       }
     } else {
       if (
@@ -198,8 +202,10 @@ const BookingForm = ({
         selectedSeats.length < maxSeatCount
       ) {
         setSelectedSeats([...selectedSeats, seat]);
+        setSelectedInfantSeats([seat]);
       } else if (selectedSeats.includes(seat)) {
         setSelectedSeats(selectedSeats.filter((s) => s !== seat));
+        setSelectedInfantSeats([]);
       }
     }
   };
@@ -269,8 +275,14 @@ const BookingForm = ({
             identification_expired: passenger.expiryDate
               ? dayjs(passenger.expiryDate).toISOString()
               : "",
-            seat_departure: parseSeat(selectedSeats[index]),
-            seat_return: parseSeat(selectedSeatsReturn[index]),
+            seat_departure:
+              passenger.type === "infant"
+                ? parseSeat(selectedInfantSeats[0])
+                : parseSeat(selectedSeats[index]),
+            seat_return:
+              passenger.type === "infant"
+                ? parseSeat(selectedInfantSeats[0])
+                : parseSeat(selectedSeatsReturn[index]),
             passenger_type: passenger.type,
           })),
         };
@@ -290,6 +302,7 @@ const BookingForm = ({
           transition: Bounce,
         });
       } else {
+        console.log(passengers);
         const bookingData = {
           flight_id: parseInt(searchParams.get("flightId")),
           payment_method: "snap",
@@ -312,10 +325,15 @@ const BookingForm = ({
             identification_expired: passenger.expiryDate
               ? dayjs(passenger.expiryDate).toISOString()
               : "",
-            seat_departure: parseSeat(selectedSeats[index]),
+            seat_departure:
+              passenger.type === "infant"
+                ? parseSeat(selectedInfantSeats[0])
+                : parseSeat(selectedSeats[index]),
             passenger_type: passenger.type,
           })),
         };
+
+        console.log(bookingData);
 
         onBookingData(bookingData);
 

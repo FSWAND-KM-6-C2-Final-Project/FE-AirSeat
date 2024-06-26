@@ -193,7 +193,7 @@ const DetailedFlightInfo = ({
                   style: "currency",
                   currency: "IDR",
                   maximumFractionDigits: 0,
-                }).format(parseFloat(price) * parseInt(infant))}
+                }).format(parseFloat(0) * parseInt(infant))}
               </span>
             </div>
             <div className="flex justify-between py-1">
@@ -225,7 +225,7 @@ const DetailedFlightInfo = ({
                   maximumFractionDigits: 0,
                 }).format(
                   parseFloat(price) * parseInt(adult) +
-                    parseFloat(price) * parseInt(infant) +
+                    parseFloat(0) * parseInt(infant) +
                     parseFloat(price) * parseInt(children)
                 )}
               </span>
@@ -254,7 +254,7 @@ const DetailedFlightInfo = ({
                   style: "currency",
                   currency: "IDR",
                   maximumFractionDigits: 0,
-                }).format(parseFloat(price) * parseInt(infant))}
+                }).format(parseFloat(0) * parseInt(infant))}
               </span>
             </div>
             <div className="flex justify-between py-1">
@@ -297,7 +297,7 @@ const DetailedFlightInfo = ({
                   style: "currency",
                   currency: "IDR",
                   maximumFractionDigits: 0,
-                }).format(parseFloat(return_price) * parseInt(infant))}
+                }).format(parseFloat(0) * parseInt(infant))}
               </span>
             </div>
             <div className="flex justify-between py-1">
@@ -329,10 +329,10 @@ const DetailedFlightInfo = ({
                   maximumFractionDigits: 0,
                 }).format(
                   parseFloat(price) * parseInt(adult) +
-                    parseFloat(price) * parseInt(infant) +
+                    parseFloat(0) * parseInt(infant) +
                     parseFloat(price) * parseInt(children) +
                     parseFloat(return_price) * parseInt(adult) +
-                    parseFloat(return_price) * parseInt(infant) +
+                    parseFloat(0) * parseInt(infant) +
                     parseFloat(return_price) * parseInt(children)
                 )}
               </span>
