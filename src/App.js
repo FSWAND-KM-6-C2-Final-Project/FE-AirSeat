@@ -16,9 +16,9 @@ import OrderHistoryEmpty from "./pages/OrderHistoryEmptyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import UnauthenticatePage from "./pages/UnauthenticatePage";
 import RequestResetPasswordPage from "./pages/RequestResetPasswordPage";
-import "./index.css";
 import OTPResetPasswordPage from "./pages/OTPResetPasswordPage";
 import ReturnSearchPage from "./pages/ReturnSearchPage";
+import "./index.css";
 
 function App() {
   return (
