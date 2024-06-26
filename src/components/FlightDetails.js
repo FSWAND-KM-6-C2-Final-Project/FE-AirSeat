@@ -196,7 +196,6 @@ const FlightDetails = ({
           const response = await bookingFlightProcess(bookingData);
 
           if (response) {
-            console.log(bookingData);
             navigate("/payment", {
               state: {
                 payment_token: response.data.payment_data.token,

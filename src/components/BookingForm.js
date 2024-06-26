@@ -162,6 +162,9 @@ const BookingForm = ({
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedSeatsReturn, setSelectedSeatsReturn] = useState([]);
   const [selectedInfantSeats, setSelectedInfantSeats] = useState([]);
+  const [selectedInfantSeatsReturn, setSelectedInfantSeatsReturn] = useState(
+    []
+  );
 
   const handleOrderChange = (e) => {
     setIsSaved(false);
@@ -190,11 +193,10 @@ const BookingForm = ({
         selectedSeatsReturn.length < maxSeatCount
       ) {
         setSelectedSeatsReturn([...selectedSeatsReturn, seat]);
-        // Saya mau tambahkan ini
-        setSelectedInfantSeats([seat]);
+        setSelectedInfantSeatsReturn([seat]);
       } else if (selectedSeatsReturn.includes(seat)) {
         setSelectedSeatsReturn(selectedSeatsReturn.filter((s) => s !== seat));
-        setSelectedInfantSeats([]);
+        setSelectedInfantSeatsReturn([]);
       }
     } else {
       if (
@@ -281,7 +283,7 @@ const BookingForm = ({
                 : parseSeat(selectedSeats[index]),
             seat_return:
               passenger.type === "infant"
-                ? parseSeat(selectedInfantSeats[0])
+                ? parseSeat(selectedInfantSeatsReturn[0])
                 : parseSeat(selectedSeatsReturn[index]),
             passenger_type: passenger.type,
           })),
@@ -302,7 +304,6 @@ const BookingForm = ({
           transition: Bounce,
         });
       } else {
-        console.log(passengers);
         const bookingData = {
           flight_id: parseInt(searchParams.get("flightId")),
           payment_method: "snap",
@@ -332,8 +333,6 @@ const BookingForm = ({
             passenger_type: passenger.type,
           })),
         };
-
-        console.log(bookingData);
 
         onBookingData(bookingData);
 
