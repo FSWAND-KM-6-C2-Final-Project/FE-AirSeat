@@ -71,7 +71,6 @@ const Account = () => {
         {
           full_name: name,
           phone_number: phoneNumber,
-          email,
         },
         {
           headers: {
@@ -136,7 +135,7 @@ const Account = () => {
     <>
       <div className="p-10 shadow-md h-44">
         <h2 className="font-bold text-xl text-left md:ml-24 lg:ml-32 xl:ml-44">
-          Akun
+          Account
         </h2>
         <div className="flex justify-center md:justify-start">
           <Link
@@ -144,7 +143,7 @@ const Account = () => {
             className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-9/12 ml-2 md:ml-28 lg:ml-36 xl:ml-48 mt-8 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
-            Beranda
+            Homepage
           </Link>
         </div>
       </div>
@@ -201,7 +200,7 @@ const Account = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full Name"
-                  className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-2"
+                  className="border-b w-11/12 ml-5 rounded-md mb-2"
                 />
               </div>
               <div>
@@ -218,7 +217,7 @@ const Account = () => {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="Phone Number"
-                  className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-2"
+                  className="border-b w-11/12 ml-5 rounded-md mb-2"
                 />
               </div>
               <div>
@@ -233,9 +232,8 @@ const Account = () => {
                   name="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
-                  required
+                  disabled
                   className="border-b w-11/12 ml-5 focus:outline-none rounded-md mb-4"
                 />
               </div>
@@ -243,7 +241,7 @@ const Account = () => {
                 type="submit"
                 className="bg-customBlue2 text-white px-10 py-3 rounded-xl self-center hover:bg-customBlue1"
               >
-                Simpan
+                Save
               </button>
             </form>
           </div>
