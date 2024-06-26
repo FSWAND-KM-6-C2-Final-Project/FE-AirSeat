@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import plantsImage from "../images/plants.png";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import Logo from "../images/logo_airseat.png";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import Swal from "sweetalert2";
+import plantsImage from "../images/plants.png";
+import Logo from "../images/logo_airseat.png";
+import { checkIsActivationExist, signUp } from "../services/auth.service";
 import Loading from "./Loading";
 import FormValidation from "./FormValidation";
-import { checkIsActivationExist, signUp } from "../services/auth.service";
-import Swal from "sweetalert2";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -17,15 +18,11 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-
-  // Form Error state
   const [phoneNumberError, setPhoneNumberError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [fullNameError, setFullNameError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
-
-  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -103,13 +100,6 @@ const SignUp = () => {
                 resend_at: response.data.verification_user_resend_at,
               },
             });
-          } else if (result.isDismissed) {
-            navigate("/activation/otp", {
-              state: {
-                email: response.data.email,
-                resend_at: response.data.verification_user_resend_at,
-              },
-            });
           }
         });
       }
@@ -164,134 +154,140 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-8">
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <ToastContainer />
-
-          <img className="w-[200px] mb-3" src={Logo} />
-
-          <h1 className="text-3xl md:text-5xl font-bold text-customBlue2">
-            AirSeat
-          </h1>
-          <p className="text-lg md:text-2xl text-customBlue2 mt-4">
-            Your Traveling Partner
-          </p>
+    <>
+      <div className="min-h-screen flex flex-col md:flex-row">
+        <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-8 hidden md:flex">
+          <div className="flex flex-col justify-center items-center text-center md:text-left">
+            <ToastContainer />
+            <img className="w-[200px] mb-3" src={Logo} />
+            <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">
+              AirSeat
+            </h1>
+            <p className="text-lg md:text-2xl text-customBlue2 mt-4">
+              Your Traveling Partner
+            </p>
+          </div>
+          <div className="absolute bottom-0 mb-10 md:mb-20 hidden md:block">
+            <img src={plantsImage} alt="Decoration" />
+          </div>
         </div>
-        <div className="hidden md:block absolute bottom-0 mb-10 md:mb-20">
-          <img src={plantsImage} alt="Decoration" className="w-40 md:w-auto" />
-        </div>
-      </div>
-      <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-8">
-        <div className="w-full max-w-md">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-            Sign Up
-          </h2>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold">Full Name</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Full Name"
-              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-            />
-            {fullNameError && <FormValidation errorMessage={fullNameError} />}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-            />
-            {emailError && <FormValidation errorMessage={emailError} />}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold">Phone</label>
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Phone"
-              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
-            />
-            {phoneNumberError && (
-              <FormValidation errorMessage={phoneNumberError} />
-            )}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold">Password</label>
-            <div className="relative">
+        <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-8">
+          <div className="w-full max-w-md px-4 md:px-8">
+            <div className="md:hidden flex items-center mb-8">
+              <img className="w-[50px]" src={Logo} />
+              <h1 className="text-3xl font-bold text-customBlue2 ml-2">
+                AirSeat
+              </h1>
+            </div>
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+              Sign Up
+            </h2>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold">Full Name</label>
               <input
-                type={passwordVisible ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full Name"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
-              <div
-                className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
-                onClick={togglePasswordVisibility}
-              >
-                {passwordVisible ? (
-                  <AiFillEyeInvisible size={24} />
-                ) : (
-                  <AiFillEye size={24} />
-                )}
-              </div>
+              {fullNameError && <FormValidation errorMessage={fullNameError} />}
             </div>
-            {passwordError && <FormValidation errorMessage={passwordError} />}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold">
-              Confirm Password
-            </label>
-            <div className="relative">
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold">Email</label>
               <input
-                type={passwordVisible ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm Password"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
-              <div
-                className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
-                onClick={togglePasswordVisibility}
-                style={{ top: "50%", transform: "translateY(-50%)" }}
-              >
-                {passwordVisible ? (
-                  <AiFillEyeInvisible size={24} />
-                ) : (
-                  <AiFillEye size={24} />
-                )}
-              </div>
+              {emailError && <FormValidation errorMessage={emailError} />}
             </div>
-            {confirmPasswordError && (
-              <FormValidation errorMessage={confirmPasswordError} />
-            )}
-          </div>
-          <button
-            onClick={handleSignUp}
-            className="w-full bg-customBlue2 text-white py-2 rounded-md mt-12 flex items-center justify-center hover:bg-customBlue1"
-          >
-            {isFetching && <Loading />}
-            {!isFetching && "Sign Up"}
-          </button>
-          <p className="mt-4 text-center">
-            Already have an account?{" "}
-            <span
-              className="text-customBlue2 hover:text-customBlue1 ml-2 font-bold cursor-pointer"
-              onClick={handleSignIn}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold">Phone</label>
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Phone"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+              />
+              {phoneNumberError && (
+                <FormValidation errorMessage={phoneNumberError} />
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold"> Password</label>
+              <div className="relative">
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Create Password"
+                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                />
+                <div
+                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                  onClick={togglePasswordVisibility}
+                >
+                  {passwordVisible ? (
+                    <AiFillEyeInvisible size={24} />
+                  ) : (
+                    <AiFillEye size={24} />
+                  )}
+                </div>
+              </div>
+              {passwordError && <FormValidation errorMessage={passwordError} />}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm Password"
+                  className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                />
+                <div
+                  className="absolute inset-y-0 right-0 pr-3 mt-1 flex items-center cursor-pointer text-gray-500"
+                  onClick={togglePasswordVisibility}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
+                >
+                  {passwordVisible ? (
+                    <AiFillEyeInvisible size={24} />
+                  ) : (
+                    <AiFillEye size={24} />
+                  )}
+                </div>
+              </div>
+              {confirmPasswordError && (
+                <FormValidation errorMessage={confirmPasswordError} />
+              )}
+            </div>
+            <button
+              onClick={handleSignUp}
+              className="w-full bg-customBlue2 text-white py-2 rounded-md mt-12 flex items-center justify-center hover:bg-customBlue1"
             >
-              Sign In
-            </span>
-          </p>
+              {isFetching && <Loading />}
+              {!isFetching && "Sign Up"}
+            </button>
+            <p className="mt-4 text-center">
+              Already have an account?{" "}
+              <span
+                className="text-customBlue2 hover:text-customBlue1 ml-2 font-bold cursor-pointer"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </span>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
