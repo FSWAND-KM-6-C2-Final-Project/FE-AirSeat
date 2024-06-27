@@ -10,8 +10,12 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { getSeatByFlightId } from "../services/seat.service";
+import { getUser } from "../services/auth.service";
+import { toast, Bounce } from "react-toastify";
 
 const BookingPage = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [bookingData, setBookingData] = useState(null);
   const [flight, setFlight] = useState();
   const [flightReturn, setFlightReturn] = useState();
@@ -25,28 +29,6 @@ const BookingPage = () => {
   const [timeLeft, setTimeLeft] = useState(900);
 
   const initialClass = "Economy";
-
-  useEffect(() => {
-    const flightId = searchParams.get("flightId");
-    if (!flightId) {
-      navigate("/");
-    }
-    fetchFlightById();
-
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timer);
-          navigate(-1);
-          return 0;
-        } else {
-          return prevTime - 1;
-        }
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const fetchFlightById = async () => {
     setIsFetching(true);
@@ -114,6 +96,69 @@ const BookingPage = () => {
     } catch (err) {}
     setIsFetching(false);
   };
+
+  useEffect(() => {
+    const flightId = searchParams.get("flightId");
+    if (!flightId) {
+      navigate("/");
+    }
+    fetchFlightById();
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 0) {
+          clearInterval(timer);
+          navigate(-1);
+          return 0;
+        } else {
+          return prevTime - 1;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const checkUser = async () => {
+      try {
+        const response = await getUser(token);
+
+        if (response) {
+          setIsAuthenticated(true);
+        } else {
+          navigate("/restricted");
+        }
+      } catch (err) {
+        toast.error("Your session has expired, please log in again.", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        if (err.message === "jwt malformed" || err.message === "jwt expired") {
+          localStorage.removeItem("token");
+        }
+      }
+    };
+
+    if (!token) {
+      navigate("/restricted");
+    } else {
+      checkUser();
+    }
+  }, [navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleBookingData = (data) => {
     setBookingData(data);
