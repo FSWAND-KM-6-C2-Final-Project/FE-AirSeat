@@ -363,11 +363,28 @@ const Home = () => {
       data.deptDate &&
       (data.adult || data.infant || data.children)
     ) {
-      navigate({
-        pathname: "/search",
-        search: createSearchParams(data).toString(),
-      });
-      navigate(0);
+      if (data.adult > data.infant) {
+        navigate({
+          pathname: "/search",
+          search: createSearchParams(data).toString(),
+        });
+        navigate(0);
+      } else {
+        toast.error(
+          "The number of infant passengers cannot exceed the number of adult passengers",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
+      }
     } else {
       toast.error("Please choose your flight details first.", {
         position: "bottom-right",
@@ -401,7 +418,6 @@ const Home = () => {
   return (
     <main className="flex flex-col items-center">
       <Banner />
-      <ToastContainer />
 
       <div className="max-w-full p-2 lg:mt-[-100px] md:mt-[-50px]">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl mb-10">

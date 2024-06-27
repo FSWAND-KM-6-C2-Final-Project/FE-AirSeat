@@ -120,7 +120,6 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
 
   return (
     <div className="p-4 md:p-10 shadow-md">
-      <ToastContainer />
       <h2 className="font-bold text-2xl text-left xl:ml-44">
         {searchParams.get("flightId")
           ? "Return Flight Details"
