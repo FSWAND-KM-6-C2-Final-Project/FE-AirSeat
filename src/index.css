@@ -12,3 +12,8 @@ body {
 .toggle-checkbox:checked + .toggle-label {
   background-color: #447c9d !important;
 }
+
+.calendarku {
+  width: 100%;
+  background-color: black;
+}

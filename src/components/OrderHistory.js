@@ -5,7 +5,8 @@ import SearchIcon from "../icons/search.svg";
 import LocationIcon from "../icons/location.svg";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import VietnamAirlinesLogo from "../images/vietnam_airlines_logo.png";
-import Datepicker from "tailwind-datepicker-react";
+import { IoMdClose } from "react-icons/io";
+
 import { Link } from "react-router-dom";
 import {
   FiArrowLeft,
@@ -14,47 +15,22 @@ import {
   FiX,
 } from "react-icons/fi";
 
-const options = {
-  title: "Pilih waktu",
-  autoHide: false,
-  todayBtn: false,
-  clearBtn: true,
-  clearBtnText: "Clear",
-  maxDate: new Date("2030-01-01"),
-  minDate: new Date("1950-01-01"),
-  theme: {
-    background: "bg-white w-50",
-    todayBtn: "",
-    clearBtn: "",
-    icons: "",
-    text: "",
-    disabledText: "bg-slate-500 text-white",
-    input: "",
-    inputIcon: "",
-    selected: "bg-customBlue2",
-  },
-  icons: {
-    prev: () => <FiChevronLeft />,
-    next: () => <FiChevronRight />,
-  },
-  datepickerClassNames: "top-full mt-2 ml-[-165px] sm:ml-[-100px]",
-  defaultDate: new Date("2022-01-01"),
-  language: "en",
-  disabledDates: [],
-  weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-  inputNameProp: "date",
-  inputIdProp: "date",
-  inputPlaceholderProp: "Select Date",
-  inputDateFormatProp: {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  },
-};
+import { Calendar } from "react-multi-date-picker";
 
 const OrderHistory = () => {
   const [show, setShow] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [value, setValue] = useState({
+    startDate: new Date(),
+    endDate: new Date().setMonth(8),
+  });
+
+  const [values, setValues] = useState([]);
+
+  const handleValueChange = (newValue) => {
+    console.log("newValue:", newValue);
+    setValue(newValue);
+  };
   const [selectedOrder, setSelectedOrder] = useState({
     status: "Issued",
     month: "January",
@@ -83,6 +59,7 @@ const OrderHistory = () => {
   });
   const [selectedOrderId, setSelectedOrderId] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalDateOpen, setIsModalDateOpen] = useState(false);
 
   const orders = [
     {
@@ -207,6 +184,10 @@ const OrderHistory = () => {
     setShow((prevShow) => !prevShow);
   };
 
+  const checkValue = () => {
+    console.log(value);
+  };
+
   const handleCardClick = (order) => {
     setSelectedOrder(order);
     setSelectedOrderId(order.id);
@@ -228,21 +209,13 @@ const OrderHistory = () => {
           </Link>
           <div className="flex items-center mt-4 md:mt-8 space-x-4">
             <div className="relative">
-              <Datepicker
-                options={options}
-                onChange={handleChange}
-                show={show}
-                setShow={handleClose}
-                className="w-full"
+              <div
+                onClick={() => setIsModalDateOpen(true)}
+                className="border border-customBlue1 cursor-pointer rounded-2xl h-8 flex items-center px-3 hover:bg-gray-200 transition"
               >
-                <div
-                  onClick={toggleShow}
-                  className="border border-customBlue1 cursor-pointer rounded-2xl h-8 flex items-center px-3 hover:bg-gray-200 transition"
-                >
-                  <img src={FilterIcon} className="mr-2" alt="Filter Icon" />
-                  <span className="font-normal">Filter</span>
-                </div>
-              </Datepicker>
+                <img src={FilterIcon} className="mr-2" alt="Filter Icon" />
+                <span className="font-normal">Filter</span>
+              </div>
             </div>
             <button
               data-modal-target="default-modal"
@@ -657,11 +630,11 @@ const OrderHistory = () => {
       {/* End Konten History */}
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex justify-center items-start bg-black bg-opacity-50 pt-24 md:pt-32">
+        <div className="fixed inset-0 z-50 flex justify-center items-start  pt-24 md:pt-32">
           <div className="relative p-4 w-full max-w-md mt-16 md:mt-20 sm:ml-12 md:ml-40 lg:ml-96 xl:ml-[600px] 2xl:ml-[750px]">
-            <div className="relative bg-white rounded-xl shadow">
+            <div className="relative bg-white rounded-xl shadow-xl">
               {/* Modal header */}
-              <div className="flex justify-between items-center p-5 border-b rounded-t">
+              <div className="flex justify-between items-center p-5 border-b  rounded-t">
                 <form className="w-full">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -698,32 +671,38 @@ const OrderHistory = () => {
                   </div>
                 </form>
               </div>
-              {/* Modal body */}
-              <div className="p-6 space-y-6">
-                <div className="flex justify-between mb-6">
-                  <span className="text-base font-semibold leading-relaxed text-gray-900">
-                    Recent search
-                  </span>
-                  <span className="text-red-600 font-semibold cursor-pointer">
-                    Delete
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {["1234ABC", "7UY71912"].map((search, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center"
-                    >
-                      <span>{search}</span>
-                      <FiX className="text-gray-500 cursor-pointer" />
-                    </div>
-                  ))}
-                </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isModalDateOpen && (
+        <div className="fixed inset-0 z-50 flex justify-center items-start  pt-24 md:pt-32">
+          <div className="relative p-4 w-full max-w-md mt-16 md:mt-20 sm:ml-12 md:ml-40 lg:ml-96 xl:ml-[600px] 2xl:ml-[750px]">
+            <div className="relative bg-white rounded-xl shadow-xl">
+              {/* Modal header */}
+
+              <div className="flex flex-col justify-center  items-center p-5 border-b rounded-t">
+                <IoMdClose
+                  className="absolute  top-3 right-3 w-6 cursor-pointer"
+                  onClick={() => setIsModalDateOpen(false)}
+                />
+
+                <p className="mb-3">Filter By Date Range</p>
+                <Calendar
+                  className="calendarku"
+                  inputClass="rounded-2xl" // Adjust the inputClass as needed
+                  value={values}
+                  onChange={handleValueChange}
+                  highlightToday={false}
+                  range
+                />
               </div>
             </div>
           </div>
         </div>
       )}
+      <button onClick={checkValue}>Check Value</button>
     </>
   );
 };
