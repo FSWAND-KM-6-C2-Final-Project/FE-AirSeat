@@ -37,7 +37,7 @@ const options = {
     prev: () => <FiChevronLeft />,
     next: () => <FiChevronRight />,
   },
-  datepickerClassNames: "top-full mt-2 ml-[-100px]",
+  datepickerClassNames: "top-full mt-2 ml-[-165px] sm:ml-[-100px]",
   defaultDate: new Date("2022-01-01"),
   language: "en",
   disabledDates: [],
