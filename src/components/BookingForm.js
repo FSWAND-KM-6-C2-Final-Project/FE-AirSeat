@@ -148,7 +148,7 @@ const BookingForm = ({
       .fill()
       .map(() => ({ ...childrenFormTemplate }));
 
-    const allPassengers = [...adults, ...infants, ...children];
+    const allPassengers = [...children, ...adults, ...infants];
 
     setPassengers(allPassengers);
 

@@ -25,12 +25,12 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (
-      !departure_airport_id &&
-      !arrival_airport_id &&
-      !departure_data &&
-      !adult &&
-      !children &&
-      !infant &&
+      !departure_airport_id ||
+      !arrival_airport_id ||
+      !departure_data ||
+      !adult ||
+      !children ||
+      !infant ||
       !seatClass
     ) {
       navigate("/");
