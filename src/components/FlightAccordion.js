@@ -182,7 +182,6 @@ export default function FlightAccordion(props) {
     <div>
       <div id="accordion-collapse" data-accordion="collapse">
         <h2 id="accordion-collapse-heading-1">
-          <ToastContainer />
           <button
             type="button"
             className={`flex items-center w-full justify-between p-5 font-medium rtl:text-right ${

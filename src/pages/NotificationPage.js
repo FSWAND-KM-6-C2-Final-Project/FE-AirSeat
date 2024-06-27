@@ -54,7 +54,6 @@ const NotificationPage = () => {
     <>
       <NavbarAccount />
       <Notification />
-      <ToastContainer />
     </>
   );
 };

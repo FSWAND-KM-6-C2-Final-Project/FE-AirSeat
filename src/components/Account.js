@@ -265,23 +265,6 @@ const Account = () => {
         )}
       </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover={false}
-        theme="colored"
-        toastStyle={{
-          width: "auto",
-          textAlign: "center",
-        }}
-      />
-
       {/* Delete Account Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
