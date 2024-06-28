@@ -18,3 +18,23 @@ export async function bookingFlight(data, token) {
 
   return resData;
 }
+
+export async function getBookingHistory(token) {
+  const response = await fetch(
+    `${BASE_URL}/api/v1/booking/detail?sortBy=transactionDate&order=desc`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resData.message);
+  }
+
+  return resData;
+}
