@@ -290,7 +290,7 @@ const OrderHistory = () => {
                         </div>
                         <div className="col-span-4 text-center">
                           <span className="block font-bold">Class:</span>
-                          <p className="text-sm">Economy</p>
+                          <p className="text-sm">{seoTitle(order.classes)}</p>
                         </div>
                         <div className="col-span-4 text-center">
                           <span className="block font-bold xl:text-lg lg:text-lg sm:text-sm text-customBlue1">
