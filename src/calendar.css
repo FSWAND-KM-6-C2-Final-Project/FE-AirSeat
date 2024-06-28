@@ -1,0 +1,10 @@
+:root {
+  --rdp-accent-color: indigo;
+  --rdp-background-color: gray;
+}
+
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover {
+  background-color: #164765;
+}
