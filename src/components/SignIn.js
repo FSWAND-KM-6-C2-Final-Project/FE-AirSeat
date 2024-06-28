@@ -7,6 +7,7 @@ import Logo from "../images/logo_airseat.png";
 import { signIn } from "../services/auth.service";
 import Loading from "./Loading";
 import FormValidation from "./FormValidation";
+import validator from "validator";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -47,10 +48,18 @@ const SignIn = () => {
     setIsFetching(true);
 
     try {
-      const reqBody = JSON.stringify({
-        email: emailOrPhone,
-        password: password,
-      });
+      let reqBody;
+      if (!validator.isEmail(emailOrPhone)) {
+        reqBody = JSON.stringify({
+          phone_number: emailOrPhone,
+          password: password,
+        });
+      } else {
+        reqBody = JSON.stringify({
+          email: emailOrPhone,
+          password: password,
+        });
+      }
 
       const response = await signIn(reqBody);
 
@@ -112,12 +121,14 @@ const SignIn = () => {
               Sign In
             </h2>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold">Email</label>
+              <label className="block text-gray-700 font-bold">
+                Email or Phone
+              </label>
               <input
                 type="email"
                 value={emailOrPhone}
                 onChange={(e) => setEmailOrPhone(e.target.value)}
-                placeholder="Email"
+                placeholder="Email/Phone"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
               {emailError && <FormValidation errorMessage={emailError} />}
