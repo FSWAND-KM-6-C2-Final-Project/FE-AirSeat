@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import ArrowLeftIcon from "../icons/arrow-left.svg";
 import FilterIcon from "../icons/filter.svg";
 import SearchIcon from "../icons/search.svg";
 import LocationIcon from "../icons/location.svg";
 import LongArrowIcon from "../icons/long_arrow.svg";
-import VietnamAirlinesLogo from "../images/vietnam_airlines_logo.png";
 import { IoMdClose } from "react-icons/io";
-import { addDays, intlFormat } from "date-fns";
 import { seoTitle } from "string-fn";
 
 import { Link } from "react-router-dom";
-import {
-  FiArrowLeft,
-  FiChevronLeft,
-  FiChevronRight,
-  FiX,
-} from "react-icons/fi";
+import { FiArrowLeft, FiX } from "react-icons/fi";
 
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
@@ -31,10 +23,19 @@ const OrderHistory = () => {
   const dayjs = require("dayjs");
 
   const initialRange = {
-    from: new Date(),
-    to: addDays(new Date(), 4),
+    from: null,
+    to: null,
   };
-  const [selected, setSelected] = useState(initialRange);
+  const [selected, setSelected] = useState([
+    { from: undefined, to: undefined },
+  ]);
+
+  const handleClickSave = () => {
+    if (selected.from && selected.to) {
+      console.log(selected.from);
+      console.log(selected.to);
+    }
+  };
 
   const handleToggleFilter = () => {
     isModalDateOpen === true
@@ -94,6 +95,12 @@ const OrderHistory = () => {
     setSelectedOrder(order);
     setSelectedOrderId(order.booking_code);
   };
+
+  const checkValue = () => {
+    console.log(selected);
+  };
+
+  const formatDate = (date) => dayjs(date).format("DD-MM-YYYY");
 
   return (
     <>
@@ -422,7 +429,9 @@ const OrderHistory = () => {
                             <div key={index}>
                               <span className="text-customBlue2">
                                 Passenger {index + 1}:{" "}
-                                {detail.passenger.first_name}
+                                {detail.passenger.first_name}{" "}
+                                {detail.passenger.last_name} -{" "}
+                                {seoTitle(detail.passenger.passenger_type)}
                               </span>
                               <br />
                               <span>ID: {detail.passenger.id}</span>
@@ -446,7 +455,11 @@ const OrderHistory = () => {
                                   <div key={index}>
                                     <span className="text-customBlue2">
                                       Passenger {index + 1}:{" "}
-                                      {detail.passenger.first_name}
+                                      {detail.passenger.first_name}{" "}
+                                      {detail.passenger.last_name} -{" "}
+                                      {seoTitle(
+                                        detail.passenger.passenger_type
+                                      )}
                                     </span>
                                     <br />
                                     <span>ID: {detail.passenger.id}</span>
@@ -467,7 +480,11 @@ const OrderHistory = () => {
                                   <div key={index}>
                                     <span className="text-customBlue2">
                                       Passenger {index + 1}:{" "}
-                                      {detail.passenger.first_name}
+                                      {detail.passenger.first_name}{" "}
+                                      {detail.passenger.last_name} -{" "}
+                                      {seoTitle(
+                                        detail.passenger.passenger_type
+                                      )}
                                     </span>
                                     <br />
                                     <span>ID: {detail.passenger.id}</span>
@@ -542,20 +559,101 @@ const OrderHistory = () => {
                   <div className="text-sm mx-4">
                     <span className="font-bold">Price Details</span>
                     <div className="grid grid-cols-12 justify-between">
-                      <div className="col-span-6">2 Adults</div>
-                      {/* <div className="col-span-6 text-end">
-                        {selectedOrder.priceDetails.adults}
+                      <div className="col-span-6">
+                        {
+                          selectedOrder.bookingDetail.filter(
+                            (detail) =>
+                              detail.passenger.passenger_type === "adult"
+                          ).length
+                        }{" "}
+                        Adults
                       </div>
-                      <div className="col-span-6">1 Baby</div>
                       <div className="col-span-6 text-end">
-                        {selectedOrder.priceDetails.baby}
+                        {(() => {
+                          let total = 0;
+                          selectedOrder.bookingDetail.forEach((detail) => {
+                            if (detail.passenger.passenger_type === "adult") {
+                              total += parseFloat(detail.price);
+                            }
+                          });
+                          return (
+                            <span>
+                              {new Intl.NumberFormat("id", {
+                                style: "currency",
+                                currency: "IDR",
+                                maximumFractionDigits: 0,
+                              }).format(total)}
+                            </span>
+                          );
+                        })()}
                       </div>
-                      <div className="col-span-6">Tax</div>
+                    </div>
+                    <div className="grid grid-cols-12 justify-between">
+                      <div className="col-span-6">
+                        {
+                          selectedOrder.bookingDetail.filter(
+                            (detail) =>
+                              detail.passenger.passenger_type === "children"
+                          ).length
+                        }{" "}
+                        Children
+                      </div>
                       <div className="col-span-6 text-end">
-                        {selectedOrder.priceDetails.tax}
-                      </div> */}
+                        {" "}
+                        {(() => {
+                          let total = 0;
+                          selectedOrder.bookingDetail.forEach((detail) => {
+                            if (
+                              detail.passenger.passenger_type === "children"
+                            ) {
+                              total += parseFloat(detail.price);
+                            }
+                          });
+                          return (
+                            <span>
+                              {new Intl.NumberFormat("id", {
+                                style: "currency",
+                                currency: "IDR",
+                                maximumFractionDigits: 0,
+                              }).format(total)}
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-12 justify-between">
+                      <div className="col-span-6">
+                        {
+                          selectedOrder.bookingDetail.filter(
+                            (detail) =>
+                              detail.passenger.passenger_type === "infant"
+                          ).length
+                        }{" "}
+                        Infant
+                      </div>
+                      <div className="col-span-6 text-end">
+                        {" "}
+                        {(() => {
+                          let total = 0;
+                          selectedOrder.bookingDetail.forEach((detail) => {
+                            if (detail.passenger.passenger_type === "infant") {
+                              total += parseFloat(detail.price);
+                            }
+                          });
+                          return (
+                            <span>
+                              {new Intl.NumberFormat("id", {
+                                style: "currency",
+                                currency: "IDR",
+                                maximumFractionDigits: 0,
+                              }).format(total)}
+                            </span>
+                          );
+                        })()}
+                      </div>
                     </div>
                   </div>
+
                   <hr className="mt-4 border w-[94.5%] mb-2 mx-auto" />
                   <div className="grid grid-cols-12 justify-between font-bold text-lg mx-4 mb-8">
                     <div className="col-span-6">Total</div>
@@ -656,11 +754,29 @@ const OrderHistory = () => {
                   selected={selected}
                   onSelect={setSelected}
                 />
+
+                <button
+                  onClick={() =>
+                    setSelected([{ from: undefined, to: undefined }])
+                  }
+                  className="border-2 font-bold border-customBlue1 w-[80%] mb-3 rounded-lg text-black
+                   px-5 py-2"
+                >
+                  Clear
+                </button>
+
+                <button
+                  onClick={handleClickSave}
+                  className="bg-customBlue1 w-[80%]  rounded-lg text-white px-5 py-2"
+                >
+                  Search
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
+      <button onClick={() => checkValue}>Hai</button>
     </>
   );
 };
