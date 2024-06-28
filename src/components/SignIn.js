@@ -112,14 +112,12 @@ const SignIn = () => {
               Sign In
             </h2>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold">
-                Email or Phone
-              </label>
+              <label className="block text-gray-700 font-bold">Email</label>
               <input
                 type="email"
                 value={emailOrPhone}
                 onChange={(e) => setEmailOrPhone(e.target.value)}
-                placeholder="Email/Phone"
+                placeholder="Email"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
               {emailError && <FormValidation errorMessage={emailError} />}
