@@ -776,7 +776,6 @@ const OrderHistory = () => {
           </div>
         </div>
       )}
-      <button onClick={() => checkValue}>Hai</button>
     </>
   );
 };
