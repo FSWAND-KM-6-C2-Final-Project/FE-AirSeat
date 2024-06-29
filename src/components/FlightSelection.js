@@ -46,10 +46,18 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
     ).toISOString();
 
     const today = departure_date;
-    const generateDates = () => {
+    const generateDates = (selectedDate) => {
       const dateArray = [];
-      for (let i = -1; i < 6; i++) {
-        const nextDate = addDays(today, i);
+      dateArray.push({
+        day: format(addDays(selectedDate, -1), "eeee"),
+        date: format(addDays(selectedDate, -1), "dd/MM/yyyy"),
+      });
+      dateArray.push({
+        day: format(selectedDate, "eeee"),
+        date: format(selectedDate, "dd/MM/yyyy"),
+      });
+      for (let i = 1; i < 5; i++) {
+        const nextDate = addDays(selectedDate, i);
         dateArray.push({
           day: format(nextDate, "eeee"),
           date: format(nextDate, "dd/MM/yyyy"),
@@ -58,8 +66,8 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
       return dateArray;
     };
 
-    setDates(generateDates());
-  }, []);
+    setDates(generateDates(departure_date));
+  }, [searchParams, selectedDay]);
 
   const fetchDepartureAirport = async (id) => {
     try {
@@ -100,9 +108,9 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
   };
 
   const handleDayClick = (index, date) => {
-    setSelectedDay(index);
+    setSelectedDay(1);
 
-    const newDate = dayjs(date.date, "DD/MM/YYYY").format("DD-MM-YYYY");
+    const newDate = dayjs(date.date, "DD/MM/YYYY").local().format("DD-MM-YYYY");
     navigate({
       pathname: "/search",
       search: createSearchParams({
@@ -115,7 +123,6 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
         class: searchParams.get("class"),
       }).toString(),
     });
-    navigate(0);
   };
 
   return (
@@ -155,22 +162,24 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
                   ? "bg-customBlue1 text-white"
                   : "bg-gray-200 text-black"
               }`}
-              style={{ width: "200px", height: "50px" }}
+              style={{ width: "200px", height: "auto" }}
               onClick={() => handleDayClick(index, date)}
             >
-              <div
-                className={`font-bold ${
-                  index === selectedDay ? "text-white" : "text-black"
-                }`}
-              >
-                {date.day}
-              </div>
-              <div
-                className={`font-semibold ${
-                  index === selectedDay ? "text-white" : "text-gray-500"
-                }`}
-              >
-                {date.date}
+              <div className="text-center">
+                <div
+                  className={`font-semibold ${
+                    index === selectedDay ? "text-white" : "text-gray-500"
+                  }`}
+                >
+                  {date.day}
+                </div>
+                <div
+                  className={`font-bold ${
+                    index === selectedDay ? "text-white" : "text-black"
+                  }`}
+                >
+                  {date.date}
+                </div>
               </div>
             </button>
           ))}

@@ -3,6 +3,7 @@ import Pagination from "./Paginations";
 import Error from "./Error";
 import NotFoundError from "./NotFoundError";
 import notFoundImage from "../images/not-found.png";
+import { useState } from "react";
 
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
@@ -16,6 +17,7 @@ const FavoriteDestination = ({
   pageNum,
   pageSize,
   onDestinationClick,
+  onPageUpdate,
 }) => {
   return (
     <>
@@ -84,6 +86,7 @@ const FavoriteDestination = ({
               totalPages={totalPages}
               pageNum={pageNum}
               pageSize={pageSize}
+              onPageChange={onPageUpdate}
             />
           )}
       </div>

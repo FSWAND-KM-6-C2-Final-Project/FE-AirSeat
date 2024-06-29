@@ -4,7 +4,13 @@ import {
   useSearchParams,
 } from "react-router-dom";
 
-const Pagination = ({ totalData, totalPages, pageNum, pageSize }) => {
+const Pagination = ({
+  totalData,
+  totalPages,
+  pageNum,
+  pageSize,
+  onPageChange,
+}) => {
   const navigate = useNavigate();
   let [searchParams, setSearchParams] = useSearchParams();
   let items = [];
@@ -29,7 +35,7 @@ const Pagination = ({ totalData, totalPages, pageNum, pageSize }) => {
                     page: number,
                   }).toString(),
                 });
-            navigate(0);
+            onPageChange(number);
           }}
           className={`flex items-center justify-center cursor-pointer px-4 h-10 leading-tight border border-customBlue1 hover:bg-gray-100 hover:text-gray-700 ${
             currentPage === number
@@ -61,8 +67,7 @@ const Pagination = ({ totalData, totalPages, pageNum, pageSize }) => {
               page: prevPage,
             }).toString(),
           });
-
-      navigate(0);
+      onPageChange(prevPage);
     }
   };
 
@@ -84,8 +89,7 @@ const Pagination = ({ totalData, totalPages, pageNum, pageSize }) => {
               page: nextPage,
             }).toString(),
           });
-
-      navigate(0);
+      onPageChange(nextPage);
     }
   };
 
