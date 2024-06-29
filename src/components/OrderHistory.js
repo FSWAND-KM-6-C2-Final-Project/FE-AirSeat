@@ -45,6 +45,19 @@ const OrderHistory = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const handleScroll = () => {
+      setIsModalOpen(false);
+      setIsModalDateOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
     const bookCode = searchParams.get("bookingCode");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
