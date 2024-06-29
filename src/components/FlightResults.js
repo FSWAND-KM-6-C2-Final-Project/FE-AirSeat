@@ -352,7 +352,7 @@ const FlightResults = () => {
                     <img
                       src={emptyIcon}
                       alt="empty"
-                      className="aspect-square w-1/5"
+                      className="aspect-square w-4/12"
                     />
                   </div>
                 )}
