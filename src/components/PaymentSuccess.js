@@ -11,7 +11,6 @@ const PaymentSuccess = () => {
 
   const handleShowBookingTransaction = () => {
     navigate("/order-history");
-    navigate(0);
   };
 
   return (

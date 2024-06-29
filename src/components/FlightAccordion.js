@@ -128,7 +128,6 @@ export default function FlightAccordion(props) {
             returnFlightId: flightId,
           }).toString(),
         });
-        navigate(0);
       }
     } else {
       if (returnDate) {
@@ -145,7 +144,6 @@ export default function FlightAccordion(props) {
             flightId: flightId,
           }).toString(),
         });
-        navigate(0);
       } else {
         if (!tokenUser) {
           toast.error("Please sign in first", {
@@ -172,7 +170,6 @@ export default function FlightAccordion(props) {
               flightId: flightId,
             }).toString(),
           });
-          navigate(0);
         }
       }
     }

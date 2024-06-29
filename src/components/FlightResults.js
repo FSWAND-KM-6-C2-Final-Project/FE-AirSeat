@@ -106,7 +106,6 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
       pathname: "/search",
       search: createSearchParams(searchParamsObject).toString(),
     });
-    navigate(0);
 
     handleOptionSelect(selectedOption);
     toggleModal();
@@ -220,7 +219,7 @@ const FlightResults = () => {
       setSelectedSortOption(0);
     }
     fetchFlightData();
-  }, []);
+  }, [showModal, searchParams]);
 
   const fetchFlightData = async () => {
     setIsLoading(true);

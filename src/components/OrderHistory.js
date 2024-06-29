@@ -6,21 +6,109 @@ import LongArrowIcon from "../icons/long_arrow.svg";
 import { IoMdClose } from "react-icons/io";
 import { seoTitle } from "string-fn";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiX } from "react-icons/fi";
 
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "../calendar.css";
-import { getBookingHistory } from "../services/booking.service";
+import { cancelBooking, getBookingHistory } from "../services/booking.service";
+import { getFlightById } from "../services/flight.service";
+import Swal from "sweetalert2";
 
 const OrderHistory = () => {
   const [selectedOrder, setSelectedOrder] = useState();
   const [selectedOrderId, setSelectedOrderId] = useState(1);
+  const [searchParams, createSearchParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalDateOpen, setIsModalDateOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [bookingCode, setBookingCode] = useState("");
   const dayjs = require("dayjs");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const bookCode = searchParams.get("bookingCode");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    fetchBookingHistory(bookCode, startDate, endDate);
+  }, [searchParams]);
+
+  const handleSearchBookingCode = () => {
+    setSelectedOrder();
+    setSelectedOrderId(1);
+
+    if (bookingCode && !selected.from && !selected.to) {
+      navigate(`/order-history?bookingCode=${bookingCode}`);
+    } else if (bookingCode && selected.from && selected.to) {
+      navigate(
+        `/order-history?bookingCode=${bookingCode}&startDate=${dayjs(
+          selected.from
+        ).format("DD-MM-YYYY")}&endDate=${dayjs(selected.to).format(
+          "DD-MM-YYYY"
+        )}`
+      );
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleClickSave = () => {
+    if (!bookingCode && selected.from && selected.to) {
+      navigate(
+        `/order-history?startDate=${dayjs(selected.from).format(
+          "DD-MM-YYYY"
+        )}&endDate=${dayjs(selected.to).format("DD-MM-YYYY")}`
+      );
+    } else if (bookingCode && selected.from && selected.to) {
+      navigate(
+        `/order-history?bookingCode=${bookingCode}&startDate=${dayjs(
+          selected.from
+        ).format("DD-MM-YYYY")}&endDate=${dayjs(selected.to).format(
+          "DD-MM-YYYY"
+        )}`
+      );
+    }
+    setIsModalDateOpen(false);
+  };
+
+  const handleCancelBooking = (order) => {
+    Swal.fire({
+      title: "Are you sure you want to cancel? This action cannot be undone.",
+      icon: "question",
+      showConfirmButton: true,
+      confirmButtonText: "Cancel Booking",
+      showCancelButton: true,
+      confirmButtonColor: "#e02424",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await cancelBooking(order.booking_code, token);
+          if (response) {
+            Swal.fire({
+              title: "Booking successfully cancelled",
+              icon: "success",
+              showConfirmButton: true,
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#447C9D",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                fetchBookingHistory();
+                setSelectedOrder();
+                setSelectedOrderId(1);
+              } else if (result.dismiss) {
+                fetchBookingHistory();
+                setSelectedOrder();
+                setSelectedOrderId(1);
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
+    });
+  };
 
   const initialRange = {
     from: null,
@@ -30,11 +118,134 @@ const OrderHistory = () => {
     { from: undefined, to: undefined },
   ]);
 
-  const handleClickSave = () => {
-    if (selected.from && selected.to) {
-      console.log(selected.from);
-      console.log(selected.to);
+  const handlePrintTicket = (booking_code) => {
+    console.log("print ticket");
+    console.log(booking_code);
+  };
+
+  const handlePayNow = (order) => {
+    let departurePrice;
+    let returnPrice;
+
+    if (order.classes === "economy") {
+      departurePrice = order.flight.price_economy;
+    } else if (order.classes === "premium_econony") {
+      departurePrice = order.flight.price_premium_economy;
+    } else if (order.classes === "business") {
+      departurePrice = order.flight.price_business;
+    } else if (order.classes === "first_class") {
+      departurePrice = order.flight.price_first_class;
+    } else {
+      departurePrice = order.flight.price_economy;
     }
+
+    if (order.returnFlight) {
+      if (order.classes === "economy") {
+        returnPrice = order.returnFlight.price_economy;
+      } else if (order.classes === "premium_econony") {
+        returnPrice = order.returnFlight.price_premium_economy;
+      } else if (order.classes === "business") {
+        returnPrice = order.returnFlight.price_business;
+      } else if (order.classes === "first_class") {
+        returnPrice = order.returnFlight.price_first_class;
+      } else {
+        returnPrice = order.returnFlight.price_economy;
+      }
+    }
+
+    navigate("/payment", {
+      state: {
+        payment_token: order.payment_token,
+        booking_code: order.booking_code,
+        airline_name: order.flight.airline.airline_name,
+        airline_picture: order.flight.airline.airline_picture,
+        flight_number: order.flight.flight_number,
+        departure_time: order.flight.departure_time,
+        arrival_time: order.flight.arrival_time,
+        information: order.flight.information,
+        adult: order.returnFlight
+          ? order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "adult"
+            ).length / 2
+          : order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "adult"
+            ).length,
+        infant: order.returnFlight
+          ? order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "infant"
+            ).length / 2
+          : order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "infant"
+            ).length,
+        children: order.returnFlight
+          ? order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "children"
+            ).length / 2
+          : order.bookingDetail.filter(
+              (detail) => detail.passenger.passenger_type === "children"
+            ).length,
+        departure_airport_city_code:
+          order.flight.departureAirport.airport_city_code,
+        arrival_airport_city_code:
+          order.flight.arrivalAirport.airport_city_code,
+        seatClass: order.classes,
+        price: departurePrice,
+        departure_airport: order.flight.departureAirport.airport_name,
+        departure_terminal: order.flight.departure_terminal,
+        arrival_airport: order.flight.arrivalAirport.airport_name,
+        return_flight_number: order.returnFlight
+          ? order.returnFlight.flight_number
+          : undefined,
+        return_airline_name: order.returnFlight
+          ? order.returnFlight.airline.airline_name
+          : undefined,
+        return_information: order.returnFlight
+          ? order.returnFlight.information
+          : undefined,
+        return_departure_airport: order.returnFlight
+          ? order.returnFlight.departureAirport.airport_name
+          : undefined,
+        return_departure_airport_city_code: order.returnFlight
+          ? order.returnFlight.departureAirport.airport_city_code
+          : undefined,
+        return_departure_terminal: order.returnFlight
+          ? order.returnFlight.departure_terminal
+          : undefined,
+        return_departure_time: order.returnFlight
+          ? order.returnFlight.departure_time
+          : undefined,
+        return_arrival_airport: order.returnFlight
+          ? order.returnFlight.arrivalAirport.airport_name
+          : undefined,
+        return_arrival_airport_city_code: order.returnFlight
+          ? order.returnFlight.arrivalAirport.airport_city_code
+          : undefined,
+        return_airline_picture: order.returnFlight
+          ? order.returnFlight.airline.airline_picture
+          : undefined,
+        return_arrival_time: order.returnFlight
+          ? order.returnFlight.arrival_time
+          : undefined,
+        return_price: returnPrice,
+      },
+    });
+  };
+
+  const parsePrice = (classes, data) => {
+    let price = 0;
+    if (classes === "economy") {
+      price = data.price_economy;
+    } else if (classes === "premium_econony") {
+      price = data.price_premium_economy;
+    } else if (classes === "business") {
+      price = data.price_business;
+    } else if (classes === "first_class") {
+      price = data.price_first_class;
+    } else {
+      price = data.price_economy;
+    }
+
+    return parseFloat(price);
   };
 
   const handleToggleFilter = () => {
@@ -69,15 +280,20 @@ const OrderHistory = () => {
     return Object.values(groupedData);
   };
 
-  useEffect(() => {
-    fetchBookingHistory();
-  }, []);
-
-  const fetchBookingHistory = async () => {
+  const fetchBookingHistory = async (
+    bookingCode = undefined,
+    startDate = undefined,
+    endDate = undefined
+  ) => {
     setIsFetching(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await getBookingHistory(token);
+      const response = await getBookingHistory(
+        token,
+        bookingCode,
+        startDate,
+        endDate
+      );
 
       if (response) {
         setOrders(groupData(response.data.booking));
@@ -94,10 +310,6 @@ const OrderHistory = () => {
     console.log(JSON.stringify(order));
     setSelectedOrder(order);
     setSelectedOrderId(order.booking_code);
-  };
-
-  const checkValue = () => {
-    console.log(selected);
   };
 
   const formatDate = (date) => dayjs(date).format("DD-MM-YYYY");
@@ -293,7 +505,7 @@ const OrderHistory = () => {
                           <p className="text-sm">{seoTitle(order.classes)}</p>
                         </div>
                         <div className="col-span-4 text-center">
-                          <span className="block font-bold xl:text-lg lg:text-lg sm:text-sm text-customBlue1">
+                          <span className="block font-bold text-sm sm:text-lg text-customBlue1">
                             {new Intl.NumberFormat("id", {
                               style: "currency",
                               currency: "IDR",
@@ -441,37 +653,9 @@ const OrderHistory = () => {
                         {selectedOrder.returnFlight && (
                           <>
                             <div>
-                              <h3 className="font-bold">
-                                Departure Flight Passenger
-                              </h3>
                               {selectedOrder.bookingDetail
                                 .slice(
                                   0,
-                                  Math.ceil(
-                                    selectedOrder.bookingDetail.length / 2
-                                  )
-                                )
-                                .map((detail, index) => (
-                                  <div key={index}>
-                                    <span className="text-customBlue2">
-                                      Passenger {index + 1}:{" "}
-                                      {detail.passenger.first_name}{" "}
-                                      {detail.passenger.last_name} -{" "}
-                                      {seoTitle(
-                                        detail.passenger.passenger_type
-                                      )}
-                                    </span>
-                                    <br />
-                                    <span>ID: {detail.passenger.id}</span>
-                                  </div>
-                                ))}
-                            </div>
-                            <div>
-                              <h3 className="font-bold">
-                                Return Flight Passenger
-                              </h3>
-                              {selectedOrder.bookingDetail
-                                .slice(
                                   Math.ceil(
                                     selectedOrder.bookingDetail.length / 2
                                   )
@@ -495,6 +679,81 @@ const OrderHistory = () => {
                         )}
                       </div>
                     </div>
+                  </div>
+                  {selectedOrder.returnFlight && <hr />}
+                  <div className="py-2">
+                    {selectedOrder.returnFlight && (
+                      <>
+                        <div className="flex  items-center">
+                          <div className="col-span-2 md:col-span-1  items-center">
+                            <img
+                              className="w-[60px] mr-2"
+                              src={
+                                selectedOrder.returnFlight.airline
+                                  .airline_picture
+                              }
+                              alt={
+                                selectedOrder.returnFlight.airline.airline_name
+                              }
+                            />
+                          </div>
+                          <div className="col-span-10 md:col-span-11 grid text-sm font-semibold">
+                            <span className="font-bold">
+                              {selectedOrder.returnFlight.airline.airline_name}
+                            </span>
+                            <span className="font-bold mb-5">
+                              {selectedOrder.returnFlight.flight_number}
+                            </span>
+                            <span className="font-bold">Information:</span>
+                            {!selectedOrder.returnFlight &&
+                              selectedOrder.bookingDetail.map(
+                                (detail, index) => (
+                                  <div key={index}>
+                                    <span className="text-customBlue2">
+                                      Passenger {index + 1}:{" "}
+                                      {detail.passenger.first_name}{" "}
+                                      {detail.passenger.last_name} -{" "}
+                                      {seoTitle(
+                                        detail.passenger.passenger_type
+                                      )}
+                                    </span>
+                                    <br />
+                                    <span>ID: {detail.passenger.id}</span>
+                                  </div>
+                                )
+                              )}
+
+                            {selectedOrder.returnFlight && (
+                              <>
+                                <div>
+                                  {selectedOrder.bookingDetail
+                                    .slice(
+                                      0,
+                                      Math.ceil(
+                                        selectedOrder.bookingDetail.length / 2
+                                      )
+                                    )
+                                    .map((detail, index) => (
+                                      <div key={index}>
+                                        <span className="text-customBlue2">
+                                          Passenger {index + 1}:{" "}
+                                          {detail.passenger.first_name}{" "}
+                                          {detail.passenger.last_name} -{" "}
+                                          {seoTitle(
+                                            detail.passenger.passenger_type
+                                          )}
+                                        </span>
+                                        <br />
+                                        <span>ID: {detail.passenger.id}</span>
+                                      </div>
+                                    ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <hr className="mt-1 border w-[94.5%] mb-3 mx-auto" />
                   <div className="grid grid-cols-12 mt-2 justify-between items-start text-sm">
@@ -556,103 +815,267 @@ const OrderHistory = () => {
                     </>
                   )}
                   <hr className="mt-4 border w-[94.5%] mb-2 mx-auto" />
-                  <div className="text-sm mx-4">
-                    <span className="font-bold">Price Details</span>
-                    <div className="grid grid-cols-12 justify-between">
-                      <div className="col-span-6">
-                        {
-                          selectedOrder.bookingDetail.filter(
-                            (detail) =>
-                              detail.passenger.passenger_type === "adult"
-                          ).length
-                        }{" "}
-                        Adults
+                  {!selectedOrder.returnFlight && (
+                    <div className="text-sm mx-4">
+                      <span className="font-bold">Price Details</span>
+                      <div className="grid grid-cols-12 justify-between">
+                        <div className="col-span-6">
+                          {
+                            selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "adult"
+                            ).length
+                          }{" "}
+                          Adults
+                        </div>
+                        <div className="col-span-6 text-end">
+                          {(() => {
+                            let total = 0;
+                            selectedOrder.bookingDetail.forEach((detail) => {
+                              if (detail.passenger.passenger_type === "adult") {
+                                total += parseFloat(detail.price);
+                              }
+                            });
+                            return (
+                              <span>
+                                {new Intl.NumberFormat("id", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                  maximumFractionDigits: 0,
+                                }).format(total)}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </div>
-                      <div className="col-span-6 text-end">
-                        {(() => {
-                          let total = 0;
-                          selectedOrder.bookingDetail.forEach((detail) => {
-                            if (detail.passenger.passenger_type === "adult") {
-                              total += parseFloat(detail.price);
-                            }
-                          });
-                          return (
-                            <span>
-                              {new Intl.NumberFormat("id", {
-                                style: "currency",
-                                currency: "IDR",
-                                maximumFractionDigits: 0,
-                              }).format(total)}
-                            </span>
-                          );
-                        })()}
+                      <div className="grid grid-cols-12 justify-between">
+                        <div className="col-span-6">
+                          {
+                            selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "children"
+                            ).length
+                          }{" "}
+                          Children
+                        </div>
+                        <div className="col-span-6 text-end">
+                          {" "}
+                          {(() => {
+                            let total = 0;
+                            selectedOrder.bookingDetail.forEach((detail) => {
+                              if (
+                                detail.passenger.passenger_type === "children"
+                              ) {
+                                total += parseFloat(detail.price);
+                              }
+                            });
+                            return (
+                              <span>
+                                {new Intl.NumberFormat("id", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                  maximumFractionDigits: 0,
+                                }).format(total)}
+                              </span>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-12 justify-between">
+                        <div className="col-span-6">
+                          {
+                            selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "infant"
+                            ).length
+                          }{" "}
+                          Infant
+                        </div>
+                        <div className="col-span-6 text-end">
+                          {" "}
+                          {(() => {
+                            let total = 0;
+                            selectedOrder.bookingDetail.forEach((detail) => {
+                              if (
+                                detail.passenger.passenger_type === "infant"
+                              ) {
+                                total += parseFloat(detail.price);
+                              }
+                            });
+                            return (
+                              <span>
+                                {new Intl.NumberFormat("id", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                  maximumFractionDigits: 0,
+                                }).format(total)}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-12 justify-between">
-                      <div className="col-span-6">
-                        {
-                          selectedOrder.bookingDetail.filter(
-                            (detail) =>
-                              detail.passenger.passenger_type === "children"
-                          ).length
-                        }{" "}
-                        Children
+                  )}
+
+                  {selectedOrder.returnFlight && (
+                    <>
+                      <div className="text-sm mx-4">
+                        <span className="font-bold">Price Details</span>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "adult"
+                            ).length / 2}{" "}
+                            Adults
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              (selectedOrder.bookingDetail.filter(
+                                (detail) =>
+                                  detail.passenger.passenger_type === "adult"
+                              ).length /
+                                2) *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.flight
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "children"
+                            ).length / 2}{" "}
+                            Children
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              (selectedOrder.bookingDetail.filter(
+                                (detail) =>
+                                  detail.passenger.passenger_type === "children"
+                              ).length /
+                                2) *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.flight
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "infant"
+                            ).length / 2}{" "}
+                            Infant
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              0 *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.flight
+                                )
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-span-6 text-end">
-                        {" "}
-                        {(() => {
-                          let total = 0;
-                          selectedOrder.bookingDetail.forEach((detail) => {
-                            if (
-                              detail.passenger.passenger_type === "children"
-                            ) {
-                              total += parseFloat(detail.price);
-                            }
-                          });
-                          return (
-                            <span>
-                              {new Intl.NumberFormat("id", {
-                                style: "currency",
-                                currency: "IDR",
-                                maximumFractionDigits: 0,
-                              }).format(total)}
-                            </span>
-                          );
-                        })()}
+
+                      <div className="text-sm mx-4">
+                        <span className="font-bold">Return Price Details</span>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "adult"
+                            ).length / 2}{" "}
+                            Adults
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              (selectedOrder.bookingDetail.filter(
+                                (detail) =>
+                                  detail.passenger.passenger_type === "adult"
+                              ).length /
+                                2) *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.returnFlight
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "children"
+                            ).length / 2}{" "}
+                            Children
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              (selectedOrder.bookingDetail.filter(
+                                (detail) =>
+                                  detail.passenger.passenger_type === "children"
+                              ).length /
+                                2) *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.returnFlight
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            {selectedOrder.bookingDetail.filter(
+                              (detail) =>
+                                detail.passenger.passenger_type === "infant"
+                            ).length / 2}{" "}
+                            Infant
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              maximumFractionDigits: 0,
+                            }).format(
+                              0 *
+                                parsePrice(
+                                  selectedOrder.classes,
+                                  selectedOrder.returnFlight
+                                )
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-12 justify-between">
-                      <div className="col-span-6">
-                        {
-                          selectedOrder.bookingDetail.filter(
-                            (detail) =>
-                              detail.passenger.passenger_type === "infant"
-                          ).length
-                        }{" "}
-                        Infant
-                      </div>
-                      <div className="col-span-6 text-end">
-                        {" "}
-                        {(() => {
-                          let total = 0;
-                          selectedOrder.bookingDetail.forEach((detail) => {
-                            if (detail.passenger.passenger_type === "infant") {
-                              total += parseFloat(detail.price);
-                            }
-                          });
-                          return (
-                            <span>
-                              {new Intl.NumberFormat("id", {
-                                style: "currency",
-                                currency: "IDR",
-                                maximumFractionDigits: 0,
-                              }).format(total)}
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
 
                   <hr className="mt-4 border w-[94.5%] mb-2 mx-auto" />
                   <div className="grid grid-cols-12 justify-between font-bold text-lg mx-4 mb-8">
@@ -665,20 +1088,40 @@ const OrderHistory = () => {
                       }).format(selectedOrder.total_amount)}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className={`text-white w-full ${
-                      selectedOrder.booking_status === "issued"
-                        ? "bg-customBlue2 hover:bg-customBlue1 focus:ring-blue-300"
-                        : selectedOrder.booking_status === "unpaid"
-                        ? "bg-red-600 hover:bg-red-800 focus:ring-red-300"
-                        : "hidden"
-                    } focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none`}
-                  >
-                    {selectedOrder.booking_status === "issued"
-                      ? "Print E-Ticket"
-                      : "Pay Now"}
-                  </button>
+                  {selectedOrder &&
+                    selectedOrder.booking_status === "issued" && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handlePrintTicket(selectedOrder.booking_code)
+                          }
+                          className={`text-white w-full bg-customBlue2 hover:bg-customBlue1 focus:ring-blue-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none`}
+                        >
+                          Print E-Ticket
+                        </button>
+                      </>
+                    )}
+
+                  {selectedOrder &&
+                    selectedOrder.booking_status === "unpaid" && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handlePayNow(selectedOrder)}
+                          className={`text-white w-full bg-red-600 hover:bg-red-800 focus:ring-red-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none`}
+                        >
+                          Pay Now
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCancelBooking(selectedOrder)}
+                          className={`text-red-600 border-2 border-red-600 w-full bg-white hover:bg-red-800 hover:text-white focus:ring-red-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none`}
+                        >
+                          Cancel Booking
+                        </button>
+                      </>
+                    )}
                 </div>
               </div>
             )}
@@ -693,7 +1136,7 @@ const OrderHistory = () => {
           <div className="relative p-4 w-full max-w-md mt-16 md:mt-20 sm:ml-12 md:ml-40 lg:ml-96 xl:ml-[600px] 2xl:ml-[750px]">
             <div className="relative bg-white rounded-xl shadow-xl">
               {/* Modal header */}
-              <div className="flex justify-between items-center p-5 border-b  rounded-t">
+              <div className="flex flex-col justify-between items-center p-5 border-b  rounded-t">
                 <form className="w-full">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -717,8 +1160,8 @@ const OrderHistory = () => {
                       type="search"
                       id="search"
                       className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter Flight Number"
-                      required
+                      placeholder="Enter Booking Code"
+                      onChange={(e) => setBookingCode(e.target.value)}
                     />
                     <button
                       type="button"
@@ -729,6 +1172,12 @@ const OrderHistory = () => {
                     </button>
                   </div>
                 </form>
+                <button
+                  onClick={handleSearchBookingCode}
+                  className="w-full bg-customBlue1 text-white p-3 rounded-lg font-bold mt-3"
+                >
+                  Search
+                </button>
               </div>
             </div>
           </div>

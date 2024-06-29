@@ -1,4 +1,4 @@
-const BASE_URL = "https://plucky-agent-424606-s3.et.r.appspot.com";
+const BASE_URL = "http://localhost:3001";
 
 export async function getFavoriteDestinations(continent, page = 1, limit = 10) {
   if (continent === "all") {
