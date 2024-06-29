@@ -200,23 +200,25 @@ const Notification = () => {
             className="flex justify-between mt-2 mb-2 mx-auto w-10/12 md:w-8/12 pb-4 rounded-sm hover:bg-gray-50"
             style={{ cursor: "default" }}
           >
-            <div className="flex">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
               <IoNotificationsCircleSharp
                 className="text-customBlue2/50 mr-3 shrink-0 mt-1"
                 size={32}
               />
               <div>
-                <p className="text-gray-400">
+                <p className="text-gray-400 text-xs sm:text-sm">
                   {notification.notification_type}
                 </p>
                 <p className="text-lg">{notification.notification_title}</p>
-                <p className="text-gray-400">
+                <p className="text-gray-400 text-xs sm:text-sm">
                   {notification.notification_description}
                 </p>
               </div>
             </div>
-            <div className="flex shrink-0">
-              <p>{formatDate(notification.created_at)}</p>
+            <div className="flex shrink-0 items-start sm:items-center">
+              <p className="text-xs sm:text-sm">
+                {formatDate(notification.created_at)}
+              </p>
             </div>
           </div>
           {index !== currentNotifications.length - 1 && (
