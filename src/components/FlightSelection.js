@@ -111,17 +111,54 @@ const FlightSelection = ({ fromCity, toCity, passengers }) => {
     setSelectedDay(1);
 
     const newDate = dayjs(date.date, "DD/MM/YYYY").local().format("DD-MM-YYYY");
+    let searchParamsObject = {
+      deptAirport: searchParams.get("deptAirport"),
+      arrAirport: searchParams.get("arrAirport"),
+      adult: searchParams.get("adult"),
+      deptDate: newDate,
+      infant: searchParams.get("infant"),
+      children: searchParams.get("children"),
+      class: searchParams.get("class"),
+    };
+
+    const returnDate = searchParams.get("returnDate");
+
+    if (returnDate) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        returnDate: returnDate,
+      };
+    }
+
+    const flightId = searchParams.get("flightId");
+
+    if (flightId) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        flightId: flightId,
+      };
+    }
+
+    const sortBy = searchParams.get("sortBy");
+
+    if (sortBy) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        sortBy: sortBy,
+      };
+    }
+    const order = searchParams.get("order");
+
+    if (order) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        order: order,
+      };
+    }
+
     navigate({
       pathname: "/search",
-      search: createSearchParams({
-        deptAirport: searchParams.get("deptAirport"),
-        arrAirport: searchParams.get("arrAirport"),
-        deptDate: newDate,
-        adult: searchParams.get("adult"),
-        infant: searchParams.get("infant"),
-        children: searchParams.get("children"),
-        class: searchParams.get("class"),
-      }).toString(),
+      search: createSearchParams(searchParamsObject).toString(),
     });
   };
 

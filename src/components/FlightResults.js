@@ -102,6 +102,15 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
       };
     }
 
+    const returnDate = searchParams.get("returnDate");
+
+    if (returnDate) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        returnDate: returnDate,
+      };
+    }
+
     navigate({
       pathname: "/search",
       search: createSearchParams(searchParamsObject).toString(),
