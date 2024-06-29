@@ -5,6 +5,14 @@ import LocationIcon from "../icons/location.svg";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import { IoMdClose } from "react-icons/io";
 import { seoTitle } from "string-fn";
+import {
+  PDFDownloadLink,
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+} from "@react-pdf/renderer";
 
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiX } from "react-icons/fi";
@@ -17,6 +25,7 @@ import { getFlightById } from "../services/flight.service";
 import Swal from "sweetalert2";
 import HistoryLoadingCard from "./HistoryLoadingCard";
 import PaginationHistory from "./PaginationHistory";
+import PdfTicket from "../pages/PdfTicket";
 
 const OrderHistory = () => {
   const [selectedOrder, setSelectedOrder] = useState();
@@ -1124,15 +1133,30 @@ const OrderHistory = () => {
                   {selectedOrder &&
                     selectedOrder.booking_status === "issued" && (
                       <>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handlePrintTicket(selectedOrder.booking_code)
+                        <PDFDownloadLink
+                          document={
+                            <PdfTicket
+                              bookingCode={selectedOrder.booking_code}
+                              created_at={selectedOrder.created_at}
+                              ordered_by_first_name={
+                                selectedOrder.ordered_by_first_name
+                              }
+                              ordered_by_last_name={
+                                selectedOrder.ordered_by_last_name
+                              }
+                              ordered_by_phone_number={
+                                selectedOrder.ordered_by_phone_number
+                              }
+                              ordered_by_email={selectedOrder.ordered_by_email}
+                              bookingDetail={selectedOrder.bookingDetail}
+                            />
                           }
-                          className={`text-white w-full bg-customBlue2 hover:bg-customBlue1 focus:ring-blue-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none`}
+                          fileName={`Invoice_${selectedOrder.booking_code}.pdf`}
                         >
-                          Print E-Ticket
-                        </button>
+                          <button className="text-white w-full bg-customBlue2 hover:bg-customBlue1 focus:ring-blue-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none">
+                            Print E-Ticket
+                          </button>
+                        </PDFDownloadLink>
                       </>
                     )}
 

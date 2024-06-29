@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://plucky-agent-424606-s3.et.r.appspot.com/";
 
 export async function getAirportData() {
   const response = await fetch(`${BASE_URL}/api/v1/airport`);
