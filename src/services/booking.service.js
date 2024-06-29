@@ -21,6 +21,7 @@ export async function bookingFlight(data, token) {
 
 export async function getBookingHistory(
   token,
+  page = 1,
   bookingCode,
   startDate,
   endDate
@@ -28,7 +29,7 @@ export async function getBookingHistory(
   let response;
   if (bookingCode && !startDate && !endDate) {
     response = await fetch(
-      `${BASE_URL}/api/v1/booking/detail?sortBy=transactionDate&order=desc&bookingCode=${bookingCode}`,
+      `${BASE_URL}/api/v1/booking/detail?limit=10&page=${page}&sortBy=transactionDate&order=desc&bookingCode=${bookingCode}`,
       {
         method: "GET",
         headers: {
@@ -38,7 +39,7 @@ export async function getBookingHistory(
     );
   } else if (!bookingCode && startDate && endDate) {
     response = await fetch(
-      `${BASE_URL}/api/v1/booking/detail?sortBy=transactionDate&order=desc&start_date=${startDate}&end_date=${endDate}`,
+      `${BASE_URL}/api/v1/booking/detail?limit=10&page=${page}&sortBy=transactionDate&order=desc&start_date=${startDate}&end_date=${endDate}`,
       {
         method: "GET",
         headers: {
@@ -48,7 +49,7 @@ export async function getBookingHistory(
     );
   } else if (bookingCode && startDate && endDate) {
     response = await fetch(
-      `${BASE_URL}/api/v1/booking/detail?sortBy=transactionDate&order=desc&bookingCode=${bookingCode}&start_date=${startDate}&end_date=${endDate}`,
+      `${BASE_URL}/api/v1/booking/detail?limit=10&page=${page}&sortBy=transactionDate&order=desc&bookingCode=${bookingCode}&start_date=${startDate}&end_date=${endDate}`,
       {
         method: "GET",
         headers: {
@@ -58,7 +59,7 @@ export async function getBookingHistory(
     );
   } else {
     response = await fetch(
-      `${BASE_URL}/api/v1/booking/detail?sortBy=transactionDate&order=desc`,
+      `${BASE_URL}/api/v1/booking/detail?limit=10&page=${page}&sortBy=transactionDate&order=desc`,
       {
         method: "GET",
         headers: {

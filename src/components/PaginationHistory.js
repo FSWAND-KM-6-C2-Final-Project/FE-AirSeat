@@ -4,7 +4,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 
-const Pagination = ({
+const HistoryPagination = ({
   totalData,
   totalPages,
   pageNum,
@@ -21,20 +21,12 @@ const Pagination = ({
       <li key={number}>
         <a
           onClick={() => {
-            searchParams.get("continent")
-              ? navigate({
-                  pathname: "/",
-                  search: createSearchParams({
-                    continent: searchParams.get("continent"),
-                    page: number,
-                  }).toString(),
-                })
-              : navigate({
-                  pathname: "/",
-                  search: createSearchParams({
-                    page: number,
-                  }).toString(),
-                });
+            navigate({
+              pathname: "/order-history",
+              search: createSearchParams({
+                page: number,
+              }).toString(),
+            });
             onPageChange(number);
           }}
           className={`flex items-center justify-center cursor-pointer px-4 h-10 leading-tight border border-customBlue1 hover:bg-gray-100 hover:text-gray-700 ${
@@ -53,20 +45,13 @@ const Pagination = ({
     const prevPage = currentPage > 1 ? currentPage - 1 : 1;
 
     if (currentPage !== 1) {
-      searchParams.get("continent")
-        ? navigate({
-            pathname: "/",
-            search: createSearchParams({
-              continent: searchParams.get("continent"),
-              page: prevPage,
-            }).toString(),
-          })
-        : navigate({
-            pathname: "/",
-            search: createSearchParams({
-              page: prevPage,
-            }).toString(),
-          });
+      searchParams.get("continent");
+      navigate({
+        pathname: "/order-history",
+        search: createSearchParams({
+          page: prevPage,
+        }).toString(),
+      });
       onPageChange(prevPage);
     }
   };
@@ -75,20 +60,12 @@ const Pagination = ({
     const nextPage = currentPage < totalPages ? currentPage + 1 : totalPages;
 
     if (totalPages !== currentPage) {
-      searchParams.get("continent")
-        ? navigate({
-            pathname: "/",
-            search: createSearchParams({
-              continent: searchParams.get("continent"),
-              page: nextPage,
-            }).toString(),
-          })
-        : navigate({
-            pathname: "/",
-            search: createSearchParams({
-              page: nextPage,
-            }).toString(),
-          });
+      navigate({
+        pathname: "/order-history",
+        search: createSearchParams({
+          page: nextPage,
+        }).toString(),
+      });
       onPageChange(nextPage);
     }
   };
@@ -122,4 +99,4 @@ const Pagination = ({
   );
 };
 
-export default Pagination;
+export default HistoryPagination;
