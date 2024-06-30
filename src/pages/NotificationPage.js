@@ -4,6 +4,7 @@ import NavbarAccount from "../components/NavbarAccount";
 import Notification from "../components/Notification";
 import { getUser } from "../services/auth.service";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import Title from "../components/Title";
 
 const NotificationPage = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const NotificationPage = () => {
 
   return (
     <>
+      <Title text={"Notification"} />
       <NavbarAccount />
       <Notification />
     </>

@@ -12,6 +12,7 @@ import {
 import { getSeatByFlightId } from "../services/seat.service";
 import { getUser } from "../services/auth.service";
 import { toast, Bounce } from "react-toastify";
+import Title from "../components/Title";
 
 const BookingPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -172,6 +173,7 @@ const BookingPage = () => {
 
   return (
     <div>
+      <Title text={"Booking"} />
       <UserNavbar />
       <StepsSection />
       {!isFetching && (

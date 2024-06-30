@@ -8,18 +8,21 @@ import { IoNotificationsCircleSharp } from "react-icons/io5";
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const notificationsPerPage = 5;
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const notificationsPerPage = 10;
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [filterDropdownVisible, setFilterDropdownVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchVisible, setSearchVisible] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     const fetchNotifications = async () => {
+      setIsFetching(true);
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(
-          "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/notification",
+          `https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/notification?limit=${notificationsPerPage}&page=${currentPage}&searchType=${selectedCategory}&searchTitle=${searchQuery}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -31,12 +34,14 @@ const Notification = () => {
         }
         const data = await response.json();
         setNotifications(data.data.notification);
+        setTotalPages(data.pagination.totalPages);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
+      setIsFetching(false);
     };
     fetchNotifications();
-  }, []);
+  }, [currentPage, searchQuery, selectedCategory]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -66,7 +71,7 @@ const Notification = () => {
 
   const filteredNotifications = notifications.filter((notification) => {
     return (
-      (selectedCategory === "All" ||
+      (selectedCategory === "" ||
         notification.notification_type.toLowerCase() ===
           selectedCategory.toLowerCase()) &&
       (searchQuery === "" ||
@@ -79,20 +84,19 @@ const Notification = () => {
     );
   });
 
-  const indexOfLastNotification = currentPage * notificationsPerPage;
-  const indexOfFirstNotification =
-    indexOfLastNotification - notificationsPerPage;
-  const currentNotifications = filteredNotifications.slice(
-    indexOfFirstNotification,
-    indexOfLastNotification
-  );
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
     setCurrentPage(1);
     setFilterDropdownVisible(false);
+  };
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleSearch = (e) => {
+    setCurrentPage(1);
+    setSearchQuery(e.target.value);
   };
 
   return (
@@ -139,7 +143,7 @@ const Notification = () => {
                   aria-labelledby="options-menu"
                 >
                   <button
-                    onClick={() => handleCategoryChange("All")}
+                    onClick={() => handleCategoryChange("")}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   >
                     All
@@ -176,7 +180,7 @@ const Notification = () => {
                       className="w-60 px-4 py-1 mt-2 border-customBlue2 rounded-md"
                       placeholder="Search..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => handleSearch(e)}
                     />
                   </div>
                 ) : (
@@ -185,7 +189,7 @@ const Notification = () => {
                     className="absolute top-0 left-10 border border-customBlue2 rounded-md px-4 py-1 w-32 md:w-36 xl:w-44 2xl:w-60"
                     placeholder="Search..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleSearch(e)}
                   />
                 )}
               </>
@@ -194,7 +198,7 @@ const Notification = () => {
         </div>
       </div>
 
-      {currentNotifications.map((notification, index) => (
+      {filteredNotifications.map((notification, index) => (
         <div key={notification.id || index}>
           <div
             className="flex justify-between mt-2 mb-2 mx-auto w-10/12 md:w-8/12 pb-4 rounded-sm hover:bg-gray-50"
@@ -221,7 +225,7 @@ const Notification = () => {
               </p>
             </div>
           </div>
-          {index !== currentNotifications.length - 1 && (
+          {index !== filteredNotifications.length - 1 && (
             <hr className="w-10/12 md:w-8/12 mx-auto border-t border-gray-300" />
           )}
         </div>
@@ -230,27 +234,20 @@ const Notification = () => {
       <div className="flex justify-center mt-2 pb-4">
         <nav>
           <ul className="flex list-none">
-            {Array.from(
-              {
-                length: Math.ceil(
-                  filteredNotifications.length / notificationsPerPage
-                ),
-              },
-              (_, index) => (
-                <li key={index} className="mx-1">
-                  <button
-                    onClick={() => paginate(index + 1)}
-                    className={`px-3 py-1 rounded-full ${
-                      currentPage === index + 1
-                        ? "bg-customBlue2 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-customBlue3 hover:text-white"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                </li>
-              )
-            )}
+            {[...Array(totalPages).keys()].map((number) => (
+              <li key={number + 1} className="mx-1">
+                <button
+                  onClick={() => paginate(number + 1)}
+                  className={`px-3 py-1 rounded-full ${
+                    currentPage === number + 1
+                      ? "bg-customBlue2 text-white"
+                      : "bg-gray-200 text-gray-600"
+                  }`}
+                >
+                  {number + 1}
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>

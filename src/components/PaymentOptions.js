@@ -180,8 +180,8 @@ const PaymentOptions = () => {
           }
         `}
       </style>
-      <div className="payment-container flex flex-col md:flex-row p-8 lg:mx-[200px] md:mx-[20px] sm:mx-0 space-y-8 md:space-y-0 md:space-x-8 font-plus-jakarta-sans">
-        <div className="w-full md:w-1/2 p-8 shadow-lg rounded-lg bg-white">
+      <div className="payment-container flex flex-col md:flex-row p-1 sm:p-8 lg:mx-[200px] md:mx-[20px] sm:mx-0 space-y-8 md:space-y-0 md:space-x-8 font-plus-jakarta-sans">
+        <div className="w-full md:w-1/2 p-1 sm:p-8 shadow-lg rounded-lg bg-white">
           <h2 className="text-3xl font-bold text-customBlue1 mb-6 text-gray-800">
             Payment Options
           </h2>
