@@ -24,6 +24,7 @@
     "react-multi-date-picker": "^4.5.2",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
+    "react-select": "^5.8.0",
     "react-slugify": "^4.0.1",
     "react-tailwindcss-datepicker": "^1.6.6",
     "react-toastify": "^10.0.5",

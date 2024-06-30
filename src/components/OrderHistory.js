@@ -265,6 +265,7 @@ const OrderHistory = () => {
         return_price: returnPrice,
       },
     });
+    navigate(0);
   };
 
   const parsePrice = (classes, data) => {
@@ -969,6 +970,47 @@ const OrderHistory = () => {
                           })()}
                         </div>
                       </div>
+                      {selectedOrder.discount && (
+                        <div className="grid grid-cols-12 justify-between">
+                          <div className="col-span-6">
+                            Discount{" "}
+                            {selectedOrder.discount &&
+                              `(${selectedOrder.discount.discount_amount} %)`}
+                          </div>
+                          <div className="col-span-6 text-end">
+                            {" "}
+                            {selectedOrder.discount.discount_amount && `-`}
+                            {(() => {
+                              let total = 0;
+                              selectedOrder.bookingDetail.forEach((detail) => {
+                                if (
+                                  detail.passenger.passenger_type !== "infant"
+                                ) {
+                                  total += parseFloat(detail.price);
+                                }
+                              });
+
+                              const discountedTotal = selectedOrder.discount
+                                ? total *
+                                  (parseFloat(
+                                    selectedOrder.discount.discount_amount
+                                  ) /
+                                    100)
+                                : 0;
+
+                              return (
+                                <span>
+                                  {new Intl.NumberFormat("id", {
+                                    style: "currency",
+                                    currency: "IDR",
+                                    maximumFractionDigits: 0,
+                                  }).format(discountedTotal)}
+                                </span>
+                              );
+                            })()}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1128,6 +1170,50 @@ const OrderHistory = () => {
                             )}
                           </div>
                         </div>
+                        {selectedOrder.discount && (
+                          <div className="grid grid-cols-12 justify-between">
+                            <div className="col-span-6">
+                              Discount{" "}
+                              {selectedOrder.discount &&
+                                `(${selectedOrder.discount.discount_amount} %)`}
+                            </div>
+                            <div className="col-span-6 text-end">
+                              {" "}
+                              {selectedOrder.discount.discount_amount && `-`}
+                              {(() => {
+                                let total = 0;
+                                selectedOrder.bookingDetail.forEach(
+                                  (detail) => {
+                                    if (
+                                      detail.passenger.passenger_type !==
+                                      "infant"
+                                    ) {
+                                      total += parseFloat(detail.price);
+                                    }
+                                  }
+                                );
+
+                                const discountedTotal = selectedOrder.discount
+                                  ? total *
+                                    (parseFloat(
+                                      selectedOrder.discount.discount_amount
+                                    ) /
+                                      100)
+                                  : 0;
+
+                                return (
+                                  <span>
+                                    {new Intl.NumberFormat("id", {
+                                      style: "currency",
+                                      currency: "IDR",
+                                      maximumFractionDigits: 0,
+                                    }).format(discountedTotal)}
+                                  </span>
+                                );
+                              })()}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </>
                   )}

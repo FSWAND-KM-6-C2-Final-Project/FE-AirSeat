@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlaneDeparture, FaPlaneArrival } from "react-icons/fa";
 
 import { seoTitle } from "string-fn";
+import { getHistoryById } from "../services/booking.service";
 
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
@@ -41,6 +42,24 @@ const DetailedFlightInfo = ({
   return_arrival_time,
   return_price,
 }) => {
+  const [discountAmount, setDiscountAmount] = useState();
+
+  useEffect(() => {
+    fetchBookingDetail(booking_code);
+  }, []);
+
+  const fetchBookingDetail = async (booking_code) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await getHistoryById(token, booking_code);
+
+      setDiscountAmount(response.data.booking[0].discount.discount_amount);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto p-8 bg-white shadow-xl rounded-lg">
       <h2 className="text-3xl font-bold mb-3 text-[#164765] border-b-2 border-gray-300 pb-3">
@@ -206,7 +225,7 @@ const DetailedFlightInfo = ({
                 }).format(parseFloat(price) * parseInt(children))}
               </span>
             </div>
-            <div className="flex justify-between py-1 mb-2">
+            <div className="flex justify-between py-1 ">
               <span className="text-md font-medium">Tax</span>
               <span className="text-md font-medium">
                 {new Intl.NumberFormat("id", {
@@ -216,6 +235,37 @@ const DetailedFlightInfo = ({
                 }).format(0)}
               </span>
             </div>
+            {discountAmount && (
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">Discount</span>
+                <span className="text-md font-medium">
+                  {"-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(
+                    (parseFloat(price) * parseInt(adult) +
+                      parseFloat(0) * parseInt(infant) +
+                      parseFloat(price) * parseInt(children)) *
+                      (parseFloat(discountAmount) / 100)
+                  )}
+                </span>
+              </div>
+            )}
+            {!discountAmount && (
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">Discount</span>
+                <span className="text-md font-medium">
+                  {"-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(0)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center border-t border-gray-200 pt-4">
               <span className="text-xl font-bold text-customBlue1">Total</span>
               <span className="text-xl font-bold text-customBlue1">
@@ -226,7 +276,13 @@ const DetailedFlightInfo = ({
                 }).format(
                   parseFloat(price) * parseInt(adult) +
                     parseFloat(0) * parseInt(infant) +
-                    parseFloat(price) * parseInt(children)
+                    parseFloat(price) * parseInt(children) -
+                    (discountAmount
+                      ? (parseFloat(price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(price) * parseInt(children)) *
+                        (parseFloat(discountAmount) / 100)
+                      : 0)
                 )}
               </span>
             </div>
@@ -310,7 +366,7 @@ const DetailedFlightInfo = ({
                 }).format(parseFloat(return_price) * parseInt(children))}
               </span>
             </div>
-            <div className="flex justify-between py-1 mb-2">
+            <div className="flex justify-between py-1">
               <span className="text-md font-medium">Tax</span>
               <span className="text-md font-medium">
                 {new Intl.NumberFormat("id", {
@@ -320,6 +376,40 @@ const DetailedFlightInfo = ({
                 }).format(0)}
               </span>
             </div>
+            {discountAmount && (
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">Discount</span>
+                <span className="text-md font-medium">
+                  {"-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(
+                    (parseFloat(price) * parseInt(adult) +
+                      parseFloat(0) * parseInt(infant) +
+                      parseFloat(price) * parseInt(children) +
+                      parseFloat(return_price) * parseInt(adult) +
+                      parseFloat(0) * parseInt(infant) +
+                      parseFloat(return_price) * parseInt(children)) *
+                      (parseFloat(discountAmount) / 100)
+                  )}
+                </span>
+              </div>
+            )}
+            {!discountAmount && (
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">Discount</span>
+                <span className="text-md font-medium">
+                  {"-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(0)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center border-t border-gray-200 pt-4">
               <span className="text-xl font-bold text-customBlue1">Total</span>
               <span className="text-xl font-bold text-customBlue1">
@@ -333,7 +423,16 @@ const DetailedFlightInfo = ({
                     parseFloat(price) * parseInt(children) +
                     parseFloat(return_price) * parseInt(adult) +
                     parseFloat(0) * parseInt(infant) +
-                    parseFloat(return_price) * parseInt(children)
+                    parseFloat(return_price) * parseInt(children) -
+                    (discountAmount
+                      ? (parseFloat(price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(price) * parseInt(children) +
+                          parseFloat(return_price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(return_price) * parseInt(children)) *
+                        (parseFloat(discountAmount) / 100)
+                      : 0)
                 )}
               </span>
             </div>

@@ -78,6 +78,39 @@ export async function getBookingHistory(
   return resData;
 }
 
+export async function getHistoryById(token, bookingCode) {
+  let response;
+  if (bookingCode) {
+    response = await fetch(
+      `${BASE_URL}/api/v1/booking/detail?bookingCode=${bookingCode}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } else {
+    response = await fetch(
+      `${BASE_URL}/api/v1/booking/detail?bookingCode=${bookingCode}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
+
+  const resData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resData.message);
+  }
+
+  return resData;
+}
+
 export async function cancelBooking(data, token) {
   const response = await fetch(`${BASE_URL}/api/v1/booking/cancel/${data}`, {
     method: "POST",
