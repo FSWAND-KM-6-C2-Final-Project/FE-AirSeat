@@ -3,10 +3,12 @@ import { FaPlaneDeparture, FaPlaneArrival, FaInfoCircle } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast, Bounce } from "react-toastify";
 import Swal from "sweetalert2";
-
+import Select from "react-select";
 import { seoTitle } from "string-fn";
 import { bookingFlight } from "../services/booking.service";
 import Loading from "./Loading";
+import { CiDiscount1 } from "react-icons/ci";
+import { getDiscountById, getDiscounts } from "../services/discount.service";
 
 const FlightDetails = ({
   airline_name,
@@ -42,12 +44,148 @@ const FlightDetails = ({
   const [seatClass, setSeatClass] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFetching, setIsFetching] = useState();
+  const [discounts, setDiscounts] = useState();
+  const [selectedDiscount, setSelectedDiscount] = useState();
+  const [discountAmount, setDiscountAmount] = useState();
 
   const dayjs = require("dayjs");
   const utc = require("dayjs/plugin/utc");
   const customParseFormat = require("dayjs/plugin/customParseFormat");
   dayjs.extend(customParseFormat);
   dayjs.extend(utc);
+
+  useEffect(() => {
+    fetchDiscounts();
+  }, []);
+
+  const handleSelectDiscount = async (choice) => {
+    if (choice) {
+      try {
+        const response = await getDiscountById(choice);
+
+        if (response) {
+          setSelectedDiscount(choice);
+          setDiscountAmount(response.data.discount.discount_amount);
+        }
+      } catch (err) {
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    }
+  };
+
+  const fetchDiscounts = async () => {
+    setIsFetching(true);
+    try {
+      const response = await getDiscounts();
+
+      if (response) {
+        const discount = response.data.discounts;
+        const selectOption = discount.map((item) => {
+          const pricePerAdult = parseFloat(price);
+          const pricePerInfant = parseFloat(0);
+          const pricePerChild = parseFloat(price);
+
+          let totalOrderAmount;
+
+          if (return_flight_number) {
+            const returnPricePerAdult = parseFloat(return_price);
+            const returnPricePerChild = parseFloat(return_price);
+
+            totalOrderAmount =
+              pricePerAdult * parseInt(adult) +
+              pricePerInfant * parseInt(infant) +
+              pricePerChild * parseInt(children) +
+              returnPricePerAdult * parseInt(adult) +
+              pricePerInfant * parseInt(infant) +
+              returnPricePerChild * parseInt(children);
+          } else {
+            totalOrderAmount =
+              pricePerAdult * parseInt(adult) +
+              pricePerInfant * parseInt(infant) +
+              pricePerChild * parseInt(children);
+          }
+
+          const formattedMinimumOrder = new Intl.NumberFormat("id", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+          }).format(item.minimum_order);
+
+          const isExpired = new Date(item.discount_expired) < new Date();
+
+          return {
+            value: item.id,
+            label: (
+              <div>
+                <p>Discount Amount: {item.discount_amount}%</p>
+                <p>Minimum Order: {formattedMinimumOrder}</p>
+                <p>
+                  Expired At:{" "}
+                  {dayjs(item.discount_expired).format("DD MMMM YYYY, HH:mm")}
+                </p>
+                {isExpired && (
+                  <p className="font-bold">(You cannot use this promo)</p>
+                )}
+              </div>
+            ),
+            isDisabled:
+              isExpired || totalOrderAmount < parseFloat(item.minimum_order),
+          };
+        });
+
+        setDiscounts(selectOption);
+      }
+    } catch (err) {
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+    setIsFetching(false);
+  };
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: "1px solid #ddd",
+      borderRadius: "0.5rem",
+      cursor: "pointer",
+      minHeight: "auto",
+      padding: "10px",
+      background: "white",
+      "&:hover": {
+        borderColor: "#aaa",
+      },
+    }),
+    indicatorSeparator: (provided, state) => ({
+      ...provided,
+      display: "none",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      cursor: "pointer",
+      "&:hover": {
+        background: "#f1f1f1",
+      },
+    }),
+  };
 
   const handlePaymentRedirect = async () => {
     if (bookingData === null) {
@@ -193,6 +331,12 @@ const FlightDetails = ({
         cancelButtonText: "Cancel",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          const data = bookingData;
+
+          if (selectedDiscount) {
+            data.discount_id = selectedDiscount;
+          }
+
           const response = await bookingFlightProcess(bookingData);
 
           if (response) {
@@ -231,6 +375,7 @@ const FlightDetails = ({
                 return_price,
               },
             });
+            navigate(0);
           }
         }
       });
@@ -459,6 +604,26 @@ const FlightDetails = ({
                   }).format(0)}
                 </span>
               </div>
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">
+                  Discount {discountAmount && "(" + discountAmount + "%)"}
+                </span>
+                <span className="text-md font-medium">
+                  {discountAmount && "-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(
+                    discountAmount
+                      ? (parseFloat(price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(price) * parseInt(children)) *
+                          (discountAmount / 100)
+                      : 0
+                  )}
+                </span>
+              </div>
               <div className="flex justify-between items-center border-t border-gray-200 pt-4">
                 <span className="text-xl font-bold text-customBlue1">
                   Total
@@ -471,10 +636,33 @@ const FlightDetails = ({
                   }).format(
                     parseFloat(price) * parseInt(adult) +
                       parseFloat(0) * parseInt(infant) +
-                      parseFloat(price) * parseInt(children)
+                      parseFloat(price) * parseInt(children) -
+                      (discountAmount
+                        ? (parseFloat(price) * parseInt(adult) +
+                            parseFloat(0) * parseInt(infant) +
+                            parseFloat(price) * parseInt(children)) *
+                          (discountAmount / 100)
+                        : 0)
                   )}
                 </span>
               </div>
+
+              {!isFetching && discounts && (
+                <div className="mt-5">
+                  <Select
+                    onChange={(choice) => handleSelectDiscount(choice.value)}
+                    isSearchable={false}
+                    options={discounts}
+                    styles={customStyles}
+                    placeholder={
+                      <div className="flex items-center">
+                        <CiDiscount1 className="w-7 h-auto mr-2" />
+                        Add Discount
+                      </div>
+                    }
+                  />
+                </div>
+              )}
               <button
                 className="w-full py-3 md:py-3 sm:py-2 my-5 text-white text-center m-auto bg-customBlue1 rounded-lg hover:bg-customBlue2 focus:outline-none focus:ring-2 focus:ring-customBlue2 focus:ring-opacity-75 text-lg md:text-lg sm:text-md disabled:bg-customBlue2 disabled:cursor-not-allowed"
                 onClick={handlePaymentRedirect}
@@ -576,6 +764,29 @@ const FlightDetails = ({
                   }).format(0)}
                 </span>
               </div>
+              <div className="flex justify-between py-1 mb-2">
+                <span className="text-md font-medium">
+                  Discount {discountAmount && "(" + discountAmount + "%)"}
+                </span>
+                <span className="text-md font-medium">
+                  {discountAmount && "-"}
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  }).format(
+                    discountAmount
+                      ? (parseFloat(price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(price) * parseInt(children) +
+                          parseFloat(return_price) * parseInt(adult) +
+                          parseFloat(0) * parseInt(infant) +
+                          parseFloat(return_price) * parseInt(children)) *
+                          (discountAmount / 100)
+                      : 0
+                  )}
+                </span>
+              </div>
               <div className="flex justify-between items-center border-t border-gray-200 pt-4">
                 <span className="text-xl font-bold text-customBlue1">
                   Total
@@ -591,10 +802,36 @@ const FlightDetails = ({
                       parseFloat(price) * parseInt(children) +
                       parseFloat(return_price) * parseInt(adult) +
                       parseFloat(0) * parseInt(infant) +
-                      parseFloat(return_price) * parseInt(children)
+                      parseFloat(return_price) * parseInt(children) -
+                      (discountAmount
+                        ? (parseFloat(price) * parseInt(adult) +
+                            parseFloat(0) * parseInt(infant) +
+                            parseFloat(price) * parseInt(children) +
+                            parseFloat(return_price) * parseInt(adult) +
+                            parseFloat(0) * parseInt(infant) +
+                            parseFloat(return_price) * parseInt(children)) *
+                          (discountAmount / 100)
+                        : 0)
                   )}
                 </span>
               </div>
+
+              {!isFetching && discounts && (
+                <div className="mt-5">
+                  <Select
+                    onChange={(choice) => handleSelectDiscount(choice.value)}
+                    isSearchable={false}
+                    options={discounts}
+                    styles={customStyles}
+                    placeholder={
+                      <div className="flex items-center">
+                        <CiDiscount1 className="w-7 h-auto mr-2" />
+                        Add Discount
+                      </div>
+                    }
+                  />
+                </div>
+              )}
               <button
                 className="w-full py-3 md:py-3 sm:py-2 my-5 text-white bg-customBlue1 rounded-lg hover:bg-customBlue2 focus:outline-none focus:ring-2 focus:ring-customBlue2 focus:ring-opacity-75 text-lg md:text-lg sm:text-md disabled:bg-customBlue2 disabled:cursor-not-allowed"
                 onClick={handlePaymentRedirect}
@@ -604,6 +841,7 @@ const FlightDetails = ({
                     <Loading />
                   </span>
                 )}
+
                 {!isFetching && "Continue To Payment"}
               </button>
             </>
