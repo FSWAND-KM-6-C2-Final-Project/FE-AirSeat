@@ -80,24 +80,30 @@ const RequestResetPassword = () => {
   return (
     <>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="md:flex-1 bg-customBlue4 flex flex-col justify-center items-center">
-          <div className="flex flex-col justify-center items-center">
-            <img className="w-[200px] mb-3" src={Logo} />
+        <div className="flex-1 bg-customBlue4 flex flex-col justify-center items-center p-4 md:p-0 hidden md:flex">
+          <div className="flex flex-col justify-center items-center text-center md:text-left">
             <ToastContainer />
+            <img className="w-[200px] mb-3" src={Logo} />
             <h1 className="text-4xl md:text-5xl font-bold text-customBlue2">
               AirSeat
             </h1>
-            <p className="text-xl md:text-2xl text-customBlue2 mt-4">
+            <p className="text-lg md:text-2xl text-customBlue2 mt-4">
               Your Traveling Partner
             </p>
           </div>
-          <div className="absolute bottom-0 mb-20 hidden md:block">
-            <img src={plantsImage} alt="Decoration" className="max-w-full" />
+          <div className="absolute bottom-0 mb-10 md:mb-20 hidden md:block">
+            <img src={plantsImage} alt="Decoration" />
           </div>
         </div>
-        <div className="flex-1 flex flex-col justify-center items-center">
-          <div className="w-full max-w-md px-8">
-            <h2 className="text-2xl font-bold mb-4">Reset Password Request</h2>
+        <div className="flex-1 flex flex-col justify-center items-center p-4 md:p-0">
+          <div className="w-full max-w-md px-4 md:px-8">
+            <div className="md:hidden flex items-center mb-8">
+              <img className="w-[50px]" src={Logo} />
+              <h1 className="text-3xl font-bold text-customBlue2 ml-2">
+                AirSeat
+              </h1>
+            </div>
+            <h2 className="text-xl font-bold mb-4">Reset Password Request</h2>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold">Email</label>
               <input
@@ -105,7 +111,7 @@ const RequestResetPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
+                className="w-full px-4 py-2 mt-2 mb-5 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
               {emailError && <FormValidation errorMessage={emailError} />}
             </div>
