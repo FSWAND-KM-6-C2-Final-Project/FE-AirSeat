@@ -104,7 +104,7 @@ const RequestResetPassword = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email/Phone"
+                placeholder="Email"
                 className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-customBlue2"
               />
               {emailError && <FormValidation errorMessage={emailError} />}

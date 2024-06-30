@@ -80,6 +80,9 @@ const FlightDetails = ({
           transition: Bounce,
         });
       }
+    } else {
+      setSelectedDiscount(null);
+      setDiscountAmount(null);
     }
   };
 
@@ -143,7 +146,14 @@ const FlightDetails = ({
           };
         });
 
-        setDiscounts(selectOption);
+        // Add a default option at the beginning
+        const defaultOption = {
+          value: null,
+          label: "No Discount Selected",
+          isDisabled: false,
+        };
+
+        setDiscounts([defaultOption, ...selectOption]);
       }
     } catch (err) {
       toast.error(err.message, {

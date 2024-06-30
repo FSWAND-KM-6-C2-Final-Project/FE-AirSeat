@@ -5,6 +5,8 @@ import LocationIcon from "../icons/location.svg";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import { IoMdClose } from "react-icons/io";
 import { seoTitle } from "string-fn";
+import notFoundImage from "../images/not-found-blue.png";
+
 import {
   PDFDownloadLink,
   Page,
@@ -26,6 +28,7 @@ import Swal from "sweetalert2";
 import HistoryLoadingCard from "./HistoryLoadingCard";
 import PaginationHistory from "./PaginationHistory";
 import PdfTicket from "../pages/PdfTicket";
+import NotFoundError from "./NotFoundError";
 
 const OrderHistory = () => {
   const [selectedOrder, setSelectedOrder] = useState();
@@ -40,6 +43,9 @@ const OrderHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageNum, setPageNum] = useState(1);
   const [pageSize, setPageSize] = useState(1);
+  const [selected, setSelected] = useState([
+    { from: undefined, to: undefined },
+  ]);
 
   const dayjs = require("dayjs");
   const navigate = useNavigate();
@@ -62,6 +68,8 @@ const OrderHistory = () => {
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     fetchBookingHistory(bookCode, startDate, endDate);
+    setSelectedOrder();
+    setSelectedOrderId(1);
   }, [searchParams]);
 
   const handleSearchBookingCode = () => {
@@ -99,6 +107,16 @@ const OrderHistory = () => {
           "DD-MM-YYYY"
         )}`
       );
+    }
+    setIsModalDateOpen(false);
+  };
+
+  const handleClickReset = () => {
+    setSelected([{ from: undefined, to: undefined }]);
+    if (!bookingCode) {
+      navigate(`/order-history`);
+    } else {
+      navigate(`/order-history?bookingCode=${bookingCode}`);
     }
     setIsModalDateOpen(false);
   };
@@ -149,14 +167,6 @@ const OrderHistory = () => {
   const initialRange = {
     from: null,
     to: null,
-  };
-  const [selected, setSelected] = useState([
-    { from: undefined, to: undefined },
-  ]);
-
-  const handlePrintTicket = (booking_code) => {
-    console.log("print ticket");
-    console.log(booking_code);
   };
 
   const handlePayNow = (order) => {
@@ -348,9 +358,15 @@ const OrderHistory = () => {
   };
 
   const handleCardClick = (order) => {
-    console.log(JSON.stringify(order));
     setSelectedOrder(order);
     setSelectedOrderId(order.booking_code);
+    if (window.innerWidth < 768) {
+      // Scroll to the target element
+      const targetElement = document.getElementById("orderDetails");
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   return (
@@ -395,6 +411,18 @@ const OrderHistory = () => {
         <div className="grid grid-cols-12 gap-5 ">
           <div className="col-span-12 lg:col-span-7 ">
             {isFetching && <HistoryLoadingCard />}
+
+            {!isFetching && orders.length === 0 && (
+              <>
+                <div className="text-center flex flex-col justify-center min-h-[20vh]">
+                  <NotFoundError
+                    errorImage={notFoundImage}
+                    errorTitle={"Oopppss..."}
+                    errorMessage={"Sorry, Order history data is not found."}
+                  />
+                </div>
+              </>
+            )}
 
             {!isFetching &&
               orders &&
@@ -873,7 +901,9 @@ const OrderHistory = () => {
                   <hr className="mt-4 border w-[94.5%] mb-2 mx-auto" />
                   {!selectedOrder.returnFlight && (
                     <div className="text-sm mx-4">
-                      <span className="font-bold">Price Details</span>
+                      <span className="font-bold" id="orderDetails">
+                        Price Details
+                      </span>
                       <div className="grid grid-cols-12 justify-between">
                         <div className="col-span-6">
                           {
@@ -1017,7 +1047,9 @@ const OrderHistory = () => {
                   {selectedOrder.returnFlight && (
                     <>
                       <div className="text-sm mx-4">
-                        <span className="font-bold">Price Details</span>
+                        <span className="font-bold" id="orderDetails">
+                          Price Details
+                        </span>
                         <div className="grid grid-cols-12 justify-between">
                           <div className="col-span-6">
                             {selectedOrder.bookingDetail.filter(
@@ -1095,7 +1127,9 @@ const OrderHistory = () => {
                       </div>
 
                       <div className="text-sm mx-4">
-                        <span className="font-bold">Return Price Details</span>
+                        <span className="font-bold" id="orderDetails">
+                          Return Price Details
+                        </span>
                         <div className="grid grid-cols-12 justify-between">
                           <div className="col-span-6">
                             {selectedOrder.bookingDetail.filter(
@@ -1362,9 +1396,7 @@ const OrderHistory = () => {
                 />
 
                 <button
-                  onClick={() =>
-                    setSelected([{ from: undefined, to: undefined }])
-                  }
+                  onClick={handleClickReset}
                   className="border-2 font-bold border-customBlue1 w-[80%] mb-3 rounded-lg text-black
                    px-5 py-2"
                 >

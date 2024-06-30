@@ -417,6 +417,7 @@ const Home = () => {
     setDeptDateVal(
       dayjs(destination.departure_time).utc().format("YYYY-MM-DD")
     );
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -573,7 +574,6 @@ const Home = () => {
               </div>
             </div>
           </div>
-
           <button
             onClick={handleClickSearch}
             className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"

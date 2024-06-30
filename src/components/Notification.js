@@ -230,26 +230,28 @@ const Notification = () => {
           )}
         </div>
       ))}
-
-      <div className="flex justify-center mt-2 pb-4">
-        <nav>
-          <ul className="flex list-none">
-            {[...Array(totalPages).keys()].map((number) => (
-              <li key={number + 1} className="mx-1">
-                <button
-                  onClick={() => paginate(number + 1)}
-                  className={`px-3 py-1 rounded-full ${
-                    currentPage === number + 1
-                      ? "bg-customBlue2 text-white"
-                      : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {number + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <div className="w-full">
+        <div className="flex justify-center mt-2 pb-4">
+          <nav>
+            <ul className="flex flex-wrap list-none justify-center">
+              {[...Array(totalPages).keys()].map((number) => (
+                <li key={number + 1} className="mx-1 mb-2">
+                  <button
+                    onClick={() => paginate(number + 1)}
+                    className={`px-3 py-1 rounded-full ${
+                      currentPage === number + 1
+                        ? "bg-customBlue2 text-white"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                    style={{ minWidth: "30px" }} // Sesuaikan lebar minimum sesuai kebutuhan
+                  >
+                    {number + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
     </>
   );
