@@ -5,6 +5,7 @@ import UserNavbar from "../components/NavbarAccount";
 import { getUser } from "../services/auth.service";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Title from "../components/Title";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const PaymentPage = () => {
   }
   return (
     <div>
+      <Title text={"Payment"} />
       <UserNavbar />
       <StepsSection />
       <PaymentOptions />

@@ -4,6 +4,7 @@ import Navbar from "../components/NavbarAccount";
 import { getUser } from "../services/auth.service";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { useState, useEffect } from "react";
+import Title from "../components/Title";
 
 const OrderHistoryPage = () => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const OrderHistoryPage = () => {
   }
   return (
     <>
+      <Title text={"Order History"} />
       <Navbar />
       <OrderHistory />
     </>

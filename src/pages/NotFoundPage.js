@@ -1,10 +1,12 @@
 import UserNavbar from "../components/NavbarAccount";
 import Error from "../components/Error";
 import notFoundImage from "../images/not-found.png";
+import Title from "../components/Title";
 
 const NotFoundPage = () => {
   return (
     <div>
+      <Title text={"Not Found"} />
       <UserNavbar />
       <Error
         errorImage={notFoundImage}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../services/auth.service";
 import { toast, Bounce } from "react-toastify";
+import Title from "../components/Title";
 
 const AccountPage = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const AccountPage = () => {
 
   return (
     <>
+      <Title text={"Profile"} />
       <NavbarAccount />
       <Account />
     </>
