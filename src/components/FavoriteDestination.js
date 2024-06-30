@@ -2,7 +2,7 @@ import LoadingCard from "./LoadingCard";
 import Pagination from "./Paginations";
 import Error from "./Error";
 import NotFoundError from "./NotFoundError";
-import notFoundImage from "../images/not-found.png";
+import notFoundImage from "../images/not-found-blue.png";
 import { useState } from "react";
 
 const dayjs = require("dayjs");

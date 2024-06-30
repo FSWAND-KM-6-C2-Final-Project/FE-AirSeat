@@ -5,7 +5,7 @@ import { LuArrowUpDown } from "react-icons/lu";
 import FlightAccordion from "./FlightAccordion";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import loadingIcon from "../images/loading.png";
-import emptyIcon from "../icons/empty.svg";
+import emptyIcon from "../icons/not-found-flight.svg";
 import { getFlightData } from "../services/flight.service";
 import {
   createSearchParams,
@@ -360,7 +360,7 @@ const FlightResults = () => {
                     <img
                       src={emptyIcon}
                       alt="empty"
-                      className="aspect-square w-4/12"
+                      className="w-[80%] sm:w-[30%]"
                     />
                   </div>
                 )}
