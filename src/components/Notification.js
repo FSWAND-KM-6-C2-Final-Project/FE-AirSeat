@@ -113,7 +113,7 @@ const Notification = () => {
     <>
       <div className="p-10 shadow-md h-44 mx-auto mb-10">
         <h2
-          className={`font-bold text-xl text-left ml-2 sm:ml-4 md:ml-12 lg:ml-16 xl:ml-32 2xl:ml-40 ${
+          className={`font-bold text-xl text-left  sm:ml-4 md:ml-12 lg:ml-16 xl:ml-32 2xl:ml-40 ${
             searchVisible
               ? "transform sm:translate-x-[-35px] md:translate-x-[-60px] lg:translate-x-[-80px] xl:translate-x-[-135px] transition-transform duration-300"
               : "transition-transform duration-300"
