@@ -66,7 +66,7 @@ const FlightDetails = ({
       Swal.fire({
         title: "Check Your Order Data",
         icon: "question",
-        width: "50%",
+        width: "85%",
 
         html: `
        <div class="mb-3">

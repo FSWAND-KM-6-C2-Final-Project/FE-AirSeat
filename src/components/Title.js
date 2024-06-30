@@ -1,11 +1,18 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { useEffect, useState } from "react";
 
 const Title = ({ text }) => {
+  const [title, setTitle] = useState(text);
+
+  useEffect(() => {
+    setTitle(text);
+  }, [text]);
+
   return (
-    text && (
+    title && (
       <HelmetProvider>
         <Helmet>
-          <title>{text} - Airseat</title>
+          <title>{title} - Airseat</title>
         </Helmet>
       </HelmetProvider>
     )
