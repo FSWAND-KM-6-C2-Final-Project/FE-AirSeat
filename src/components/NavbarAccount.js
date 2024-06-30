@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiUser, FiBell, FiList } from "react-icons/fi";
 import { FaSignInAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getUser } from "../services/auth.service";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import Logo from "../images/logo_airseat.png";
@@ -63,31 +63,31 @@ const NavbarAccount = () => {
     <div className="bg-gray-100">
       <header className="bg-white shadow-md p-3">
         <div className="max-w-8xl mx-auto flex justify-between items-center">
-          <a
-            href="/"
+          <Link
             className="text-customBlue1 flex items-end text-xl font-bold"
+            to={"/"}
           >
             <img className="h-[2rem] mr-1" src={Logo} alt="Logo" />
             AirSeat
-          </a>
+          </Link>
           <ToastContainer />
           <div className="flex space-x-4">
             {isAuthenticated ? (
               <>
                 <button onClick={() => setActivePage("list")}>
-                  <a href="/order-history">
+                  <Link to={"/order-history"}>
                     <FiList
                       className={
-                        activePage === "list"
+                        activePage === "order-history"
                           ? "text-customBlue2"
                           : "text-black"
                       }
                       size={20}
                     />
-                  </a>
+                  </Link>
                 </button>
                 <button onClick={() => setActivePage("notification")}>
-                  <a href="/notification">
+                  <Link to={"/notification"}>
                     <FiBell
                       className={
                         activePage === "notification"
@@ -96,10 +96,10 @@ const NavbarAccount = () => {
                       }
                       size={20}
                     />
-                  </a>
+                  </Link>
                 </button>
                 <button onClick={() => setActivePage("profile")}>
-                  <a href="/profile">
+                  <Link to={"/profile"}>
                     <FiUser
                       className={
                         activePage === "profile"
@@ -108,7 +108,7 @@ const NavbarAccount = () => {
                       }
                       size={20}
                     />
-                  </a>
+                  </Link>
                 </button>
               </>
             ) : (

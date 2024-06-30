@@ -5,7 +5,7 @@ import { LuArrowUpDown } from "react-icons/lu";
 import FlightAccordion from "./FlightAccordion";
 import LongArrowIcon from "../icons/long_arrow.svg";
 import loadingIcon from "../images/loading.png";
-import emptyIcon from "../icons/empty.svg";
+import emptyIcon from "../icons/not-found-flight.svg";
 import { getFlightData } from "../services/flight.service";
 import {
   createSearchParams,
@@ -102,11 +102,19 @@ const Modal = ({ showModal, toggleModal, handleOptionSelect }) => {
       };
     }
 
+    const returnDate = searchParams.get("returnDate");
+
+    if (returnDate) {
+      searchParamsObject = {
+        ...searchParamsObject,
+        returnDate: returnDate,
+      };
+    }
+
     navigate({
       pathname: "/search",
       search: createSearchParams(searchParamsObject).toString(),
     });
-    navigate(0);
 
     handleOptionSelect(selectedOption);
     toggleModal();
@@ -220,7 +228,7 @@ const FlightResults = () => {
       setSelectedSortOption(0);
     }
     fetchFlightData();
-  }, []);
+  }, [showModal, searchParams]);
 
   const fetchFlightData = async () => {
     setIsLoading(true);
@@ -267,29 +275,7 @@ const FlightResults = () => {
       />
 
       <div className="grid grid-cols-1 2xl:grid-cols-6">
-        <div className="p-4 hidden xl:block">
-          <div className="p-5 bg-background shadow-[0_3px_15px_-3px_rgba(0,0,0,0.3)] aspect-square w-40 rounded-2xl">
-            <div className="self-center space-y-2">
-              <div className="mt-3 mb-5">
-                <p className="font-semibold text-base">Filter</p>
-              </div>
-              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
-                <FiBox />
-                <p>Transit</p>
-              </div>
-              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
-                <CiHeart />
-                <p>Fasilitas</p>
-              </div>
-              <div className="flex cursor-pointer items-center gap-2 border-b pb-2 text-lg">
-                <FiDollarSign />
-                <p>Harga</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 col-span-5">
+        <div className="p-4 col-span-12">
           <div className="space-y-5">
             {isLoading ? (
               <div className="flex justify-center">
@@ -352,7 +338,7 @@ const FlightResults = () => {
                     <img
                       src={emptyIcon}
                       alt="empty"
-                      className="aspect-square w-4/12"
+                      className="w-[80%] sm:w-[30%]"
                     />
                   </div>
                 )}

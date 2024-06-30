@@ -19,6 +19,7 @@ import RequestResetPasswordPage from "./pages/RequestResetPasswordPage";
 import OTPResetPasswordPage from "./pages/OTPResetPasswordPage";
 import ReturnSearchPage from "./pages/ReturnSearchPage";
 import "./index.css";
+import PdfTicket from "./pages/PdfTicket";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/notification" element={<NotificationPage />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/order-history-empty" element={<OrderHistoryEmpty />} />
+          <Route path="/ticket" element={<PdfTicket />} />
           <Route path="/restricted" element={<UnauthenticatePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

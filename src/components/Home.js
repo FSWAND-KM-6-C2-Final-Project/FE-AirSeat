@@ -77,7 +77,7 @@ const Home = () => {
     try {
       const continentData = data;
       if (continentData) {
-        const page = searchParams.get("page") || 1;
+        const page = pageNum || 1;
         const response = await getFavoriteDestinations(continentData, page);
 
         setFavoriteDestination(response.data.flights);
@@ -131,7 +131,7 @@ const Home = () => {
       setContinent("all");
     }
     fetchData(continent);
-  }, [continent, selectedButton, fromCity, toCity]);
+  }, [continent, selectedButton, fromCity, toCity, pageNum]);
 
   useEffect(() => {
     if (showClassModal) {
@@ -286,6 +286,7 @@ const Home = () => {
   const handleDepartureDate = (e) => {
     e.preventDefault();
     setDeptDate(e.target.value);
+    setDeptDateVal(dayjs(e.target.value).utc().format("YYYY-MM-DD"));
   };
 
   const fetchFlight = async (data) => {
@@ -368,7 +369,6 @@ const Home = () => {
           pathname: "/search",
           search: createSearchParams(data).toString(),
         });
-        navigate(0);
       } else {
         toast.error(
           "The number of infant passengers cannot exceed the number of adult passengers",
@@ -400,6 +400,10 @@ const Home = () => {
     }
   };
 
+  const handlePageUpdate = (newPageNum) => {
+    setPageNum(newPageNum);
+  };
+
   const handleDestinationClick = (destination) => {
     setFromCity(
       `${destination.departureAirport.airport_name} - ${destination.departureAirport.airport_city} (${destination.departureAirport.airport_city_code})`
@@ -413,6 +417,7 @@ const Home = () => {
     setDeptDateVal(
       dayjs(destination.departure_time).utc().format("YYYY-MM-DD")
     );
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -485,7 +490,7 @@ const Home = () => {
                           <input
                             type="date"
                             min={today}
-                            value={deptDateVal}
+                            value={deptDateVal && deptDateVal}
                             onChange={handleDepartureDate}
                             className="w-full border-b-2 border-t-white border-l-white border-r-white rounded"
                           />
@@ -496,7 +501,8 @@ const Home = () => {
                           <label className="block text-gray-700">Return</label>
                           <input
                             type="date"
-                            placeholder=""
+                            placeholder="test"
+                            min={today}
                             disabled={!showReturnDate}
                             onChange={(e) => setReturnDate(e.target.value)}
                             className={`w-full border-b-2 border-t-white border-l-white border-r-white rounded ${
@@ -568,7 +574,6 @@ const Home = () => {
               </div>
             </div>
           </div>
-
           <button
             onClick={handleClickSearch}
             className="mt-6 w-full bg-customBlue2 hover:bg-customBlue1 text-white rounded py-3"
@@ -887,6 +892,7 @@ const Home = () => {
           pageNum={pageNum}
           pageSize={pageSize}
           onDestinationClick={handleDestinationClick}
+          onPageUpdate={handlePageUpdate}
         />
       </div>
 

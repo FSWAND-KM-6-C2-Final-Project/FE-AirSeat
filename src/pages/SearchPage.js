@@ -7,6 +7,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+import Title from "../components/Title";
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +41,7 @@ const SearchPage = () => {
 
   return (
     <div>
+      <Title text={"Search Flight"} />
       <NavbarAccount />
       <FlightSelection />
       <FlightResults />
