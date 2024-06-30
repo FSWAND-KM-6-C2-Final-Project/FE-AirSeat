@@ -140,7 +140,7 @@ const Account = () => {
         <div className="flex justify-center md:justify-start">
           <Link
             to={"/"}
-            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-9/12 ml-2 md:ml-28 lg:ml-36 xl:ml-48 mt-8 hover:bg-customBlue1"
+            className="flex items-center bg-customBlue2 text-white px-4 py-3 rounded-xl w-full md:w-9/12 ml-0 md:ml-28 lg:ml-36 xl:ml-48 mt-8 hover:bg-customBlue1"
           >
             <FiArrowLeft size={24} className="mr-2" />
             Homepage
