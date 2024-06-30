@@ -99,6 +99,16 @@ const Notification = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleDropdownVisible = () => {
+    setSearchVisible(false);
+    setFilterDropdownVisible(!filterDropdownVisible);
+  };
+
+  const handleSearchVisible = () => {
+    setFilterDropdownVisible(false);
+    setSearchVisible(!searchVisible);
+  };
+
   return (
     <>
       <div className="p-10 shadow-md h-44 mx-auto mb-10">
@@ -129,7 +139,7 @@ const Notification = () => {
             <button
               className="flex items-center outline outline-customBlue2 px-4 py-1 rounded-full"
               style={{ height: "fit-content" }}
-              onClick={() => setFilterDropdownVisible(!filterDropdownVisible)}
+              onClick={handleDropdownVisible}
             >
               <BiFilterAlt className="text-gray-500" size={24} />
               <span className="ml-2">Filter</span>
@@ -168,7 +178,7 @@ const Notification = () => {
             <AiOutlineSearch
               className="flex items-center text-customBlue2 cursor-pointer"
               size={32}
-              onClick={() => setSearchVisible(!searchVisible)}
+              onClick={handleSearchVisible}
             />
             {searchVisible && (
               <>
@@ -243,7 +253,7 @@ const Notification = () => {
                         ? "bg-customBlue2 text-white"
                         : "bg-gray-200 text-gray-600"
                     }`}
-                    style={{ minWidth: "30px" }} // Sesuaikan lebar minimum sesuai kebutuhan
+                    style={{ minWidth: "30px" }}
                   >
                     {number + 1}
                   </button>
