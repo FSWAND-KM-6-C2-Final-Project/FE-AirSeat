@@ -2,6 +2,9 @@
 
 Airseat is an android and web-based application that has features to be able to purchase airplane tickets easily and quickly.
 
+
+![alt text](image.png)
+
 # TEAM (FRONTEND)
 
 | Name    | Job Description                    |
@@ -44,13 +47,14 @@ npm start
 - **Homepage**: Allows users to check the flight schedule and view favorite destinations.
 - **Sign In**: Users can log in to their accounts.
 - **Sign Up**: New users can create an account.
-  -- **Send OTP**: Enhance security for user account management.
+- **Send OTP**: Enhance security for user account management.
 - **Reset Password**: Users can reset their password if they forget it.
 - **Booking Form**: Allows users to fill in their booking details.
 - **Flight Results**: Displays available flights based on the user's search criteria.
 - **Flight Details**: Displays detailed information about the flight.
 - **Payment Options**: Lets users choose from different payment methods.
 - **Payment Success**: Displays the success status after payment is completed.
+- **Order History**: Allows users to view a list of their past flight bookings and details.
 - **Profile**: Users can update their profile data.
 - **Notification**: Users receive notifications about discounts and any changes in flight schedules.
 
@@ -67,5 +71,6 @@ The application uses React Router for navigation. Below are the routes defined:
 - **/booking**: Displays the booking form and flight details.
 - **/payment**: Displays the payment options.
 - **/payment-success**: Displays the payment success message.
+- **/order-history**: Displays the user's past bookings and related details.
 - **/profile**: Displays the profile page where users can edit their profile data.
 - **/notification**: Displays notifications about discounts and any changes in flight schedules.
