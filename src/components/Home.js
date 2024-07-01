@@ -590,7 +590,7 @@ const Home = () => {
 
       {showPassengerModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[80%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[80%] md:w-[70%] lg:w-[50%] overflow-auto">
             <button
               onClick={() => setShowPassengerModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -681,7 +681,7 @@ const Home = () => {
 
       {showClassModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[80%] max-h-[70%] md:w-[50%] md:max-h-[70%] lg:w-[30%] lg:max-h-[60%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[80%] md:w-[70%] lg:w-[50%] overflow-auto">
             <button
               onClick={() => setShowClassModal(false)}
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -745,7 +745,7 @@ const Home = () => {
 
       {showFromCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[80%] md:w-[70%] lg:w-[50%] overflow-auto">
             <div className="flex item-center relative gap-3">
               <button
                 onClick={() => setShowFromCityModal(false)}
@@ -781,7 +781,7 @@ const Home = () => {
 
       {showToCityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[90%] md:w-[50%] md:max-h-[70%] lg:w-[50%] lg:max-h-[50%]">
+          <div className="bg-white p-6 rounded-xl shadow-lg relative w-[90%] max-h-[80%] md:w-[70%] lg:w-[50%] overflow-auto">
             <div className="flex item-center relative gap-3">
               <button
                 onClick={() => setShowToCityModal(false)}
