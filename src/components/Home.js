@@ -287,7 +287,7 @@ const Home = () => {
   const handleDepartureDate = (e) => {
     e.preventDefault();
     setDeptDate(e.target.value);
-    setDeptDateVal(dayjs(e.target.value).utc().format("YYYY-MM-DD"));
+    setDeptDateVal(dayjs(e.target.value).format("YYYY-MM-DD"));
   };
 
   const fetchFlight = async (data) => {
