@@ -127,7 +127,8 @@ const OrderHistory = () => {
 
   const handleCancelBooking = (order) => {
     Swal.fire({
-      title: "Are you sure you want to cancel? This action cannot be undone.",
+      title: "Are you sure?",
+      text: "Are you sure you want to cancel? This action cannot be undone.",
       icon: "question",
       showConfirmButton: true,
       confirmButtonText: "Cancel Booking",
@@ -140,7 +141,8 @@ const OrderHistory = () => {
           const response = await cancelBooking(order.booking_code, token);
           if (response) {
             Swal.fire({
-              title: "Booking successfully cancelled",
+              title: "Success",
+              text: "Booking successfully cancelled",
               icon: "success",
               showConfirmButton: true,
               confirmButtonText: "Ok",

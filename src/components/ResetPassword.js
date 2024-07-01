@@ -74,7 +74,8 @@ const ResetPassword = () => {
       const response = await changePassword(reqBody);
       if (response) {
         Swal.fire({
-          title: response.message,
+          title: "Success",
+          text: response.message,
           icon: "success",
           showConfirmButton: true,
           confirmButtonText: "Sign In",
