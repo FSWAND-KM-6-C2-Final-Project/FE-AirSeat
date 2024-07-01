@@ -20,46 +20,9 @@ const PdfTicket = ({
   ordered_by_phone_number,
   ordered_by_email,
   bookingDetail,
+  discount,
+  totalAmount,
 }) => {
-  const reciept_data = {
-    id: "642be0b4bbe5d71a5341dfb1",
-    invoice_no: "20200669",
-    address: "739 Porter Avenue, Cade, Missouri, 1134",
-    date: "24-09-2019",
-    items: [
-      {
-        id: 1,
-        desc: "do ex anim quis velit excepteur non",
-        qty: 8,
-        price: 179.25,
-      },
-      {
-        id: 2,
-        desc: "incididunt cillum fugiat aliqua Lorem sit Lorem",
-        qty: 9,
-        price: 107.78,
-      },
-      {
-        id: 3,
-        desc: "quis Lorem ad laboris proident aliqua laborum",
-        qty: 4,
-        price: 181.62,
-      },
-      {
-        id: 4,
-        desc: "exercitation non do eu ea ullamco cillum",
-        qty: 4,
-        price: 604.55,
-      },
-      {
-        id: 5,
-        desc: "ea nisi non excepteur irure Lorem voluptate",
-        qty: 6,
-        price: 687.08,
-      },
-    ],
-  };
-
   const styles = StyleSheet.create({
     page: {
       fontSize: 11,
@@ -204,11 +167,57 @@ const PdfTicket = ({
             <Text>{booking.seat.seat_name}</Text>
           </View>
           <View style={styles.tbody}>
-            <Text>{booking.price}</Text>
+            <Text>
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(booking.price)}
+            </Text>
           </View>
         </View>
       </Fragment>
     ));
+
+  const TableDiscount = ({ discount, totalAmount }) => {
+    let totalOrder = 0;
+    bookingDetail.forEach((booking) => {
+      totalOrder += parseFloat(booking.price || 0);
+    });
+
+    const calculateDiscount = () => {
+      if (discount && totalOrder) {
+        return (
+          parseFloat(totalOrder) * (parseInt(discount.discount_amount) / 100)
+        );
+      }
+      return 0;
+    };
+
+    return (
+      <View style={{ width: "100%", flexDirection: "row" }}>
+        <View style={styles.total}>
+          <Text></Text>
+        </View>
+        <View style={styles.total}>
+          <Text> </Text>
+        </View>
+        <View style={styles.tbody}>
+          <Text>Discount</Text>
+        </View>
+        <View style={styles.tbody}>
+          <Text>
+            -
+            {new Intl.NumberFormat("id", {
+              style: "currency",
+              currency: "IDR",
+              maximumFractionDigits: 0,
+            }).format(parseFloat(calculateDiscount().toFixed(2)))}
+          </Text>
+        </View>
+      </View>
+    );
+  };
 
   const TableTotal = () => (
     <View style={{ width: "100%", flexDirection: "row" }}>
@@ -223,9 +232,11 @@ const PdfTicket = ({
       </View>
       <View style={styles.tbody}>
         <Text>
-          {bookingDetail
-            .reduce((sum, booking) => sum + parseFloat(booking.price), 0)
-            .toFixed(2)}
+          {new Intl.NumberFormat("id", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+          }).format(parseFloat(totalAmount))}
         </Text>
       </View>
     </View>
@@ -238,6 +249,7 @@ const PdfTicket = ({
         <UserAddress />
         <TableHead />
         <TableBody />
+        <TableDiscount discount={discount} totalAmount={totalAmount} />
         <TableTotal />
       </Page>
     </Document>

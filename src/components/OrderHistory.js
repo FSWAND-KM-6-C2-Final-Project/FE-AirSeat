@@ -1281,6 +1281,8 @@ const OrderHistory = () => {
                               }
                               ordered_by_email={selectedOrder.ordered_by_email}
                               bookingDetail={selectedOrder.bookingDetail}
+                              totalAmount={selectedOrder.total_amount}
+                              discount={selectedOrder.discount}
                             />
                           }
                           fileName={`Airseat_Invoice_${selectedOrder.booking_code}.pdf`}
