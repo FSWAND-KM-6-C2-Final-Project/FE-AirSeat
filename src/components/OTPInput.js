@@ -17,7 +17,8 @@ const OTPInput = () => {
   useEffect(() => {
     if (!email && !resend_at) {
       Swal.fire({
-        title: "You don't have user activation request, please sign up first",
+        title: "Error",
+        text: "You don't have user activation request, please sign up first",
         icon: "error",
         showConfirmButton: true,
         confirmButtonText: "Sign Up",
@@ -79,7 +80,8 @@ const OTPInput = () => {
       }
 
       Swal.fire({
-        title: resData.message,
+        title: "Success",
+        text: resData.message,
         icon: "success",
         showConfirmButton: true,
         confirmButtonText: "Sign In",

@@ -87,7 +87,8 @@ const SignUp = () => {
 
       if (response) {
         Swal.fire({
-          title: response.message,
+          title: "Success",
+          text: response.message,
           icon: "success",
           showConfirmButton: true,
           confirmButtonText: "Verify Your Account",
