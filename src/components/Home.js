@@ -363,7 +363,8 @@ const Home = () => {
       data.deptAirport &&
       data.arrAirport &&
       data.deptDate &&
-      (data.adult || data.infant || data.children)
+      (data.adult || data.infant || data.children) &&
+      data.class
     ) {
       if (data.adult >= data.infant) {
         navigate({
@@ -424,7 +425,6 @@ const Home = () => {
   return (
     <main className="flex flex-col items-center">
       <Banner />
-      <ToastContainer />
       <div className="max-w-full p-2 lg:mt-[-100px] md:mt-[-50px]">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl mb-10">
           <div className="lg:p-8 p-5 space-y-8 md:space-y-4">
