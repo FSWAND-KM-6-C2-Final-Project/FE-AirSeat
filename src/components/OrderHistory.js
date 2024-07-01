@@ -361,7 +361,6 @@ const OrderHistory = () => {
     setSelectedOrder(order);
     setSelectedOrderId(order.booking_code);
     if (window.innerWidth < 768) {
-      // Scroll to the target element
       const targetElement = document.getElementById("orderDetails");
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: "smooth" });
@@ -371,8 +370,8 @@ const OrderHistory = () => {
 
   return (
     <>
-      <div className="p-4 md:p-10 shadow-md">
-        <h2 className="font-bold text-2xl text-left ml-2 sm:ml-10 md:ml-6 lg:ml-11  xl:ml-28 2xl:ml-36">
+      <div className="p-10 shadow-md">
+        <h2 className="font-bold text-xl text-left md:ml-24 lg:ml-32 xl:ml-44">
           Order History
         </h2>
         <div className="flex justify-center md:justify-start">

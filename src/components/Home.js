@@ -131,7 +131,7 @@ const Home = () => {
       setContinent("all");
     }
     fetchData(continent);
-  }, [continent, selectedButton, fromCity, toCity, pageNum]);
+  }, [continent, selectedButton, fromCity, toCity, pageNum, searchParams]);
 
   useEffect(() => {
     if (showClassModal) {
@@ -160,6 +160,7 @@ const Home = () => {
       setContinent("all");
     }
     setSelectedButton(button);
+    setPageNum(1);
   };
 
   const [tempPassengers, setTempPassengers] = useState({

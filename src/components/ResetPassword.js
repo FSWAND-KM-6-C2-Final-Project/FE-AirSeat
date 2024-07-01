@@ -200,7 +200,7 @@ const ResetPassword = () => {
             <button
               disabled={isFetching}
               onClick={handleResetPassword}
-              className="w-full bg-customBlue2 text-white py-2 rounded-md flex items-center justify-center hover:bg-customBlue1"
+              className="w-full bg-customBlue2 text-white py-2 mt-10 rounded-md flex items-center justify-center hover:bg-customBlue1"
             >
               {isFetching && <Loading />}
               {!isFetching && "Change Password"}
