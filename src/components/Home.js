@@ -48,6 +48,9 @@ const Home = () => {
     arrAirport: null,
     deptTime: null,
   });
+
+  const [totalPagesCity, setTotalPagesCity] = useState(1);
+
   const [deptDate, setDeptDate] = useState(0);
   const [deptCity, setDeptCity] = useState();
   const [arrCity, setArrCity] = useState();
@@ -171,8 +174,20 @@ const Home = () => {
 
   const fetchCity = async () => {
     try {
-      const response = await getAirportData();
-      const airports = response.data.airports;
+      const initialResponse = await getAirportData();
+      const totalPages = initialResponse.pagination.totalPages;
+      let airports = initialResponse.data.airports;
+
+      if (totalPages > 1) {
+        const fetchPromises = [];
+        for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
+          fetchPromises.push(getAirportData(pageNum));
+        }
+        const responses = await Promise.all(fetchPromises);
+        responses.forEach((response) => {
+          airports = airports.concat(response.data.airports);
+        });
+      }
 
       const data = airports.map((airport) => ({
         id: airport.id,
