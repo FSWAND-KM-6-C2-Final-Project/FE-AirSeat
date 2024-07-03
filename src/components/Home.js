@@ -381,26 +381,40 @@ const Home = () => {
       (data.adult || data.infant || data.children) &&
       data.class
     ) {
-      if (data.adult >= data.infant) {
-        navigate({
-          pathname: "/search",
-          search: createSearchParams(data).toString(),
+      if (data.deptAirport === data.arrAirport) {
+        toast.error("Departure & Arrival Airport must different", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
         });
       } else {
-        toast.error(
-          "The number of infant passengers cannot exceed the number of adult passengers",
-          {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          }
-        );
+        if (data.adult >= data.infant) {
+          navigate({
+            pathname: "/search",
+            search: createSearchParams(data).toString(),
+          });
+        } else {
+          toast.error(
+            "The number of infant passengers cannot exceed the number of adult passengers",
+            {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            }
+          );
+        }
       }
     } else {
       toast.error("Please choose your flight details first.", {
