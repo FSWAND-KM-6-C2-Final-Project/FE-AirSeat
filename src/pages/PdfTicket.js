@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -7,6 +7,8 @@ import {
   Document,
   StyleSheet,
 } from "@react-pdf/renderer";
+import JsBarcode from "jsbarcode";
+import { createCanvas } from "canvas";
 
 import logo from "../images/logo_airseat.png";
 import { seoTitle } from "string-fn";
@@ -22,7 +24,21 @@ const PdfTicket = ({
   bookingDetail,
   discount,
   totalAmount,
+  departure_airport,
+  arrival_airport,
+  airline_name,
+  departure_time,
+  arrival_time,
+  printed_by,
 }) => {
+  const [barcodeDataUri, setBarcodeDataUri] = useState("");
+
+  useEffect(() => {
+    const canvas = createCanvas();
+    JsBarcode(canvas, bookingCode, { format: "CODE128", displayValue: false });
+    setBarcodeDataUri(canvas.toDataURL("image/png"));
+  }, [bookingCode]);
+
   const styles = StyleSheet.create({
     page: {
       fontSize: 11,
@@ -38,7 +54,6 @@ const PdfTicket = ({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      color: "#3E3E3E",
     },
 
     titleContainer: { flexDirection: "row", marginTop: 24 },
@@ -91,7 +106,15 @@ const PdfTicket = ({
     },
 
     tbody2: { flex: 2, borderRightWidth: 1 },
+
+    footer: {
+      marginTop: 20,
+      fontSize: 10,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
   });
+
   const InvoiceTitle = () => (
     <View style={styles.titleContainer}>
       <View style={styles.spaceBetween}>
@@ -106,6 +129,12 @@ const PdfTicket = ({
       <View style={styles.spaceBetween}>
         <View>
           <Text style={styles.invoice}>Ticket </Text>
+          {barcodeDataUri && (
+            <Image
+              src={barcodeDataUri}
+              style={{ width: 140, height: 50, marginTop: 5 }}
+            />
+          )}
           <Text style={styles.invoiceNumber}>Booking Code: {bookingCode} </Text>
         </View>
       </View>
@@ -118,17 +147,38 @@ const PdfTicket = ({
         <View style={{ maxWidth: 200 }}>
           <Text style={styles.addressTitle}>Ordered By </Text>
           <Text style={styles.address}>
-            Name :{`${ordered_by_first_name} `} {ordered_by_last_name}
+            Name : {`${ordered_by_first_name} `} {ordered_by_last_name}
           </Text>
           <Text style={styles.address}>
-            Phone Number :{ordered_by_phone_number}
+            Phone Number : {ordered_by_phone_number}
           </Text>
-          <Text style={styles.address}>Email :{ordered_by_email}</Text>
+          <Text style={styles.address}>Email : {ordered_by_email}</Text>
         </View>
         <Text style={styles.addressTitle}>
           Booked At : <br />
-          {dayjs(created_at).format("DD MMMM YYYY")}
+          {dayjs(created_at).format("DD MMMM YYYY HH:mm:ss")}
         </Text>
+      </View>
+    </View>
+  );
+
+  const FlightDetails = () => (
+    <View style={styles.titleContainer}>
+      <View style={styles.spaceBetween}>
+        <View>
+          <Text style={styles.addressTitle}>Flight Details</Text>
+          <Text style={styles.address}>Airline: {airline_name}</Text>
+          <Text style={styles.address}>
+            Departure Airport: {departure_airport}
+          </Text>
+          <Text style={styles.address}>
+            Departure Time: {dayjs(departure_time).format("DD MMMM YYYY HH:mm")}
+          </Text>
+          <Text style={styles.address}>Arrival Airport: {arrival_airport}</Text>
+          <Text style={styles.address}>
+            Arrival Time: {dayjs(arrival_time).format("DD MMMM YYYY HH:mm")}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -161,7 +211,7 @@ const PdfTicket = ({
             </Text>
           </View>
           <View style={styles.tbody}>
-            <Text>{booking.seat.class}</Text>
+            <Text>{seoTitle(booking.seat.class)}</Text>
           </View>
           <View style={styles.tbody}>
             <Text>{booking.seat.seat_name}</Text>
@@ -241,18 +291,29 @@ const PdfTicket = ({
       </View>
     </View>
   );
+
+  const Footer = () => (
+    <View style={styles.footer}>
+      <Text>Printed At: {dayjs().format("DD MMMM YYYY HH:mm:ss")}</Text>
+      <Text>Printed By: {printed_by}</Text>
+    </View>
+  );
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <InvoiceTitle />
         <Address />
         <UserAddress />
+        <FlightDetails />
         <TableHead />
         <TableBody />
         <TableDiscount discount={discount} totalAmount={totalAmount} />
         <TableTotal />
+        <Footer />
       </Page>
     </Document>
   );
 };
+
 export default PdfTicket;

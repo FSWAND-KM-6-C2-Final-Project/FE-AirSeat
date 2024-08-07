@@ -339,6 +339,7 @@ const FlightDetails = ({
         confirmButtonColor: "#447C9D",
         showCancelButton: true,
         cancelButtonText: "Cancel",
+        cancelButtonColor: "#FF0000",
       }).then(async (result) => {
         if (result.isConfirmed) {
           const data = bookingData;

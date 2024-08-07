@@ -29,6 +29,7 @@ import HistoryLoadingCard from "./HistoryLoadingCard";
 import PaginationHistory from "./PaginationHistory";
 import PdfTicket from "../pages/PdfTicket";
 import NotFoundError from "./NotFoundError";
+import { getUser } from "../services/auth.service";
 
 const OrderHistory = () => {
   const [selectedOrder, setSelectedOrder] = useState();
@@ -46,9 +47,30 @@ const OrderHistory = () => {
   const [selected, setSelected] = useState([
     { from: undefined, to: undefined },
   ]);
+  const [userLogin, setUserLogin] = useState();
 
   const dayjs = require("dayjs");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const userPrint = async () => {
+      setIsFetching(true);
+      try {
+        const response = await getUser(token);
+
+        if (response) {
+          setUserLogin(response.data.user.full_name);
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+      setIsFetching(false);
+    };
+
+    userPrint();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1285,9 +1307,26 @@ const OrderHistory = () => {
                               bookingDetail={selectedOrder.bookingDetail}
                               totalAmount={selectedOrder.total_amount}
                               discount={selectedOrder.discount}
+                              departure_airport={
+                                selectedOrder.flight.departureAirport
+                                  .airport_name
+                              }
+                              arrival_airport={
+                                selectedOrder.flight.arrivalAirport.airport_name
+                              }
+                              departure_time={
+                                selectedOrder.flight.departure_time
+                              }
+                              arrival_time={selectedOrder.flight.arrival_time}
+                              airline_name={
+                                selectedOrder.flight.airline.airline_name
+                              }
+                              printed_by={userLogin}
                             />
                           }
-                          fileName={`Airseat_Invoice_${selectedOrder.booking_code}.pdf`}
+                          fileName={`Airseat_Invoice_${
+                            selectedOrder.booking_code
+                          }_${Date.now()}.pdf`}
                         >
                           <button className="text-white w-full bg-customBlue2 hover:bg-customBlue1 focus:ring-blue-300 focus:ring-4 h-14 font-medium rounded-lg text-xl px-5 py-2.5 me-2 mb-2 focus:outline-none">
                             Print E-Ticket
