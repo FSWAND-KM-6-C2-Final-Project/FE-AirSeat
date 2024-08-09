@@ -27,7 +27,7 @@ const Account = () => {
         };
 
         const response = await axios.get(
-          "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/me",
+          "https://airseat.akbarrahmatm.my.id/api/v1/auth/me",
           config
         );
         const userData = response.data.data.user;
@@ -67,7 +67,7 @@ const Account = () => {
       }
 
       const response = await axios.patch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/profile",
+        "https://airseat.akbarrahmatm.my.id/api/v1/profile",
         {
           full_name: name,
           phone_number: phoneNumber,
@@ -101,7 +101,7 @@ const Account = () => {
       }
 
       const response = await axios.delete(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/profile",
+        "https://airseat.akbarrahmatm.my.id/api/v1/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -11,9 +11,7 @@ const NavbarBook = () => {
 
   useEffect(() => {
     axios
-      .get(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/notification"
-      )
+      .get("https://airseat.akbarrahmatm.my.id/api/v1/notification")
       .then((response) => {
         setNotifications(response.data);
       })
@@ -22,7 +20,7 @@ const NavbarBook = () => {
       });
 
     axios
-      .get("https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/me")
+      .get("https://airseat.akbarrahmatm.my.id/api/v1/auth/me")
       .then((response) => {
         setUser(response.data);
       })

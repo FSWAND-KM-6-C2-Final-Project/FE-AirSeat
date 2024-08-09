@@ -60,7 +60,7 @@ const OTPInput = () => {
 
     try {
       const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/verify",
+        "https://airseat.akbarrahmatm.my.id/api/v1/auth/activation/verify",
         {
           method: "POST",
           headers: {
@@ -111,7 +111,7 @@ const OTPInput = () => {
   const handleResend = async () => {
     try {
       const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/activation/resend",
+        "https://airseat.akbarrahmatm.my.id/api/v1/auth/activation/resend",
         {
           method: "POST",
           headers: {

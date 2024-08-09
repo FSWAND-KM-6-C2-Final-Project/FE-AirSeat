@@ -1,4 +1,4 @@
-const BASE_URL = "https://plucky-agent-424606-s3.et.r.appspot.com";
+const BASE_URL = "https://airseat.akbarrahmatm.my.id";
 
 export async function requestReset(data) {
   const response = await fetch(`${BASE_URL}/api/v1/auth/password-reset`, {

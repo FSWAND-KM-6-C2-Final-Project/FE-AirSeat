@@ -22,7 +22,7 @@ const Notification = () => {
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(
-          `https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/notification?limit=${notificationsPerPage}&page=${currentPage}&searchType=${selectedCategory}&searchTitle=${searchQuery}`,
+          `https://airseat.akbarrahmatm.my.id/api/v1/notification?limit=${notificationsPerPage}&page=${currentPage}&searchType=${selectedCategory}&searchTitle=${searchQuery}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

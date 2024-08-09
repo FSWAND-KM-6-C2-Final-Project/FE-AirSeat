@@ -79,7 +79,7 @@ const OTPInputResetPassword = () => {
   const handleResend = async () => {
     try {
       const response = await fetch(
-        "https://plucky-agent-424606-s3.et.r.appspot.com/api/v1/auth/password-reset/resend",
+        "https://airseat.akbarrahmatm.my.id/api/v1/auth/password-reset/resend",
         {
           method: "POST",
           headers: {
